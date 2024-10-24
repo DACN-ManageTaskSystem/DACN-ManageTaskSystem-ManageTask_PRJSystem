@@ -146,27 +146,42 @@
                     <th>Project Name</th>
                     <th>Start</th>
                     <th>End</th>
-                    <th>Tổng Số Task</th>
+                    <th>Thành viên </th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td><img src="https://via.placeholder.com/100" alt="Project Image" width="100"></td>
-                    <td>Dự Án Trường Đại học HUIT</td>
-                    <td>10:20 31/10/2022</td>
-                    <td>10:20 31/10/2022</td>
-                    <td>
-                        <div class="avatar-group">
-                            <img src="https://via.placeholder.com/30" alt="Team Member">
-                            <img src="https://via.placeholder.com/30" alt="Team Member">
-                            <img src="https://via.placeholder.com/30" alt="Team Member">
-                            <span>+3</span>
-                        </div>
-                    </td>
-                    <td><span class="status-done">DONE</span></td>
-                </tr>
+                @foreach (var project in Model)
+                {
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td><img src="https://via.placeholder.com/100" alt="Project Image" width="100"></td>
+                        <td><a href="@Url.Action("MembersOfProject", "Project", new { projectId = project.Id })" class="btn btn-info">@project.ProjectName</a></td>
+                        
+
+                        <td>@project.StartDate.ToString("HH:mm dd/MM/yyyy")</td>
+                        <td>@project.EndDate.ToString("HH:mm dd/MM/yyyy")</td>
+                        <td>
+                            <div class="avatar-group">
+                                <!-- Hiển thị team members hoặc số task, có thể thay thế bằng dữ liệu thật -->
+                                <img src="https://via.placeholder.com/30" alt="Team Member">
+                                <img src="https://via.placeholder.com/30" alt="Team Member">
+                                <img src="https://via.placeholder.com/30" alt="Team Member">
+                                <span>+3</span>
+                            </div>
+                        </td>
+                        <td>
+                            @if (project.Status == "DONE")
+                            {
+                                <span class="status-done">DONE</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">@project.Status</span>
+                            }
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

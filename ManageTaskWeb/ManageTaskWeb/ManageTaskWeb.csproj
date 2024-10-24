@@ -232,9 +232,11 @@
     <Content Include="Views\Home\DangNhap.cshtml" />
     <Content Include="Views\Home\TrangChu.cshtml" />
     <Content Include="Views\Home\DSProject.cshtml" />
+    <Content Include="Views\Home\MembersOfProject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
