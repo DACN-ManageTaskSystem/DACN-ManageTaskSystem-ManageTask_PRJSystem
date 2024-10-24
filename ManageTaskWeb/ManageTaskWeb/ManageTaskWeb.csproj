@@ -141,6 +141,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\layout.css" />
+    <Content Include="Content\css\member.css" />
+    <Content Include="Content\css\project.css" />
+    <Content Include="Content\css\task.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -232,6 +236,9 @@
     <Content Include="Views\Home\DangNhap.cshtml" />
     <Content Include="Views\Home\TrangChu.cshtml" />
     <Content Include="Views\Home\DSProject.cshtml" />
+    <Content Include="Views\Home\DSMember.cshtml" />
+    <Content Include="Views\Home\DSTask.cshtml" />
+    <Content Include="Views\Home\MembersOfProject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

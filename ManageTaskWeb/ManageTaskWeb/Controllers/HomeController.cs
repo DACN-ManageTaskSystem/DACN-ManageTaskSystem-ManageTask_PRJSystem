@@ -24,5 +24,25 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
+
+        public ActionResult MembersOfProject(int projectId)
+        {
+            // Lấy danh sách thành viên theo projectId
+            var members = data.Members.Where(m => m.ProjectId == projectId).ToList();
+
+            // Truyền dữ liệu thành viên qua view
+            return View(members);
+        }
+
+
+        public ActionResult DSMember()
+        {
+            return View();
+        }
+
+        public ActionResult DSTask()
+        {
+            return View();
+        }
     }
 }

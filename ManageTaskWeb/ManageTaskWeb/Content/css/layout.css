@@ -1,0 +1,124 @@
+﻿
+/* Reset margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+
+/* Header styles */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo styles */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .logo img {
+        width: 40px;
+        height: 40px;
+    }
+
+/* Menu styles */
+nav .menu {
+    display: flex;
+    gap: 40px; /* Tăng khoảng cách giữa các mục menu */
+}
+
+    nav .menu a {
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Khoảng cách giữa icon và text */
+    }
+
+    nav .menu i {
+        font-size: 20px; /* Icon size */
+    }
+
+/* Icon and avatar section */
+nav .icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+    nav .icons a {
+        color: #333;
+        font-size: 24px;
+        text-decoration: none;
+    }
+
+    nav .icons img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+/* Hover effects */
+nav a:hover {
+    color: #007bff;
+}
+
+/* Main content */
+main {
+    flex: 1; /* Cho phép nội dung chính mở rộng nếu có nhiều nội dung */
+    padding: 20px;
+}
+
+/* Footer styles */
+footer {
+    background-color: #cce7ff;
+    padding: 40px;
+    display: flex;
+    justify-content: space-around;
+    color: #333;
+    position: relative;
+    width: 100%;
+    bottom: 0;
+}
+
+    footer .column {
+        width: 20%;
+    }
+
+    footer h3 {
+        margin-bottom: 10px;
+    }
+
+    footer p, footer ul {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    footer ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        footer ul li {
+            margin-bottom: 5px;
+        }
+
+
