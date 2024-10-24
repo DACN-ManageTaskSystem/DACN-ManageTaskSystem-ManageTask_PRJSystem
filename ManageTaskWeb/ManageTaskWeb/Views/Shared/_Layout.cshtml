@@ -122,6 +122,42 @@
                 footer ul li {
                     margin-bottom: 5px;
                 }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            min-width: 150px;
+        }
+
+            .dropdown-menu a {
+                display: block;
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #333;
+                border-bottom: 1px solid #eee;
+            }
+
+                .dropdown-menu a:hover {
+                    background-color: #f1f1f1;
+                }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +176,16 @@
         <div class="icons">
             <a href="#"><i class="fas fa-bell"></i></a>
             <a href="#"><i class="fas fa-cog"></i></a>
-            <a href="#"><img src="user-avatar.png" alt="User Avatar"></a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle"><img src="user-avatar.png" alt="User Avatar"></a>
+                <div class="dropdown-menu">
+                    <a href="#">Edit Profile</a>
+                    <a href="#">Settings</a>
+                    <a href="#">Dark Mode</a>
+                    <a href="#">Logout</a>
+                </div>
+            </div>
+
         </div>
     </nav>
 
@@ -191,3 +236,15 @@
     </footer>
 </body>
 </html>
+<script>
+    document.addEventListener('click', function (e) {
+        var dropdown = document.querySelector('.dropdown-menu');
+        var avatar = document.querySelector('.dropdown-toggle');
+
+        if (avatar.contains(e.target)) {
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>

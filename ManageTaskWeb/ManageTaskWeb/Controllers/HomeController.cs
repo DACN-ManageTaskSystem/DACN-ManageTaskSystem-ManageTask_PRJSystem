@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ManageTaskWeb.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +11,7 @@ namespace ManageTaskWeb.Controllers
     {
         //
         // GET: /Home/
-
+        QLCVDataContext data = new QLCVDataContext();
         public ActionResult DangNhap()
         {
             return View();
@@ -22,8 +23,22 @@ namespace ManageTaskWeb.Controllers
         }
         public ActionResult DSProject()
         {
-            return View();
+             // Lấy danh sách dự án từ cơ sở dữ liệu
+            var projects = data.Projects.ToList();
+
+            // Truyền dữ liệu dự án sang view
+            return View(projects);
         }
+
+        public ActionResult MembersOfProject(int projectId)
+        {
+            // Lấy danh sách thành viên theo projectId
+            var members = data.Members.Where(m => m.ProjectId == projectId).ToList();
+
+            // Truyền dữ liệu thành viên qua view
+            return View(members);
+        }
+
 
         public ActionResult MembersOfProject(int projectId)
         {
