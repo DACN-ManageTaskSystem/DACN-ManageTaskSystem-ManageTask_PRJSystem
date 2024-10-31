@@ -141,6 +141,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\groupchat.css" />
     <Content Include="Content\css\layout.css" />
     <Content Include="Content\css\login.css" />
     <Content Include="Content\css\member.css" />
@@ -242,6 +243,7 @@
     <Content Include="Views\Home\DSMember.cshtml" />
     <Content Include="Views\Home\DSTask.cshtml" />
     <Content Include="Views\Home\MembersOfProject.cshtml" />
+    <Content Include="Views\Home\GroupChat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

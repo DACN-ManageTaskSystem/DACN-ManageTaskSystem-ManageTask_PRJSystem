@@ -48,5 +48,10 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
+
+        public ActionResult GroupChat()
+        {
+            return View();
+        }
     }
 }
