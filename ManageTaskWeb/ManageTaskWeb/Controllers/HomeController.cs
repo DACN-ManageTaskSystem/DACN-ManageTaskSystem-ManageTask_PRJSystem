@@ -24,20 +24,29 @@ namespace ManageTaskWeb.Controllers
         public ActionResult DSProject()
         {
              // Lấy danh sách dự án từ cơ sở dữ liệu
-            var projects = data.Projects.ToList();
+            //var projects = data.Projects.ToList();
 
             // Truyền dữ liệu dự án sang view
-            return View(projects);
+            return View();
         }
 
-        public ActionResult MembersOfProject(int projectId)
+        //public ActionResult MembersOfProject(int projectId)
+        //{
+        //    // Lấy danh sách thành viên theo projectId
+        //    var members = data.Members.Where(m => m.ProjectId == projectId).ToList();
+
+        //    // Truyền dữ liệu thành viên qua view
+        //    return View(members);
+        //}
+
+        public ActionResult DSMember()
         {
-            // Lấy danh sách thành viên theo projectId
-            var members = data.Members.Where(m => m.ProjectId == projectId).ToList();
-
-            // Truyền dữ liệu thành viên qua view
-            return View(members);
+            return View();
         }
 
+        public ActionResult DSTask()
+        {
+            return View();
+        }
     }
 }
