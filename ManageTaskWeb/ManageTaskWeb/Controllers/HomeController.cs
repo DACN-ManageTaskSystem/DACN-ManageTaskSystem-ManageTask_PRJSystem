@@ -23,11 +23,11 @@ namespace ManageTaskWeb.Controllers
         }
         public ActionResult DSProject()
         {
-             // Lấy danh sách dự án từ cơ sở dữ liệu
-            //var projects = data.Projects.ToList();
+            // Lấy danh sách dự án từ cơ sở dữ liệu
+            var projects = data.Projects.ToList();
 
             // Truyền dữ liệu dự án sang view
-            return View();
+            return View(projects);
         }
 
         //public ActionResult MembersOfProject(int projectId)

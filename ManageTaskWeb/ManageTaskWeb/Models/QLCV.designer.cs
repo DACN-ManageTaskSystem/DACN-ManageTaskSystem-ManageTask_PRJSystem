@@ -51,15 +51,15 @@ namespace ManageTaskWeb.Models
     partial void InsertTaskLog(TaskLog instance);
     partial void UpdateTaskLog(TaskLog instance);
     partial void DeleteTaskLog(TaskLog instance);
-    #endregion
-		
-		public QLCVDataContext() : 
-				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["QLCVConnectionString"].ConnectionString, mappingSource)
-		{
-			OnCreated();
-		}
-		
-		public QLCVDataContext(string connection) : 
+        #endregion
+
+        public QLCVDataContext() :
+                base("Data Source=ACERNITRO5;Initial Catalog=QLCV;Persist Security Info=True;Use" +
+                        "r ID=sa;Password=123;Encrypt=True;TrustServerCertificate=True", mappingSource)
+        {
+            OnCreated();
+        }
+        public QLCVDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
