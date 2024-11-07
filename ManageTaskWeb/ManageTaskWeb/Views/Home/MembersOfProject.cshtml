@@ -6,57 +6,79 @@
 @model List<ManageTaskWeb.Models.Member>
 
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project For HUIT University</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="memberofproject.css">
 </head>
 <body>
-    <div class="header">
-        <div>
-            <a href="/Home/TrangChu"><i class="fas fa-home"></i> Home </a> > <a href="#">Memberofproject</a>
+    <div class="memberofproject-header">
+        <div class="logo"></div>
+        <nav>
+            <a href="#">Projects</a>
+            <a href="#">Task</a>
+            <a href="#">Members</a>
+            <a href="#">Need Help ?</a>
+        </nav>
+        <div class="profile">
+            <img src="/api/placeholder/40/40" alt="Profile" />
+            <div class="icons">
+                <i class="fas fa-bell"></i>
+                <i class="fas fa-cog"></i>
+            </div>
         </div>
-
     </div>
 
-  
+    <div class="memberofproject-breadcrumb">
+        <a href="#">Home</a>
+        <span>></span>
+        <a href="#">Project</a>
+        <span>></span>
+        <a href="#">Members of Project</a>
+    </div>
 
-    <div class="content">
-        <h1>Project For HUIT University</h1>
-
-        <div class="project-description">
-            <p>Mô tả dự án cho: Câu hỏi thực tập sinh</p>
-            <p>- Thiết kế câu hỏi cho thực tập sinh</p>
-            <p>- Thực tập sinh: Xem câu hỏi, đưa câu hỏi, xem câu trả lời, xóa câu hỏi, hiện thị danh sách câu hỏi trả lời</p>
-            <p>- Admin: Đăng nhập, xem câu hỏi, thêm câu trả lời, xóa câu trả lời hiện thị danh sách câu hỏi trả lời</p>
-        </div>
-
-        <div class="project-info">
-            <div class="owner-info">
-                <img src="/api/placeholder/50/50" alt="Owner" />
-                <div>
-                    <div>Phạm Nguyên Vũ (Owner)</div>
-                    <div style="color: #666;">Create at: 11/10/2024</div>
+    <div class="memberofproject-content">
+        <div class="memberofproject-project-section">
+            <div class="memberofproject-project-info">
+                <h1>Project For HUIT University</h1>
+                <div class="project-description">
+                    <p>Mô tả dự án cho: Câu hỏi thực tập sinh</p>
+                    <p>- Thiết kế câu hỏi cho thực tập sinh</p>
+                    <p>- Thực tập sinh: Xem câu hỏi, đưa câu hỏi, xem câu trả lời, xóa câu hỏi, hiển thị danh sách câu hỏi trả lời</p>
+                    <p>- Admin: Đăng nhập, xem câu hỏi, thêm câu trả lời, xóa câu trả lời, hiển thị danh sách câu hỏi trả lời</p>
                 </div>
             </div>
-            <div class="status-section">
-                <div class="status-label">Status</div>
-                <button class="status-button">DONE</button>
+
+            <div class="memberofproject-owner-status">
+                <div class="memberofproject-owner-info">
+                    <img src="/api/placeholder/50/50" alt="Owner" />
+                    <div class="memberofproject-owner-details">
+                        <div class="name">Phạm Nguyên Vũ (Owner)</div>
+                        <div class="date">Create at: 11/10/2024</div>
+                    </div>
+                </div>
+                <div class="memberofproject-status-section">
+                    <div class="memberofproject-status-label">Status</div>
+                    <button class="memberofproject-status-button">DONE</button>
+                </div>
             </div>
         </div>
 
-        <div class="toolbar">
-            <button class="add-member-btn">
+        <div class="memberofproject-toolbar">
+            <button class="memberofproject-add-member-btn">
                 <span>+</span> Thêm Thành Viên Mới
             </button>
-            <div class="search-bar">
+            <div class="memberofproject-search-bar">
                 <input type="text" placeholder="Tìm kiếm theo mã hoặc tên" />
                 <i class="fas fa-search"></i>
             </div>
         </div>
 
-        <div class="membersofproject-container">
-            <div class="membersofproject-list">
+        <div class="memberofproject-members-container">
+            <div class="memberofproject-member-list">
                 <table>
                     <thead>
                         <tr>
@@ -69,57 +91,57 @@
                     <tbody>
                         <tr>
                             <td>
-                                <div class="membersofproject-info">
+                                <div class="memberofproject-member-info">
                                     <img src="/api/placeholder/40/40" alt="Staff" />
                                     <span>Phạm Nguyên Vũ</span>
                                 </div>
                             </td>
                             <td>11/10/2024</td>
-                            <td><span class="status-badge status-active">Active</span></td>
-                            <td><button class="view-btn">View</button></td>
+                            <td><span class="memberofproject-status-badge status-active">Active</span></td>
+                            <td><button class="memberofproject-view-btn">View</button></td>
                         </tr>
                         <tr>
                             <td>
-                                <div class="membersofproject-info">
+                                <div class="memberofproject-member-info">
                                     <img src="/api/placeholder/40/40" alt="Staff" />
                                     <span>Phạm Nguyên Vũ</span>
                                 </div>
                             </td>
                             <td>11/10/2024</td>
-                            <td><span class="status-badge status-off">Off</span></td>
-                            <td><button class="view-btn">View</button></td>
+                            <td><span class="memberofproject-status-badge status-off">Off</span></td>
+                            <td><button class="memberofproject-view-btn">View</button></td>
                         </tr>
-                        <!-- More rows similar to above -->
+                        <!-- More rows as necessary -->
                     </tbody>
                 </table>
             </div>
 
-            <div class="membersofproject-details">
+            <div class="memberofproject-member-details">
                 <img src="/api/placeholder/60/60" alt="Selected member" />
-                <div class="detail-row">
-                    <span class="detail-label">Username:</span>
+                <div class="memberofproject-detail-row">
+                    <span class="memberofproject-detail-label">Username:</span>
                     <span>Phạm Nguyên Vũ</span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Email:</span>
+                <div class="memberofproject-detail-row">
+                    <span class="memberofproject-detail-label">Email:</span>
                     <span>pnv287@gmail.com</span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Phone:</span>
+                <div class="memberofproject-detail-row">
+                    <span class="memberofproject-detail-label">Phone:</span>
                     <span>0123456789</span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Role:</span>
+                <div class="memberofproject-detail-row">
+                    <span class="memberofproject-detail-label">Role:</span>
                     <span>Staff</span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status:</span>
+                <div class="memberofproject-detail-row">
+                    <span class="memberofproject-detail-label">Status:</span>
                     <span>Normal</span>
                 </div>
-                <div class="action-buttons">
-                    <button class="action-btn btn-view">View detail</button>
-                    <button class="action-btn btn-edit">Edit</button>
-                    <button class="action-btn btn-delete">Delete</button>
+                <div class="memberofproject-action-buttons">
+                    <button class="memberofproject-action-btn memberofproject-btn-view">View detail</button>
+                    <button class="memberofproject-action-btn memberofproject-btn-edit">Edit</button>
+                    <button class="memberofproject-action-btn memberofproject-btn-delete">Delete</button>
                 </div>
             </div>
         </div>
