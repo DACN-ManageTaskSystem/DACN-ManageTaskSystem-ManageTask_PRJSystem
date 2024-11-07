@@ -1,0 +1,276 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+
+    .header .logo {
+        width: 40px;
+        height: 40px;
+        background-color: #2196F3;
+        border-radius: 8px;
+    }
+
+    .header nav {
+        display: flex;
+        gap: 30px;
+    }
+
+        .header nav a {
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+        }
+
+    .header .profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+        .header .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+.breadcrumb {
+    padding: 15px 20px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+    .breadcrumb a {
+        text-decoration: none;
+        color: black;
+    }
+
+    .breadcrumb span {
+        color: #666;
+    }
+
+.content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+    .content h1 {
+        color: #F44336;
+        margin: 0;
+        font-size: 24px;
+    }
+
+.project-description {
+    color: #666;
+    margin: 20px 0;
+}
+
+.project-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+    .project-info .owner-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .project-info img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+.status-section {
+    text-align: right;
+}
+
+.status-label {
+    color: #4CAF50;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.status-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.add-member-btn {
+    background-color: #f5f5f5;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 4px;
+    padding: 5px 10px;
+    flex: 1;
+    max-width: 300px;
+    margin-left: 20px;
+}
+
+    .search-bar input {
+        border: none;
+        outline: none;
+        padding: 5px;
+        width: 100%;
+    }
+
+.membersofproject-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.membersofproject-list {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+    .membersofproject-list table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .membersofproject-list th {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .membersofproject-list td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+.membersofproject-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .membersofproject-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-active {
+    background: #E8F5E9;
+    color: #4CAF50;
+}
+
+.status-off {
+    background: #FFEBEE;
+    color: #F44336;
+}
+
+.view-btn {
+    background: #E3F2FD;
+    color: #2196F3;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.membersofproject-details {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+    .membersofproject-details img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+    }
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+    color: #666;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-view {
+    background: #E3F2FD;
+    color: #2196F3;
+}
+
+.btn-edit {
+    background: #E8F5E9;
+    color: #4CAF50;
+}
+
+.btn-delete {
+    background: #FFEBEE;
+    color: #F44336;
+}
