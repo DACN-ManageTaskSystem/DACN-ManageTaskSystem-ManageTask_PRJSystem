@@ -133,6 +133,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\GroupChatViewModel.cs" />
+    <Compile Include="Models\MemberViewModel.cs" />
+    <Compile Include="Models\ProjectExtended.cs" />
     <Compile Include="Models\QLCV.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -150,6 +153,8 @@
     <Content Include="Content\css\task.css" />
     <Content Include="Content\images\hinh1.png" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\member-img\jane_smith.jpg" />
+    <Content Include="Content\images\member-img\john_doe.jpg" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -241,7 +246,7 @@
     <Content Include="Views\Home\DangNhap.cshtml" />
     <Content Include="Views\Home\TrangChu.cshtml" />
     <Content Include="Views\Home\DSProject.cshtml" />
-    <Content Include="Views\Home\DSMember.cshtml" />
+    <Content Include="Views\Home\TTCaNhan.cshtml" />
     <Content Include="Views\Home\DSTask.cshtml" />
     <Content Include="Views\Home\MembersOfProject.cshtml" />
     <Content Include="Views\Home\GroupChat.cshtml" />
@@ -249,6 +254,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="assets\" />
+    <Folder Include="Content\images\project-img\" />
+    <Folder Include="Content\Javascript\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

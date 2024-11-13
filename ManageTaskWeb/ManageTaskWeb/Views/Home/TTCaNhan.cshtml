@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "DSMember";
+    ViewBag.Title = "TTCaNhan";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -35,16 +35,16 @@
                 <a href="#">
                     <span class="red"></span> Đặt lại mật khẩu
                 </a>
-                <a href="#">
+                <a href="/Home/Logout">
                     <span class="red"></span> Đăng xuất
                 </a>
             </div>
             <div class="content">
                 <h2>Thông tin tài khoản</h2>
                 <div class="profile-pic">
-                    <img alt="User profile picture" height="150" src="https://storage.googleapis.com/a1aa/image/VqtikVhkNf2hAy2kAZheMyf2nn9zB3VgN2S5LuuZWnh0GcTnA.jpg" width="150" />
+                    <img alt="User profile picture" height="150" src="~/Content/images/member-img/@Session["ImageMember"]   " width="150" />
                     <button>Chọn ảnh</button>
-                    <p>Dung lượng file tối đa 1 MB Định dạng: .JPEG, .PNG</p>
+                    <p>Dung lượng file tối đa 1 MB Định dạng: .JPG, .PNG</p>
                 </div>
                 <div class="form-group">
                     <label>Họ và tên</label><span>:</span>
