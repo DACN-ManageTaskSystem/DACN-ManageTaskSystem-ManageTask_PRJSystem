@@ -1,104 +1,242 @@
-﻿﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Layout Example</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- CSS files -->
     <link rel="stylesheet" type="text/css" href="~/Content/css/task.css">
     <link rel="stylesheet" type="text/css" href="~/Content/css/member.css">
     <link rel="stylesheet" type="text/css" href="~/Content/css/project.css">
     <link rel="stylesheet" type="text/css" href="~/Content/css/layout.css">
     <link rel="stylesheet" type="text/css" href="~/Content/css/groupchat.css">
+
+    <style>
+
+        /* Header styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Logo styles */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .logo img {
+                width: 40px;
+                height: 40px;
+            }
+
+        /* Menu styles */
+        nav .menu {
+            display: flex;
+            gap: 40px; /* Tăng khoảng cách giữa các mục menu */
+        }
+
+            nav .menu a {
+                text-decoration: none;
+                color: #333;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                gap: 8px; /* Khoảng cách giữa icon và text */
+            }
+
+            nav .menu i {
+                font-size: 20px; /* Icon size */
+            }
+
+        /* Icon and avatar section */
+        nav .icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+            nav .icons a {
+                color: #333;
+                font-size: 24px;
+                text-decoration: none;
+            }
+
+            nav .icons img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+            }
+
+        /* Hover effects */
+        nav a:hover {
+            color: #007bff;
+        }
+
+        /* Nút quay lại đầu trang */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 20px; 
+            right: 20px; 
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20%;
+            cursor: pointer;
+            font-size: 24px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+            #scrollToTopBtn:hover {
+                background-color: #0056b3;
+            }
+
+            #scrollToTopBtn i {
+                font-size: 20px; /* Kích thước icon */
+            }
+
+    </style>
 </head>
+
 <body>
-    <nav>
-        <div class="logo">
-            <img src="logo.png" alt="Logo"> <!-- Thay logo.png bằng hình ảnh logo thực tế -->
-        </div>
-        <div class="menu">
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/Home/TrangChu"><img src="~/Content/images/logo.png"></a>
+            </div>
 
-            <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
-            <a href="/Home/DSTask"><i class="fas fa-list-alt"></i> Task</a>
-            <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
-            <a href="/Home/GroupChat"><i class="fas fa-users"></i> GroupChat</a>
+            <div class="menu">
+                <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
+                <a href="#"><i class="fas fa-users"></i> GroupChat</a>
+                <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+            </div>
 
-            <a href="#"><i class="fas fa-question-circle"></i> Help</a>
-        </div>
-        <div class="icons">
-            <a href="#"><i class="fas fa-bell"></i></a>
-            <a href="#"><i class="fas fa-cog"></i></a>
-            <div class="dropdown">
-                <a href="#" class="dropdown-toggle"><img src="user-avatar.png" alt="User Avatar"></a>
-                <div class="dropdown-menu">
-                    <a href="#">Edit Profile</a>
-                    <a href="#">Settings</a>
-                    <a href="#">Dark Mode</a>
-                    <a href="#">Logout</a>
+            <div class="icons">
+                <a href="#"><i class="fas fa-bell"></i></a>
+                <a href="#"><i class="fas fa-cog"></i></a>
+
+                <!-- User Avatar & Dropdown Menu -->
+                <div class="dropdown">
+                    @if (Session["FullName"] != null)
+                    {
+                        <a href="#" class="dropdown-toggle">
+                            <img src="~/Content/images/member-img/@Session["ImageMember"]">
+                            <span style=" font-size:18px">@Session["FullName"]</span>
+                        </a>
+                        <div class="dropdown-menu" st>
+                            <div style="display:flex; flex-direction: column; padding:10px">
+                                <a href="/Home/TTCaNhan" style="font-size: 18px;">Edit Profile</a>
+                                <a href="#" style="font-size: 18px;">Settings</a>
+                                <a href="#" style="font-size: 18px;">Dark Mode</a>
+                                <a href="/Home/Logout" style="font-size: 18px;">Logout</a>
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="/Home/DangNhap" style="font-size: 18px;">Login</a>
+                    }
                 </div>
+
+
+
             </div>
+        </nav>
+    </header>
 
-        </div>
-    </nav>
-
+    <!-- Main Content -->
     <main>
-        <body>
-            <div>
-                @RenderBody()
-            </div>
-        </body>
+        @RenderBody()
     </main>
 
-    <footer>
-        <div class="column">
-            <h3>E-Comm</h3>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-        </div>
-        <div class="column">
-            <h3>Information</h3>
-            <ul>
-                <li>About Us</li>
-                <li>Infomation</li>
-                <li>Privacy Policy</li>
-                <li>Terms & Conditions</li>
-            </ul>
-        </div>
-        <div class="column">
-            <h3>Service</h3>
-            <ul>
-                <li>About Us</li>
-                <li>Infomation</li>
-                <li>Privacy Policy</li>
-                <li>Terms & Conditions</li>
-            </ul>
-        </div>
-        <div class="column">
-            <h3>My Account</h3>
-            <ul>
-                <li>About Us</li>
-                <li>Infomation</li>
-                <li>Privacy Policy</li>
-                <li>Terms & Conditions</li>
-            </ul>
-        </div>
-        <div class="column">
-            <h3>Contact Us</h3>
-            <p>E-Comm, 4578 Marmora Road, Glasgow D04 89GR</p>
-        </div>
-    </footer>
-</body>
-</html>
-<script>
-    document.addEventListener('click', function (e) {
-        var dropdown = document.querySelector('.dropdown-menu');
-        var avatar = document.querySelector('.dropdown-toggle');
+    <!-- Nút quay lại đầu trang -->
+    <div id="scrollToTopBtn" title="Go to top">
+        <i class="fas fa-chevron-up"></i>
+    </div>
 
-        if (avatar.contains(e.target)) {
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        } else {
-            dropdown.style.display = 'none';
-        }
-    });
-</script>
+    @*Footer
+        <footer>
+            <div class="column">
+                <h3>E-Comm</h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+            <div class="column">
+                <h3>Information</h3>
+                <ul>
+                    <li>About Us</li>
+                    <li>Infomation</li>
+                    <li>Privacy Policy</li>
+                    <li>Terms & Conditions</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Service</h3>
+                <ul>
+                    <li>About Us</li>
+                    <li>Infomation</li>
+                    <li>Privacy Policy</li>
+                    <li>Terms & Conditions</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>My Account</h3>
+                <ul>
+                    <li>About Us</li>
+                    <li>Infomation</li>
+                    <li>Privacy Policy</li>
+                    <li>Terms & Conditions</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Contact Us</h3>
+                <p>E-Comm, 4578 Marmora Road, Glasgow D04 89GR</p>
+            </div>
+        </footer>*@
+
+
+
+    <script>
+        //Dropdown Menu
+        document.addEventListener('click', function (e) {
+            var dropdown = document.querySelector('.dropdown-menu');
+            var avatar = document.querySelector('.dropdown-toggle');
+
+            if (avatar.contains(e.target)) {
+                dropdown.classList.toggle('show'); 
+            } else {
+                dropdown.classList.remove('show'); 
+            }
+        });
+
+        //Nut Go to top
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+        scrollToTopBtn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 200) {
+                scrollToTopBtn.style.display = 'block';
+            } else {
+                scrollToTopBtn.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -67,11 +67,12 @@
             {
                 <div class="member-item">
                     <div>
-                        <img src="@member.AvatarUrl" alt="Avatar" class="avatar">
-                        <strong>@member.Name</strong>
+                        <img src="~/Content/images/member-img/@member.ImageMember" alt="Avatar" class="avatar">
+                        <strong>@member.FullName</strong>
                     </div>
                     <div>
-                        <span>@member.CreateAt.ToString("dd/MM/yyyy")</span>
+                        <span>@(member.HireDate.HasValue ? member.HireDate.Value.ToString("dd/MM/yyyy") : "No date available")</span>
+
                     </div>
                     <div>
                         <span class="badge bg-success">@member.Status</span>
