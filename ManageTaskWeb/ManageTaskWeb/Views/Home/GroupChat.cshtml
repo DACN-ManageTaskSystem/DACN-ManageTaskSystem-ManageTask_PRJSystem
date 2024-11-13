@@ -3,6 +3,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@model ManageTaskWeb.Models.GroupChatViewModel
+
 <html>
 <head>
     <title>Project For HUIT University</title>
@@ -16,7 +18,7 @@
 
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="margin-right: 0">
         <div class="main-content">
             <div class="header">
                 <div>
@@ -24,164 +26,75 @@
                 </div>
             </div>
             <div class="project-details">
-                <h1>Project For HUIT University</h1>
-                <p>Mô tả dự án cho: Câu hỏi thực tập sinh</p>
-                <p>- Thiết kế câu hỏi cho thực tập sinh</p>
-                <p>- Thực tập sinh: Xem câu hỏi, đưa câu trả lời, xóa câu hỏi, hiện thị danh sách câu hỏi/ trả lời</p>
-                <p>- Admin: Đăng nhập, xem câu hỏi, thêm câu trả lời, xóa câu trả lời hiện thị danh sách câu hỏi/ trả lời</p>
-                <div class="university-logo">
-                    <img src="https://placehold.co/50x50" alt="University logo">
-                    <div>
-                        <p>Trường Đại Học Công Thương TP. HCM</p>
-                        <p>HCMC University of Industry and Trade</p>
-                        <p>Start: 10:20 31/10/2022</p>
-                        <p>End: 10:20 31/10/2022</p>
+                @if (Model.Project != null)
+                {
+                    <h1>@Model.Project.ProjectName</h1>
+                    <p>Mô tả dự án: @Model.Project.Description</p>
+                    <div class="university-logo">
+                        <img src="~/Content/images/project-img/@Model.Project.ImageProject" alt="University logo">
+                        <div>
+                            <p>Piority: @Model.Project.Priority</p>
+                            <p>Start: @(Model.Project.StartDate.HasValue ? Model.Project.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                            <p>End: @(Model.Project.EndDate.HasValue ? Model.Project.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+
+                        </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <p>Project information is not available.</p>
+                }
             </div>
+
             <div class="activity">
                 <h2>Activity</h2>
                 <div class="comment-box">
-                    <input type="text" placeholder="Say Something ??">
+                    <input type="text" placeholder="Say Something.....">
                     <button><i class="fas fa-paper-plane"></i></button>
                 </div>
-                <div class="comment">
-                    <img src="https://placehold.co/50x50" alt="User profile picture">
-                    <div class="comment-content">
-                        <h3>Phạm Nguyên Vũ</h3>
-                        <p>Phạm Nguyên Vũ</p>
-                        <p>Mô tả dự án cho: Câu hỏi thực tập sinh</p>
-                        <p>- Thiết kế câu hỏi cho thực tập sinh</p>
-                        <p>- Thực tập sinh: Xem câu hỏi, đưa câu trả lời, xóa câu hỏi, hiện thị danh sách câu hỏi/ trả lời</p>
-                        <p>- Admin: Đăng nhập, xem câu hỏi, thêm câu trả lời, xóa câu trả lời hiện thị danh sách câu hỏi/ trả lời</p>
-                        <p class="role">Leader</p>
+
+                @foreach (var interaction in Model.Interactions)
+                {
+                    <div class="comment">
+                        <img src="~/Content/images/member-img/@interaction.Member.ImageMember" alt="User profile picture">
+                        <div class="comment-content">
+                            <h3>@interaction.Member.FullName</h3>
+                            <p>@interaction.Message</p>
+                            <p class="role">@interaction.Member.Role</p>
+                            <p>@(interaction.InteractionDate.HasValue ? interaction.InteractionDate.Value.ToString("HH:mm dd/MM/yyyy") : "")</p>
+                        </div>
                     </div>
+                }
+
+                <div class="pagination">
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <button class="@(i == ViewBag.CurrentPage ? "active" : "")"
+                                onclick="window.location.href='@Url.Action("GroupChat", "Home", new { projectId = ViewBag.ProjectID, page = i })'">
+                            @i
+                        </button>
+                    }
                 </div>
-                <div class="comment">
-                    <img src="https://placehold.co/50x50" alt="User profile picture">
-                    <div class="comment-content">
-                        <h3>Lê Bảo Ngọc</h3>
-                        <p>Lê Bảo Ngọc</p>
-                        <p>xây dựng các game, ứng dụng đơn giản bằng các ngôn ngữ khác nhau và xuất bản bài viết, video hướng dẫn người dùng khác (có hướng dẫn trực tiếp từ các anh chị support từ các anh chị khác trong team)</p>
-                        <p class="role">Member</p>
-                    </div>
-                </div>
-                <div class="comment">
-                    <img src="https://placehold.co/50x50" alt="User profile picture">
-                    <div class="comment-content">
-                        <h3>Nguyễn Nhật Quân</h3>
-                        <p>Nguyễn Nhật Quân</p>
-                        <p>Xây dựng trong một công viên công cộng đã được họ nhắm thách thức quan trọng. Kế hoạch cần thiết là rất cần thiết để giảm thiểu sự gián đoạn đối với các hoạt động của khách tham quan đặc biệt.</p>
-                        <p class="role">Member</p>
-                    </div>
-                </div>
-                <div class="comment">
-                    <img src="https://placehold.co/50x50" alt="User profile picture">
-                    <div class="comment-content">
-                        <h3>Trương Minh Trang</h3>
-                        <p>Trương Minh Trang</p>
-                        <p>Phát triển và tối ưu hóa code script VBA trong Excel để xử lý và phân tích dữ liệu</p>
-                        <p>Tham gia, làm project về xử lý dữ liệu và AI</p>
-                        <p class="role">Subleader</p>
-                    </div>
-                </div>
-            </div>
-            <div class="pagination">
-                <button class="active">1</button>
-                <button>2</button>
-                <button>3</button>
+
             </div>
         </div>
         <div class="sidebar">
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Phạm Nguyên Vũ</h3>
-                    <p>Leader</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
+            @foreach (var member in Model.Members)
+            {
+                <div class="member">
+                    <img src="~/Content/images/member-img/@member.ImageMember" alt="User profile picture">
+                    <div>
+                        <h3>@member.FullName</h3>
+                        <p>@member.Role</p>
+                        <div class="status">
+                            <div class="dot @(member.Status == "Active" ? "online" : "offline")"></div>
+                            <span>@member.Status</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Nguyễn Nhật Quân</h3>
-                    <p>Member</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Nguyễn Nhật Bảo</h3>
-                    <p>Member</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Đỗ Lan Hương</h3>
-                    <p>Member</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Lê Bảo Ngọc</h3>
-                    <p>Member</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Võ Thị Kim Huệ</h3>
-                    <p>Member</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Trương Minh Trang</h3>
-                    <p>Subleader</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
-            <div class="member">
-                <img src="https://placehold.co/50x50" alt="User profile picture">
-                <div>
-                    <h3>Lê Thái Hào</h3>
-                    <p>Member</p>
-                    <div class="status">
-                        <div class="dot"></div>
-                        <span>Online</span>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
+
     </div>
 </body>
 </html>
