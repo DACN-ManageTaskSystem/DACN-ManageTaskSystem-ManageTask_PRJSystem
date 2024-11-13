@@ -102,7 +102,7 @@ body {
 }
 
     .task-column h2 {
-        background-color: #6a1b9a;
+        background-color: rgba(56, 155, 253, 100);
         color: #fff;
         padding: 10px;
         margin: 0;

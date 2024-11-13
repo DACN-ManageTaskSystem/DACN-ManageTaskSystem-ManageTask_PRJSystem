@@ -76,7 +76,7 @@
                 <i class="fas fa-search"></i>
             </div>
         </div>
-
+      
         <div class="memberofproject-members-container">
             <div class="memberofproject-member-list">
                 <table>
@@ -89,28 +89,20 @@
                         </tr>
                     </thead>
                     <tbody>
+                       @foreach (var member in Model)
+                      {
                         <tr>
                             <td>
                                 <div class="memberofproject-member-info">
-                                    <img src="/api/placeholder/40/40" alt="Staff" />
-                                    <span>Phạm Nguyên Vũ</span>
+                                    <img src="~/Content/images/member-img/@member.ImageMember" alt="Staff" />
+                                    <span>@member.FullName</span>
                                 </div>
                             </td>
-                            <td>11/10/2024</td>
-                            <td><span class="memberofproject-status-badge status-active">Active</span></td>
+                            <td>@(member.HireDate.HasValue ? member.HireDate.Value.ToString("dd/MM/yyyy") : "No date available")</td>
+                            <td><span class="memberofproject-status-badge status-active">@member.Status</span></td>
                             <td><button class="memberofproject-view-btn">View</button></td>
                         </tr>
-                        <tr>
-                            <td>
-                                <div class="memberofproject-member-info">
-                                    <img src="/api/placeholder/40/40" alt="Staff" />
-                                    <span>Phạm Nguyên Vũ</span>
-                                </div>
-                            </td>
-                            <td>11/10/2024</td>
-                            <td><span class="memberofproject-status-badge status-off">Off</span></td>
-                            <td><button class="memberofproject-view-btn">View</button></td>
-                        </tr>
+                      }
                         <!-- More rows as necessary -->
                     </tbody>
                 </table>

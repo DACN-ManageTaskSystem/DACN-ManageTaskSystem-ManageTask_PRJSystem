@@ -25,21 +25,28 @@
         </div>
         <div class="login-right">
             <h2>Log In</h2>
-            <form class="login-form">
+            <form class="login-form" method="post" action="/Home/DangNhap">
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Username" required />
+                    <input type="text" name="username" placeholder="Username" required />
                 </div>
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Password" required />
+                    <input type="password" name="password" id="password" placeholder="Password" required />
                     <i class="fas fa-eye" id="togglePassword" style="cursor: pointer; color: #888;"></i>
                 </div>
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="error-message" style="color: red; font-size: 14px; margin-top: 5px;">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
                 <label>
-                    <input type="checkbox"> Remember me
+                    <input type="checkbox"> <span style="padding-left:5px">Remember me</span>
                 </label>
                 <button type="submit" class="login-btn">Log In</button>
             </form>
+
             <div class="login-options">
                 <span>Or Login With</span>
                 <button class="login-google-btn">
