@@ -1,0 +1,334 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.memberofproject-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+    .memberofproject-header .logo {
+        width: 40px;
+        height: 40px;
+        background-color: #2196F3;
+        border-radius: 8px;
+    }
+
+    .memberofproject-header nav {
+        display: flex;
+        gap: 30px;
+    }
+
+        .memberofproject-header nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+    .memberofproject-header .profile {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+        .memberofproject-header .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .memberofproject-header .profile .icons {
+            display: flex;
+            gap: 15px;
+        }
+
+.memberofproject-breadcrumb {
+    padding: 15px 20px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+}
+
+    .memberofproject-breadcrumb a {
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .memberofproject-breadcrumb span {
+        margin: 0 10px;
+        color: #666;
+    }
+
+.memberofproject-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.memberofproject-project-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.memberofproject-project-info {
+    padding-right: 30px;
+    border-right: 1px solid #eee;
+}
+
+    .memberofproject-project-info h1 {
+        color: #F44336;
+        margin: 0 0 20px 0;
+        font-size: 24px;
+    }
+
+    .memberofproject-project-info p {
+        color: #666;
+        margin: 8px 0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+.memberofproject-owner-status {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between; 
+    padding-left: 30px;
+}
+
+.memberofproject-status-section {
+    display: flex;
+    align-items: center; 
+    gap: 10px; 
+}
+
+.memberofproject-status-label {
+    font-weight: 500;
+    color: #4CAF50;
+}
+
+.memberofproject-status-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.memberofproject-owner-info {
+    display: flex;
+    align-items: center; 
+    gap: 15px;
+}
+
+    .memberofproject-owner-info img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+.memberofproject-owner-details .name {
+    font-weight: 500;
+}
+
+.memberofproject-owner-details .date {
+    color: #666;
+}
+
+
+.memberofproject-status-section {
+    text-align: right;
+}
+
+.memberofproject-status-label {
+    color: #4CAF50;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.memberofproject-status-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.memberofproject-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.memberofproject-add-member-btn {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.memberofproject-search-bar {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 4px;
+    padding: 8px 16px;
+    width: 300px;
+    border: 1px solid #eee;
+
+}
+
+    .memberofproject-search-bar input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .memberofproject-search-bar i {
+        color: #666;
+    }
+
+.memberofproject-members-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.memberofproject-member-list {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+    .memberofproject-member-list table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .memberofproject-member-list th {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .memberofproject-member-list td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+.memberofproject-member-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .memberofproject-member-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+.memberofproject-status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.memberofproject-status-active {
+    background: #E8F5E9;
+    color: #4CAF50;
+}
+
+.memberofproject-status-off {
+    background: #FFEBEE;
+    color: #F44336;
+}
+
+.memberofproject-view-btn {
+    background: #E3F2FD;
+    color: #2196F3;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.memberofproject-member-details {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+    .memberofproject-member-details img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+    }
+
+.memberofproject-detail-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.memberofproject-detail-label {
+    color: #666;
+}
+
+.memberofproject-action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.memberofproject-action-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.memberofproject-btn-view {
+    background: #E3F2FD;
+    color: #2196F3;
+}
+
+.memberofproject-btn-edit {
+    background: #E8F5E9;
+    color: #4CAF50;
+}
+
+.memberofproject-btn-delete {
+    background: #FFEBEE;
+    color: #F44336;
+}

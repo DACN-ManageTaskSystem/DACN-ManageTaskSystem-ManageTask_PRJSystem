@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace ManageTaskWeb.Controllers
 {
     public class HomeController : Controller
@@ -50,6 +51,11 @@ namespace ManageTaskWeb.Controllers
         }
 
         public ActionResult GroupChat()
+        {
+            return View();
+        }
+
+        public ActionResult MembersOfProject()
         {
             return View();
         }
