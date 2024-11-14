@@ -3,24 +3,16 @@
   "WorkspaceRootPath": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|d:\\e\\dai hoc\\hk7\\dacn\\1\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\content\\css\\layout.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\content\\css\\layout.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|d:\\e\\dai hoc\\hk7\\dacn\\1\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\dsproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dsproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\views\\home\\dstask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dstask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\views\\home\\groupchat.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\groupchat.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\content\\css\\styleproject.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\content\\css\\styleproject.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,32 +22,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "layout.css",
-              "DocumentMoniker": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Content\\css\\layout.css",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Content\\css\\layout.css",
-              "ToolTip": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Content\\css\\layout.css",
-              "RelativeToolTip": "ManageTaskWeb\\Content\\css\\layout.css",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2024-11-13T01:20:09.137Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "DSTask.cshtml",
-              "DocumentMoniker": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
-              "ToolTip": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
-              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
-              "ViewState": "AQIAAIEAAAAAAAAAAAAAAJgAAAAyAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-11T13:13:39.979Z"
+              "Title": "styleproject.css",
+              "DocumentMoniker": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Content\\css\\styleproject.css",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Content\\css\\styleproject.css",
+              "ToolTip": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Content\\css\\styleproject.css",
+              "RelativeToolTip": "ManageTaskWeb\\Content\\css\\styleproject.css",
+              "ViewState": "AQIAAJcBAAAAAAAAAAAgwKcBAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2024-11-13T18:40:24.901Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -65,34 +45,23 @@
               "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\DSProject.cshtml",
               "ToolTip": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSProject.cshtml",
               "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\DSProject.cshtml",
-              "ViewState": "AQIAAJABAAAAAAAAAAAAAKUBAAAxAAAA",
+              "ViewState": "AQIAAHMBAAAAAAAAAAAiwIIBAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-10T17:35:27.596Z",
+              "WhenOpened": "2024-11-13T03:12:59.401Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "GroupChat.cshtml",
-              "DocumentMoniker": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "ToolTip": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAADMAAABGAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-11T10:55:57.207Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 0,
               "Title": "HomeController.cs",
               "DocumentMoniker": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "ManageTaskWeb\\Controllers\\HomeController.cs",
               "ToolTip": "D:\\E\\DAI HOC\\HK7\\DACN\\1\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\HomeController.cs",
               "RelativeToolTip": "ManageTaskWeb\\Controllers\\HomeController.cs",
-              "ViewState": "AQIAAIIAAAAAAAAAAAAiwK4AAAAcAAAA",
+              "ViewState": "AQIAAKMAAAAAAAAAAAAwwM4AAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-10T16:33:53.541Z"
+              "WhenOpened": "2024-11-13T02:00:26.686Z",
+              "EditorCaption": ""
             }
           ]
         }
