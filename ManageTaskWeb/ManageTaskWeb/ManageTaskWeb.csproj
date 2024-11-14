@@ -150,11 +150,15 @@
     <Content Include="Content\css\member.css" />
     <Content Include="Content\css\membersofproject.css" />
     <Content Include="Content\css\project.css" />
+    <Content Include="Content\css\styleproject.css" />
     <Content Include="Content\css\task.css" />
     <Content Include="Content\images\hinh1.png" />
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\member-img\jane_smith.jpg" />
     <Content Include="Content\images\member-img\john_doe.jpg" />
+    <Content Include="Content\images\project-img\alpha_image.jpg" />
+    <Content Include="Content\images\project-img\beta_image.jpg" />
+    <Content Include="Content\images\project-img\gamma_image.jpg" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -255,7 +259,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="assets\" />
-    <Folder Include="Content\images\project-img\" />
     <Folder Include="Content\Javascript\" />
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +275,9 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
@@ -293,6 +299,9 @@
           <CustomServerUrl>
           </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+          <servers defaultServer="SelfHostServer">
+            <server name="SelfHostServer" exePath="" cmdArgs="" url="http://localhost:65178/" workingDir="" />
+          </servers>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
