@@ -1,11 +1,4 @@
-﻿body {
-    font-family: 'Poppins', Arial, sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 0;
-}
-
-/* Header */
+﻿
 .member-page .header {
     display: flex;
     align-items: center;

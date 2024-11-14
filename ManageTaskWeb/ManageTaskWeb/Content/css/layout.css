@@ -1,38 +1,40 @@
-﻿
-/* Reset margin and padding */
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
-    height: 100%;
-}
 
 body {
     display: flex;
     flex-direction: column;
-    font-family: 'Comfortaa', sans-serif;
-}
 
-/* Main content */
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+
+}
+header {
+    width: 100%;
+    padding: 1em;
+}
 main {
-    flex: 1; /* Cho phép nội dung chính mở rộng nếu có nhiều nội dung */
-    padding: 20px;
+    flex: 1;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    background-color: #ffffff;
 }
 
-/* Footer styles */
 footer {
+    width: 100%;
     background-color: #cce7ff;
     padding: 40px;
     display: flex;
     justify-content: space-around;
     color: #333;
-    position: relative;
-    width: 100%;
-    bottom: 0;
-    margin-top: 600px;
+    padding: 1em;
 }
 
     footer .column {

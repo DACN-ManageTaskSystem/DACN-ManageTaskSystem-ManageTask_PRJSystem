@@ -1,11 +1,4 @@
 ﻿
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
-}
-
 .header {
     display: flex;
     justify-content: space-between;
@@ -91,6 +84,7 @@ body {
     display: flex;
     justify-content: space-around;
     padding: 20px;
+    width: 80%;
 }
 
 .task-column {
