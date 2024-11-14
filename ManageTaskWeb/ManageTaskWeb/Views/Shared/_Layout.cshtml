@@ -18,177 +18,57 @@
     <style>
         /* Header styles */
         nav {
-            width: 100%;
-            height: 60px;
-            background-color: #333;
-            color: #fff;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
-            position: fixed; /* Fixes the navbar at the top */
-            top: 0; /* Aligns the navbar to the top of the page */
-            left: 0;
-            z-index: 1000; /* Ensures navbar is on top */
-        }
-
-            nav .logo img {
-                height: 40px;
-            }
-
-            nav .menu a,
-            nav .icons a {
-                color: #fff;
-                text-decoration: none;
-                margin: 0 10px;
-                font-size: 18px;
-            }
-
-                nav .menu a:hover,
-                nav .icons a:hover {
-                    color: #ddd;
-                }
-
-            nav .icons {
-                display: flex;
-                align-items: center;
-            }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-            .dropdown .dropdown-toggle {
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-            }
-
-
-                .dropdown .dropdown-toggle img {
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 50%;
-                    margin-right: 8px;
-                }
-
-            .dropdown .dropdown-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                right: 0;
-                background-color: #444;
-                border-radius: 4px;
-                padding: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                z-index: 1001;
-            }
-
-            .dropdown:hover .dropdown-menu {
-                display: block;
-            }
-
-            .dropdown .dropdown-menu a {
-                color: #fff;
-                text-decoration: none;
-                display: block;
-                padding: 8px 0;
-            }
-
-                .dropdown .dropdown-menu a:hover {
-                    color: #ddd;
-                }
-         /*Notification*/
-        .notification-container {
-            width: 350px;
+            align-items: center;
             background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            position: fixed; /* Để cố định vị trí */
-            top: 60px; /* Cách 20px từ trên xuống */
-            right: 0px; /* Cách 20px từ bên phải */
-            z-index: 1000; /* Đảm bảo hiển thị lên trên */
-            overflow-y: auto; /* Bật thanh cuộn dọc */
-            height: 100vh;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .notification-container::-webkit-scrollbar {
-            width: 8px; /* Độ rộng của thanh cuộn */
-        }
-        .notification-container::-webkit-scrollbar-track {
-             background: #f1f1f1; /* Màu nền của đường dẫn thanh cuộn */
-             border-radius: 8px;
-        }
-            .notification-container::-webkit-scrollbar-thumb {
-                background-color: #888; /* Màu thanh cuộn */
-                border-radius: 8px;
-                border: 2px solid #f1f1f1; /* Khoảng cách giữa thanh cuộn và track */
-            }
-            .notification-container h1 {
-                font-size: 24px;
-                font-weight: bold;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-
-        .notification, 
-
-
-        nav .icons {
-
+        /* Logo styles */
+        .logo {
             display: flex;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
+            gap: 10px;
         }
-
-            .notification:last-child {
-                border-bottom: none;
-            }
-
-            .dot img {
+            .logo img {
                 width: 40px;
                 height: 40px;
-                border-radius: 50%; /* Đảm bảo ảnh sẽ tròn */
-                margin-right:20px
             }
-        .content {
-            flex: 1;
+        /* Menu styles */
+        nav .menu {
+            display: flex;
+            gap: 40px; /* Tăng khoảng cách giữa các mục menu */
         }
-
-        .title {
-            font-size: 16px;
-            font-weight: 500;
+            nav .menu a {
+                text-decoration: none;
+                color: #333;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                gap: 8px; /* Khoảng cách giữa icon và text */
+            }
+            nav .menu i {
+                font-size: 20px; /* Icon size */
+            }
+        nav .icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
-
-
-        .time {
-            font-size: 12px;
-            color: #888;
-
-
+            nav .icons a {
+                color: #333;
+                font-size: 24px;
+                text-decoration: none;
+            }
+            nav .icons img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+            }
         nav a:hover,
         nav label:hover {
             color: #007bff;
-
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #2196F3;
-            border-radius: 50%;
-        }
-
-
-        .notification-button {
-            cursor: pointer;
-            font-size: 18px;
-            padding: 15px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
         }
         /* Nút quay lại đầu trang */
         #scrollToTopBtn {
@@ -206,43 +86,34 @@
             z-index: 1000;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
             #scrollToTopBtn:hover {
                 background-color: #0056b3;
             }
-
             #scrollToTopBtn i {
                 font-size: 20px;
             }
-
-
         /*Dark Mode*/
         .dark-mode {
             background-color: rgb(27, 26, 28);
             color: white;
         }
-
             .dark-mode nav,
             .dark-mode .dropdown-menu,
             .dark-mode .selected-option {
                 background-color: rgb(27, 26, 28);
                 color: white;
             }
-
-
             .dark-mode .menu a,
             .dark-mode .icons a,
             .dark-mode .dropdown-item,
             .dark-mode .label-dark {
                 color: white;
             }
-
                 .dark-mode .menu a:hover,
                 .dark-mode .icons a:hover,
                 .dark-mode label:hover {
                     color: #007bff;
                 }
-
         /* Switch styles */
         .switch {
             width: 40px;
@@ -253,7 +124,6 @@
             cursor: pointer;
             display: inline-block;
         }
-
             .switch::before {
                 content: "";
                 width: 18px;
@@ -265,16 +135,14 @@
                 left: 1px;
                 transition: transform 0.3s;
             }
-
         /* When the checkbox is checked */
         #darkModeToggle:checked + .switch::before {
             transform: translateX(20px);
         }
-
         #darkModeToggle:checked + .switch {
             background-color: #007bff;
         }
-    </style>
+        </style>
 
 
     <link rel="stylesheet" type="text/css" href="~/Content/css/membersofproject.css">
@@ -329,7 +197,7 @@
             </div>
         </nav>
 
-        <div class="notification-container" id="notificationContainer">
+        @*<div class="notification-container" id="notificationContainer">
             <h1>Notifications</h1>
             <div class="notification">
                 <div class="dot">
@@ -350,57 +218,7 @@
                     <p class="time">1 ngày trước</p>
                 </div>
                 <div class="status-dot"></div>
-            </div>
-            <div class="notification">
-                <div class="dot">
-                    <img src="~/Content/images/logo.png" alt="image description">
-                </div>
-                <div class="content">
-                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
-                    <p class="time">1 ngày trước</p>
-                </div>
-                <div class="status-dot"></div>
-            </div>
-            <div class="notification">
-                <div class="dot">
-                    <img src="~/Content/images/logo.png" alt="image description">
-                </div>
-                <div class="content">
-                    <p class="title">Thành Viên: Nguyễn Nhật Quân đã tham gia dự án HUIT</p>
-                    <p class="time">1 ngày trước</p>
-                </div>
-                <div class="status-dot"></div>
-            </div>
-            <div class="notification">
-                <div class="dot">
-                    <img src="~/Content/images/logo.png" alt="image description">
-                </div>
-                <div class="content">
-                    <p class="title">Thành Viên: Nguyễn Nhật Quân đã tham gia dự án HUIT</p>
-                    <p class="time">1 ngày trước</p>
-                </div>
-                <div class="status-dot"></div>
-            </div>
-            <div class="notification">
-                <div class="dot">
-                    <img src="~/Content/images/logo.png" alt="image description">
-                </div>
-                <div class="content">
-                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
-                    <p class="time">1 ngày trước</p>
-                </div>
-                <div class="status-dot"></div>
-            </div>
-            <div class="notification">
-                <div class="dot">
-                    <img src="~/Content/images/logo.png" alt="image description">
-                </div>
-                <div class="content">
-                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
-                    <p class="time">1 ngày trước</p>
-                </div>
-                <div class="status-dot"></div>
-            </div>
+            </div>*@
         </div>
     </header>
 
@@ -444,7 +262,7 @@
                 <p>E-Comm, 4578 Marmora Road, Glasgow D04 89GR</p>
             </div>
 
-        </footer>*
+        </footer>
 
 
 
