@@ -246,7 +246,13 @@ namespace ManageTaskWeb.Controllers
             }
 
         }
-        //Chat 
+
+        public ActionResult DetailTask()
+        {
+            return View();
+        }
+        //Chat
+
         public ActionResult GroupChat(string projectId, int page = 1)
         {
             int pageSize = 6;
