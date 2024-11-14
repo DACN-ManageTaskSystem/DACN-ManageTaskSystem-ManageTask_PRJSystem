@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="QLCViec" Class="QLCVDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+
+  <Connection Mode="WebSettings" ConnectionString="Data Source=.;Initial Catalog=QLCViec;User ID=sa" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="QLCViecConnectionString" Provider="System.Data.SqlClient" />
+
   <Table Name="dbo.Assignments" Member="Assignments">
     <Type Name="Assignment">
       <Column Name="AssignmentID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />

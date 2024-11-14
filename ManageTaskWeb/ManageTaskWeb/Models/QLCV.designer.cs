@@ -51,16 +51,24 @@ namespace ManageTaskWeb.Models
     partial void InsertTask(Task instance);
     partial void UpdateTask(Task instance);
     partial void DeleteTask(Task instance);
-        #endregion
 
-        public QLCVDataContext() :
-          base("Data Source=MSI;Initial Catalog=QLCViec;Persist Security Info=True;Use" +
-                  "r ID=sa;Password=123;Encrypt=True;TrustServerCertificate=True", mappingSource)
-        {
-            OnCreated();
-        }
+		#endregion
 
-        public QLCVDataContext(System.Data.IDbConnection connection) : 
+		public QLCVDataContext() :
+		  base("Data Source=HOANGTIEN;Initial Catalog=QLCViec;Persist Security Info=True;Use" +
+				  "r ID=sa;Password=123;Encrypt=True;TrustServerCertificate=True", mappingSource)
+		{
+			OnCreated();
+		}
+
+		public QLCVDataContext(string connection) : 
+				base(connection, mappingSource)
+		{
+			OnCreated();
+		}
+		
+		public QLCVDataContext(System.Data.IDbConnection connection) : 
+
 				base(connection, mappingSource)
 		{
 			OnCreated();
