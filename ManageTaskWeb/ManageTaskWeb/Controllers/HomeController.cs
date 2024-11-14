@@ -169,7 +169,10 @@ namespace ManageTaskWeb.Controllers
             }
 
         }
-
+        public ActionResult DetailTask()
+        {
+            return View();
+        }
         //Chat
         public ActionResult GroupChat(string projectId, int page = 1)
         {
