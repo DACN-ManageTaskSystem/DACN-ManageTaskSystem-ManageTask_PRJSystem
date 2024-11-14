@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 12.375" name="QLCV">
   <DataContextMoniker Name="/QLCVDataContext" />
   <nestedChildShapes>
@@ -160,7 +161,6 @@
 
         <classShapeMoniker Id="9e80bba6-cc20-4303-8793-6a1799762ab0" />
         <classShapeMoniker Id="a1d95c97-8a63-46ff-9174-0a919d6fa0c8" />
-
       </nodes>
     </associationConnector>
   </nestedChildShapes>

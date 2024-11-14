@@ -1,6 +1,8 @@
 ﻿using ManageTaskWeb.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -17,7 +19,6 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
-
         //DangNhap-POST
         [HttpPost]
         public ActionResult DangNhap(string username, string password)
@@ -69,20 +70,18 @@ namespace ManageTaskWeb.Controllers
             // Chuyển hướng về trang đăng nhập
             return RedirectToAction("DangNhap");
         }
-
-
         //TrangChu
         public ActionResult TrangChu()
         {
             return View();
         }
-
         //Danh sach project
         public ActionResult DSProject()
         {
             var role = Session["Role"]?.ToString();
             List<ProjectExtended> projects;
 
+            // Kiểm tra nếu người dùng là Manager hoặc Admin
             if (role == "Manager" || role == "Admin")
             {
                 projects = data.Projects
@@ -93,11 +92,15 @@ namespace ManageTaskWeb.Controllers
                                    StartDate = p.StartDate,
                                    EndDate = p.EndDate,
                                    Status = p.Status,
+                                   Priority = p.Priority,
+                                   ImageProject = p.ImageProject,
+                                   deleteTime = p.deleteTime,
                                    MemberCount = data.Assignments
-                                                     .Where(a => a.ProjectID == p.ProjectID)
-                                                     .Select(a => a.AssignedTo)
-                                                     .Distinct()
-                                                     .Count()
+                                                      .Where(a => a.ProjectID == p.ProjectID)
+                                                      .Select(a => a.AssignedTo)
+                                                      .Distinct()
+                                                      .Count(),
+                                   
                                }).ToList();
             }
             else
@@ -107,6 +110,7 @@ namespace ManageTaskWeb.Controllers
                                .Where(a => a.AssignedTo == memberId)
                                .Select(a => a.Project)
                                .Distinct()
+                               .Where(p => p.deleteTime == null)  
                                .Select(p => new ProjectExtended
                                {
                                    ProjectID = p.ProjectID,
@@ -114,18 +118,93 @@ namespace ManageTaskWeb.Controllers
                                    StartDate = p.StartDate,
                                    EndDate = p.EndDate,
                                    Status = p.Status,
+                                   Priority = p.Priority,
+                                   ImageProject = p.ImageProject,
                                    MemberCount = data.Assignments
-                                                     .Where(a => a.ProjectID == p.ProjectID)
-                                                     .Select(a => a.AssignedTo)
-                                                     .Distinct()
-                                                     .Count()
+                                                      .Where(a => a.ProjectID == p.ProjectID)
+                                                      .Select(a => a.AssignedTo)
+                                                      .Distinct()
+                                                      .Count(),
                                }).ToList();
+            }
+
+            // Kiểm tra nếu projects vẫn là null hoặc rỗng, gán giá trị mặc định là danh sách rỗng
+            if (projects == null)
+            {
+                projects = new List<ProjectExtended>();
             }
 
             return View(projects);
         }
 
+        public string GenerateUniqueProjectID()
+        {
+            string prefix = "PRJ";
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var randomString = new string(Enumerable.Repeat(chars, 6)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            return prefix + randomString;
+        }
+        public string GetUniqueProjectID()
+        {
+            string projectIDnew = string.Empty;
+            bool isUnique = false;
 
+            while (!isUnique)
+            {
+                projectIDnew = GenerateUniqueProjectID();
+                isUnique = !data.Projects.Any(p => p.ProjectID == projectIDnew); 
+            }
+
+            return projectIDnew;
+        }
+        //Add Project
+        [HttpPost]
+        public ActionResult AddProject(string ProjectName, string Description, DateTime StartDate, DateTime EndDate, int Priority, string Status, string ImageProject, HttpPostedFileBase ImageFile)
+        {
+            try
+            {
+                // Lưu hình ảnh vào thư mục ~/Content/images/project-img nếu có file upload
+                string imagePath = null;
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    // Lưu ảnh vào thư mục
+                    string path = Server.MapPath("~/Content/images/project-img/");
+                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
+                    imagePath = Path.Combine(path, ImageProject);
+                    ImageFile.SaveAs(imagePath);
+                }
+
+                // Tạo một đối tượng Project mới và lưu thông tin
+                var project = new Project
+                {
+                    ProjectID = GetUniqueProjectID(), // Tạo ID duy nhất
+                    ProjectName = ProjectName,
+                    Description = Description,
+                    StartDate = StartDate,
+                    EndDate = EndDate,
+                    Priority = Priority, // Lưu giá trị Priority (1: Highest, 5: Lowest)
+                    Status = Status,
+                    ImageProject = ImageProject, // Lưu tên file ảnh
+                    deleteTime = null
+                };
+
+                // Thêm project vào database
+                data.Projects.InsertOnSubmit(project);
+                data.SubmitChanges();
+
+                // Redirect with success message
+                return RedirectToAction("DSProject", new { notificationMessage = "Thêm Project mới thành công!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                // Redirect with error message
+                return RedirectToAction("DSProject", new { notificationMessage = "Đã xảy ra lỗi khi thêm dự án!", notificationType = "error" });
+            }
+        }
+
+        
         //Danh sach Member trong Project
         public ActionResult MembersOfProject(string projectId)
         {
@@ -138,8 +217,6 @@ namespace ManageTaskWeb.Controllers
 
             return View(members);
         }
-
-
         //Thong tin ca nhan
         public ActionResult TTCaNhan()
         {
@@ -169,11 +246,13 @@ namespace ManageTaskWeb.Controllers
             }
 
         }
+
         public ActionResult DetailTask()
         {
             return View();
         }
         //Chat
+
         public ActionResult GroupChat(string projectId, int page = 1)
         {
             int pageSize = 6;

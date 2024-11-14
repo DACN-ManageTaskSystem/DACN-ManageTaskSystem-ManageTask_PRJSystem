@@ -3,165 +3,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="@Url.Content("~/Content/css/styleproject.css?v=1")" rel="stylesheet" />
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Details</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f9f9f9;
-        }
-
-        .container {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-            .header a {
-                text-decoration: none;
-                color: #6c63ff;
-                font-size: 1.2rem;
-            }
-
-                .header a:hover {
-                    text-decoration: underline;
-                }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            background-color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-            .search-bar input {
-                width: 300px;
-                padding: 10px;
-                border-radius: 25px;
-                border: 1px solid #ddd;
-            }
-
-            .search-bar button {
-                background: none;
-                border: none;
-                font-size: 1.2rem;
-                color: #6c63ff;
-                cursor: pointer;
-            }
-
-        .project-table {
-            width: 100%;
-            background-color: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-            .project-table th, .project-table td {
-                padding: 15px;
-                text-align: left;
-            }
-
-            .project-table th {
-                background-color: #f3f3f3;
-                color: #333;
-            }
-
-        .btn-done {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-        }
-
-        .avatar-group {
-            display: flex;
-            align-items: center;
-        }
-
-            .avatar-group img {
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                margin-left: -10px;
-                border: 2px solid white;
-            }
-
-            .avatar-group span {
-                margin-left: 10px;
-            }
-
-        .status-done {
-            background-color: #28a745;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 25px;
-        }
+<!-- Popup thông báo thành công -->
 
 
-        /*Modal them du an*/
-        .modal-content {
-            border-radius: 15px;
-            padding: 30px;
-            border: none;
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-        }
 
-        .modal-header {
-            border-bottom: none;
-            padding-bottom: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 1.8rem;
-            color: #4a4a8c;
-            font-weight: 600;
-        }
-
-        .btn-close {
-            background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            color: #a0a0a0;
-        }
-
-        .modal-body {
-            display: flex;
-            gap: 20px;
-        }
+<div>
 
         .column {
             flex: 1;
@@ -419,6 +267,7 @@
 
 </head>
 <body>
+
     <div class="container">
         <div class="header">
             <div>
@@ -430,8 +279,7 @@
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
                         <i class="fas fa-plus-circle"></i> Thêm Dự Án Mới
                     </button>
-                    <button class="btn btn-outline-secondary"><i class="fas fa-edit"></i> Chỉnh sửa dự án</button>
-                    <button class="btn btn-danger"><i class="fas fa-trash"></i> Delete Project</button>
+                    <button class="btn btn-outline-secondary"><i class="fas fa-edit"></i> Tham gia dự án</button>
                 }
                 else
                 {
@@ -457,46 +305,112 @@
                     <th>Thành viên</th>
                     <th>Số lượng</th>
                     <th>Status</th>
+                    <th></th>
+                    <!-- Cột DeleteTime chỉ hiển thị cho Admin và Manager -->   
+                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                    {
+                        <th>Delete Time</th>
+                    }
                 </tr>
             </thead>
             <tbody>
-                @foreach (var project in Model)
+                @if (Model != null)
+                {
+                    foreach (var project in Model)
+                    {
+                        <tr>
+                            <td><input type="checkbox" class="project-checkbox"></td>
+                            <td>
+                                <img src="~/Content/images/project-img/@project.ImageProject" alt="Project Image" width="80">
+                                <div class="action-buttons">
+                                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                                    {
+                                        <button class="btn btn-outline-secondary edit-project-btn"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editProjectModal"
+                                                data-project-id="@project.ProjectID"
+                                                data-project-name="@project.ProjectName"
+                                                data-project-description="@project.Description"
+                                                data-start-date="@project.StartDate.ToString("yyyy-MM-dd")"
+                                                data-end-date="@project.EndDate.ToString("yyyy-MM-dd")"
+                                                data-priority="@project.Priority"
+                                                data-status="@project.Status">
+                                            <i class="fas fa-pencil-alt"></i> <span>Edit Project</span>
+                                        </button>
+
+                                        <button class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i><span>Delete Project</span></button>
+                                    }
+                                    <a href="@Url.Action("DSTask", "Home", new { projectId = project.ProjectID })" class="btn btn-outline-dark">
+                                        <i class="fas fa-eye"></i><span>View Task</span>
+                                    </a>
+                                </div>
+
+
+                            </td>
+                            <td>
+                                <div>
+                                    <strong>@project.ProjectName</strong><br>
+                                    <span>Project Code: @project.ProjectID</span>
+                                </div>
+                            </td>
+                            <td>@project.StartDate.ToString("HH:mm dd/MM/yyyy")</td>
+                            <td>@project.EndDate.ToString("HH:mm dd/MM/yyyy")</td>
+                            <td>
+                                <div class="avatar-group">
+                                    <a href="@Url.Action("MembersOfProject", "Home", new { projectId = project.ProjectID })">
+                                        <img src="https://via.placeholder.com/30" alt="Team Member">
+                                        <img src="https://via.placeholder.com/30" alt="Team Member">
+                                        <img src="https://via.placeholder.com/30" alt="Team Member">
+                                        <span>+@project.MemberCount</span>
+                                    </a>
+                                </div>
+                            </td>
+                            <td><span>@project.MemberCount</span></td>
+                            <td>
+                                <div>
+                                    @if (project.Status == "Completed")
+                                    {
+                                        <span class="status-done">DONE</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">@project.Status</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("GroupChat", "Home", new { projectId = project.ProjectID })" class="btn btn-outline-primary">
+                                    <i class="fas fa-comments"></i> Thảo Luận
+                                </a>
+                            </td>
+                            <!-- Hiển thị DeleteTime chỉ cho Admin và Manager -->
+                            @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                            {
+                                <td>
+                                    @if (project.deleteTime != null)
+                                    {
+                                        @project.deleteTime.Value.ToString("HH:mm dd/MM/yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span>Not deleted</span> <!-- Hoặc có thể là "N/A" tùy vào yêu cầu của bạn -->
+                                    }
+                                </td>
+
+
+                            }
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td><input type="checkbox"></td>
-                        <td><img src="https://via.placeholder.com/100" alt="Project Image" width="100"></td>
-                        <td><a href="@Url.Action("DSTask", "Home", new { projectId = project.ProjectID })" class="btn btn-info">@project.ProjectName</a></td>
-                        <td>@project.StartDate.ToString("HH:mm dd/MM/yyyy")</td>
-                        <td>@project.EndDate.ToString("HH:mm dd/MM/yyyy")</td>
-                        <td>
-                            <div class="avatar-group">
-                                <a href="@Url.Action("MembersOfProject", "Home", new { projectId = project.ProjectID })">
-                                    <img src="https://via.placeholder.com/30" alt="Team Member">
-                                    <img src="https://via.placeholder.com/30" alt="Team Member">
-                                    <img src="https://via.placeholder.com/30" alt="Team Member">
-                                    <span>+@project.MemberCount</span> <!-- Hiển thị số lượng thành viên -->
-                                </a>
-                            </div>
-                        </td>
-                        <td><span>@project.MemberCount</span></td>
-                        <td>
-                            <div>
-                                @if (project.Status == "DONE")
-                                {
-                                    <span class="status-done">DONE</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-warning text-dark">@project.Status</span>
-                                }
-                            </div>
-                            <div>
-                                <a href="@Url.Action("GroupChat", "Home", new { projectId = project.ProjectID })" class="btn btn-info">Thảo luận</a>
-                            </div>
-                        </td>
+                        <td colspan="9">Không có dự án nào.</td>
                     </tr>
                 }
             </tbody>
+
+
         </table>
 
         <!-- Add Project Modal -->
@@ -508,26 +422,112 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                     </div>
 
-                    <form>
+                    <form action="/Home/AddProject" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <!-- Left Column -->
                             <div class="column">
                                 <label for="projectName">Project Name *</label>
-                                <input type="text" class="form-control" id="projectName" placeholder="Name Project...">
+                                <input type="text" class="form-control" name="ProjectName" id="projectName" placeholder="Name Project..." required>
 
                                 <label for="description">Description *</label>
-                                <textarea class="form-control" id="description" placeholder="Enter Description..."></textarea>
+                                <textarea class="form-control" name="Description" id="description" placeholder="Enter Description..." required></textarea>
 
                                 <label for="startDate">Start Date *</label>
-                                <input type="date" class="form-control" id="startDate">
+                                <input type="date" class="form-control" name="StartDate" id="startDate" required>
 
                                 <label for="endDate">End Date *</label>
-                                <input type="date" class="form-control" id="endDate">
+                                <input type="date" class="form-control" name="EndDate" id="endDate" required>
                             </div>
-                            
+
                             <!-- Right Column -->
                             <div class="column">
                                 <label for="priority">Priority</label>
+                                <div class="custom-dropdown">
+                                    <div class="selected-option" onclick="toggleDropdown()">
+                                        <span id="selectedPriority">Medium</span>
+                                        <i class="fa-solid fa-bars icon ic3"></i>
+                                    </div>
+                                    <div class="dropdown-menu" id="priorityDropdown">
+                                        <div class="dropdown-item" onclick="selectPriority(1, 'Highest')">
+                                            <i class="fa-solid fa-angles-up icon ic1"></i> Highest
+                                        </div>
+                                        <div class="dropdown-item" onclick="selectPriority(2, 'High')">
+                                            <i class="fa-solid fa-angle-up icon ic2"></i> High
+                                        </div>
+                                        <div class="dropdown-item" onclick="selectPriority(3, 'Medium')">
+                                            <i class="fa-solid fa-bars icon ic3"></i> Medium
+                                        </div>
+                                        <div class="dropdown-item" onclick="selectPriority(4, 'Low')">
+                                            <i class="fa-solid fa-angle-down icon ic4"></i> Low
+                                        </div>
+                                        <div class="dropdown-item" onclick="selectPriority(5, 'Lowest')">
+                                            <i class="fa-solid fa-angles-down icon ic5"></i> Lowest
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="Priority" id="priorityValue" value="3">
+                                </div>
+
+                                <label for="statusProject">Status Project</label>
+                                <select class="form-select" name="Status" id="statusProject">
+                                    <option>Pending</option>
+                                    <option>In Progress</option>
+                                    <option>Completed</option>
+                                </select>
+
+                                <label for="image">Image</label>
+                                <p id="fileName" style="margin: 5px 0; font-size: 0.9em; color: #555;"></p>
+                                <button type="button" class="btn-upload" id="uploadBtnAdd" onclick="document.getElementById('imageInputAdd').click();">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                                <input type="file" name="ImageFile" id="imageInputAdd" style="display: none;" onchange="handleFileUpload()" />
+                                <input type="hidden" name="ImageProject" id="imageProject">
+                                <img id="previewImage" src="" alt="Preview" style="display: none; margin-top: 10px; width: 100px; height: 100px; border: 1px solid #ddd; object-fit: cover;"> <!-- Hình ảnh xem trước -->
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Project Modal -->
+        <div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editProjectModalLabel">Edit Project</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+
+                    <form>
+                        <div class="modal-body">
+                            <!-- Left Column -->
+                            <div class="column">
+                                <label for="editProjectID">Project ID</label>
+                                <input type="text" class="form-control" id="editProjectID" readonly>
+
+                                <label for="editProjectName">Project Name *</label>
+                                <input type="text" class="form-control" id="editProjectName" placeholder="Name Project...">
+
+                                <label for="editDescription">Description *</label>
+                                <textarea class="form-control" id="editDescription" placeholder="Enter Description..."></textarea>
+
+                                <label for="editStartDate">Start Date *</label>
+                                <input type="date" class="form-control" id="editStartDate">
+
+                                <label for="editEndDate">End Date *</label>
+                                <input type="date" class="form-control" id="editEndDate">
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="column">
+                                <label for="editPriority">Priority</label>
                                 <div class="custom-dropdown">
                                     <div class="selected-option">
                                         <span> Medium</span> <i class="fa-solid fa-bars icon ic3"></i>
@@ -537,13 +537,13 @@
                                             <i class="fa-solid fa-angles-up icon ic1"></i> Highest
                                         </div>
                                         <div class="dropdown-item">
-                                            <i class="fa-solid fa-angle-up icon ic2" ></i> High
+                                            <i class="fa-solid fa-angle-up icon ic2"></i> High
                                         </div>
                                         <div class="dropdown-item">
                                             <i class="fa-solid fa-bars icon ic3"></i> Medium
                                         </div>
                                         <div class="dropdown-item">
-                                            <i class="fa-solid fa-angle-down icon ic4" ></i> Low
+                                            <i class="fa-solid fa-angle-down icon ic4"></i> Low
                                         </div>
                                         <div class="dropdown-item">
                                             <i class="fa-solid fa-angles-down icon ic5"></i> Lowest
@@ -551,50 +551,225 @@
                                     </div>
                                 </div>
 
-                                <label for="statusProject">Status Project</label>
-                                <select class="form-select" id="statusProject">
+                                <label for="editStatusProject">Status Project</label>
+                                <select class="form-select" id="editStatusProject">
                                     <option>Pending</option>
                                     <option>In Progress</option>
                                     <option>Completed</option>
                                 </select>
 
-                                <label for="image">Image</label>
-                                <button type="button" class="btn-upload">
+                                <label for="editImage">Image</label>
+                                <button type="button" class="btn-upload" id="uploadBtnEdit">
                                     <i class="fas fa-upload"></i> Upload
                                 </button>
-
+                                <input type="file" id="imageInputEdit" style="display: none;" />
                             </div>
                         </div>
                     </form>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Confirm</button>
+                        <button type="button" class="btn btn-primary">Save Changes</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Success/Error Message Modal -->
+        <div id="notificationPopup"  style="display: none;">
+            <span id="notificationMessage">Notification message here</span>
+            <span class="close-btn" onclick="closeNotificationPopup()">×</span>
+        </div>
+
+
+        @* Delete popup *@
+    <div class="popup-delete-container" id="popupDeleteContainer" style="display: none;">
+        <button class="close-btn" onclick="closeProjectDeletePopup()()">×</button>
+        <div class="project-select">
+            <span id="projectSelectCount">Select Project</span>
+        </div>
+        <button class="delete-btn" onclick="deleteSelectedProjects()">
+            <i class="fas fa-trash-alt" style="margin-right:5px"></i><span>Delete</span>
+        </button>
     </div>
 
 
+
+
+    </div>
+
     <script>
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', function () {
-                const selectedOption = document.querySelector('.selected-option span');
-                const selectedIcon = document.querySelector('.selected-option i');
+        function showProjectDeletePopup(selectedCount) {
+            var popup = document.getElementById('popupDeleteContainer');
+            var projectCountSpan = document.getElementById('projectSelectCount');
 
-                // Cập nhật văn bản và icon
-                selectedOption.textContent = item.textContent.trim();  // Cập nhật văn bản
-                selectedIcon.className = item.querySelector('i').className;  // Cập nhật class của icon
 
-                // Ẩn dropdown sau khi chọn
-                document.querySelector('.dropdown-menu').style.display = 'none';
+            projectCountSpan.textContent = selectedCount + " Project" + (selectedCount > 1 ? "s" : "");
+
+            if (selectedCount > 0) {
+                popup.style.display = 'flex';  
+            } else {
+                popup.style.display = 'none';  
+            }
+        }
+
+        // Function to close the project delete popup
+        function closeProjectDeletePopup() {
+            var popup = document.getElementById('popupDeleteContainer');
+            popup.style.display = 'none';  // Hide the project delete popup
+            document.querySelectorAll('.project-checkbox').forEach(function (checkbox) {
+                checkbox.checked = false;  // Uncheck each checkbox
+            });
+
+            // Optionally, you can also update the project count text when the popup is closed
+            showProjectDeletePopup(0);
+        }
+
+        // Example of handling checkboxes to count selected projects and show the delete popup
+        document.querySelectorAll('.project-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                // Count the number of checked checkboxes
+                var selectedCount = document.querySelectorAll('.project-checkbox:checked').length;
+                showProjectDeletePopup(selectedCount);  // Show the project delete popup with the updated count
             });
         });
 
+        // Optional: Function to delete selected projects when 'Delete' is clicked
+        function deleteSelectedProjects() {
+            // You can add your logic to delete selected projects here
+            alert("Deleting selected projects...");
+
+            // Reset the checkboxes and hide the popup
+            document.querySelectorAll('.project-checkbox:checked').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            showProjectDeletePopup(0);  // Hide the project delete popup after delete
+        }
+
+        //////////////
+        //////////
+        /////////
+        // Popup Thong bao - start
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('notificationMessage');
+            const type = urlParams.get('notificationType');
+
+            if (message && type) {
+                showNotificationPopup(message, type);
+            }
+        };
+
+        function showNotificationPopup(message, type) {
+            const popup = document.getElementById('notificationPopup');
+            const messageSpan = document.getElementById('notificationMessage');
+
+            popup.classList.remove('popup-success', 'popup-error');
+            if (type === "success") {
+                popup.classList.add('popup-success');
+            } else if (type === "error") {
+                popup.classList.add('popup-error');
+            }
+
+            messageSpan.textContent = message;
+            popup.style.display = 'flex';
+            setTimeout(closeNotificationPopup, 5000);
+
+
+            setTimeout(function () {
+                // Use history.pushState to change the URL without reloading the page
+                window.history.pushState({}, document.title, "/Home/DSProject");
+            }, 5000);
+        }
+
+        function closeNotificationPopup() {
+            document.getElementById('notificationPopup').style.display = 'none';
+        }
+
+        // Function to handle priority selection
+        function handlePrioritySelection(modalId) {
+            document.querySelectorAll(`#${modalId} .dropdown-item`).forEach(item => {
+                item.addEventListener('click', function () {
+                    const selectedText = this.innerText;
+                    const selectedIconClass = this.querySelector('i').classList;
+                    const selectedOption = document.querySelector(`#${modalId} .selected-option span`);
+                    const selectedIcon = document.querySelector(`#${modalId} .selected-option i`);
+
+                    selectedOption.textContent = selectedText;
+                    selectedIcon.className = ''; // Reset icon class
+                    selectedIcon.classList.add(...selectedIconClass);
+                });
+            });
+        }
+
+        // Initialize priority selection for both modals
+        handlePrioritySelection('addProjectModal');
+        handlePrioritySelection('editProjectModal');
+
+        // File upload handling
+        function handleFileUpload() {
+            const fileInput = document.getElementById('imageInputAdd');
+            const file = fileInput.files[0];
+            const fileNameDisplay = document.getElementById('fileName');
+            const previewImage = document.getElementById('previewImage');
+
+            if (file) {
+                const validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                if (!validExtensions.includes(fileExtension)) {
+                    fileNameDisplay.textContent = "Hãy chọn file hình ảnh (.jpg, .jpeg, .png, .gif)";
+                    fileNameDisplay.style.color = "red";
+                    fileInput.value = ""; // Reset input if invalid file
+                    document.getElementById('imageProject').value = ""; // Clear hidden input value
+                    previewImage.style.display = "none"; // Hide preview if error
+                } else {
+                    document.getElementById('imageProject').value = file.name;
+                    fileNameDisplay.textContent = "Selected file: " + file.name;
+                    fileNameDisplay.style.color = "#555";
+                    previewImage.src = URL.createObjectURL(file);
+                    previewImage.style.display = "block"; // Show preview
+                }
+            }
+        }
+
+        // Update ProjectID and other fields when opening the "Edit Project" modal
+        document.querySelectorAll('.edit-project-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const projectId = this.getAttribute('data-project-id');
+                const projectName = this.getAttribute('data-project-name');
+                const projectDescription = this.getAttribute('data-project-description');
+                const startDate = this.getAttribute('data-start-date');
+                const endDate = this.getAttribute('data-end-date');
+                const projectPriority = this.getAttribute('data-priority');
+                const projectStatus = this.getAttribute('data-status');
+
+                document.getElementById('editProjectID').value = projectId;
+                document.getElementById('editProjectName').value = projectName;
+                document.getElementById('editDescription').value = projectDescription;
+                document.getElementById('editStartDate').value = startDate;
+                document.getElementById('editEndDate').value = endDate;
+
+                const priorityDropdown = document.querySelector('#editProjectModal .selected-option span');
+                const priorityIcon = document.querySelector('#editProjectModal .selected-option i');
+                let iconClass, text;
+                switch (projectPriority) {
+                    case '1': iconClass = 'fa-angles-up ic1 icon'; text = 'Highest'; break;
+                    case '2': iconClass = 'fa-angle-up ic2 icon'; text = 'High'; break;
+                    case '3': iconClass = 'fa-bars ic3 icon'; text = 'Medium'; break;
+                    case '4': iconClass = 'fa-angle-down ic4 icon'; text = 'Low'; break;
+                    case '5': iconClass = 'fa-angles-down ic5 icon'; text = 'Lowest'; break;
+                    default: iconClass = 'fa-bars ic3 icon'; text = 'Medium';
+                }
+
+                priorityDropdown.textContent = ` ${text}`;
+                priorityIcon.className = `fa-solid ${iconClass}`;
+                document.getElementById('editStatusProject').value = projectStatus;
+            });
+        });
 
     </script>
 
     <!-- Bootstrap and JavaScript dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</div>
+
