@@ -33,6 +33,9 @@ namespace ManageTaskWeb.Models
     partial void InsertAssignment(Assignment instance);
     partial void UpdateAssignment(Assignment instance);
     partial void DeleteAssignment(Assignment instance);
+    partial void InsertTask(Task instance);
+    partial void UpdateTask(Task instance);
+    partial void DeleteTask(Task instance);
     partial void InsertInteraction(Interaction instance);
     partial void UpdateInteraction(Interaction instance);
     partial void DeleteInteraction(Interaction instance);
@@ -48,19 +51,20 @@ namespace ManageTaskWeb.Models
     partial void InsertTaskLog(TaskLog instance);
     partial void UpdateTaskLog(TaskLog instance);
     partial void DeleteTaskLog(TaskLog instance);
-    partial void InsertTask(Task instance);
-    partial void UpdateTask(Task instance);
-    partial void DeleteTask(Task instance);
         #endregion
-
         public QLCVDataContext() :
-          base("Data Source=MSI;Initial Catalog=QLCViec;Persist Security Info=True;Use" +
+          base("Data Source=.;Initial Catalog=QLCViec;Persist Security Info=True;Use" +
                   "r ID=sa;Password=123;Encrypt=True;TrustServerCertificate=True", mappingSource)
         {
             OnCreated();
         }
-
-        public QLCVDataContext(System.Data.IDbConnection connection) : 
+        public QLCVDataContext(string connection) : 
+				base(connection, mappingSource)
+		{
+			OnCreated();
+		}
+		
+		public QLCVDataContext(System.Data.IDbConnection connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -83,6 +87,14 @@ namespace ManageTaskWeb.Models
 			get
 			{
 				return this.GetTable<Assignment>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Task> Tasks
+		{
+			get
+			{
+				return this.GetTable<Task>();
 			}
 		}
 		
@@ -125,14 +137,6 @@ namespace ManageTaskWeb.Models
 				return this.GetTable<TaskLog>();
 			}
 		}
-		
-		public System.Data.Linq.Table<Task> Tasks
-		{
-			get
-			{
-				return this.GetTable<Task>();
-			}
-		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Assignments")]
@@ -153,13 +157,13 @@ namespace ManageTaskWeb.Models
 		
 		private System.Nullable<System.DateTime> _AssignedDate;
 		
+		private EntityRef<Task> _Task;
+		
 		private EntityRef<Member> _Member;
 		
 		private EntityRef<Member> _Member1;
 		
 		private EntityRef<Project> _Project;
-		
-		private EntityRef<Task> _Task;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -181,10 +185,10 @@ namespace ManageTaskWeb.Models
 		
 		public Assignment()
 		{
+			this._Task = default(EntityRef<Task>);
 			this._Member = default(EntityRef<Member>);
 			this._Member1 = default(EntityRef<Member>);
 			this._Project = default(EntityRef<Project>);
-			this._Task = default(EntityRef<Task>);
 			OnCreated();
 		}
 		
@@ -324,6 +328,40 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Assignment", Storage="_Task", ThisKey="TaskID", OtherKey="TaskID", IsForeignKey=true)]
+		public Task Task
+		{
+			get
+			{
+				return this._Task.Entity;
+			}
+			set
+			{
+				Task previousValue = this._Task.Entity;
+				if (((previousValue != value) 
+							|| (this._Task.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Task.Entity = null;
+						previousValue.Assignments.Remove(this);
+					}
+					this._Task.Entity = value;
+					if ((value != null))
+					{
+						value.Assignments.Add(this);
+						this._TaskID = value.TaskID;
+					}
+					else
+					{
+						this._TaskID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Task");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Assignment", Storage="_Member", ThisKey="AssignedTo", OtherKey="MemberID", IsForeignKey=true)]
 		public Member Member
 		{
@@ -426,36 +464,451 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Assignment", Storage="_Task", ThisKey="TaskID", OtherKey="TaskID", IsForeignKey=true)]
-		public Task Task
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Tasks")]
+	public partial class Task : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _TaskID;
+		
+		private string _TaskName;
+		
+		private string _Description;
+		
+		private string _AssignedTo;
+		
+		private string _ProjectID;
+		
+		private System.Nullable<int> _ParentTaskID;
+		
+		private System.Nullable<System.DateTime> _StartDate;
+		
+		private System.Nullable<System.DateTime> _EndDate;
+		
+		private System.Nullable<int> _Priority;
+		
+		private string _Status;
+		
+		private EntitySet<Assignment> _Assignments;
+		
+		private EntitySet<Task> _Tasks;
+		
+		private EntitySet<TaskLog> _TaskLogs;
+		
+		private EntityRef<Task> _Task1;
+		
+		private EntityRef<Member> _Member;
+		
+		private EntityRef<Project> _Project;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnTaskIDChanging(int value);
+    partial void OnTaskIDChanged();
+    partial void OnTaskNameChanging(string value);
+    partial void OnTaskNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnAssignedToChanging(string value);
+    partial void OnAssignedToChanged();
+    partial void OnProjectIDChanging(string value);
+    partial void OnProjectIDChanged();
+    partial void OnParentTaskIDChanging(System.Nullable<int> value);
+    partial void OnParentTaskIDChanged();
+    partial void OnStartDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnStartDateChanged();
+    partial void OnEndDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnEndDateChanged();
+    partial void OnPriorityChanging(System.Nullable<int> value);
+    partial void OnPriorityChanged();
+    partial void OnStatusChanging(string value);
+    partial void OnStatusChanged();
+    #endregion
+		
+		public Task()
+		{
+			this._Assignments = new EntitySet<Assignment>(new Action<Assignment>(this.attach_Assignments), new Action<Assignment>(this.detach_Assignments));
+			this._Tasks = new EntitySet<Task>(new Action<Task>(this.attach_Tasks), new Action<Task>(this.detach_Tasks));
+			this._TaskLogs = new EntitySet<TaskLog>(new Action<TaskLog>(this.attach_TaskLogs), new Action<TaskLog>(this.detach_TaskLogs));
+			this._Task1 = default(EntityRef<Task>);
+			this._Member = default(EntityRef<Member>);
+			this._Project = default(EntityRef<Project>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int TaskID
 		{
 			get
 			{
-				return this._Task.Entity;
+				return this._TaskID;
 			}
 			set
 			{
-				Task previousValue = this._Task.Entity;
+				if ((this._TaskID != value))
+				{
+					this.OnTaskIDChanging(value);
+					this.SendPropertyChanging();
+					this._TaskID = value;
+					this.SendPropertyChanged("TaskID");
+					this.OnTaskIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string TaskName
+		{
+			get
+			{
+				return this._TaskName;
+			}
+			set
+			{
+				if ((this._TaskName != value))
+				{
+					this.OnTaskNameChanging(value);
+					this.SendPropertyChanging();
+					this._TaskName = value;
+					this.SendPropertyChanged("TaskName");
+					this.OnTaskNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(MAX)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedTo", DbType="NVarChar(14)")]
+		public string AssignedTo
+		{
+			get
+			{
+				return this._AssignedTo;
+			}
+			set
+			{
+				if ((this._AssignedTo != value))
+				{
+					if (this._Member.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAssignedToChanging(value);
+					this.SendPropertyChanging();
+					this._AssignedTo = value;
+					this.SendPropertyChanged("AssignedTo");
+					this.OnAssignedToChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectID", DbType="NVarChar(14)")]
+		public string ProjectID
+		{
+			get
+			{
+				return this._ProjectID;
+			}
+			set
+			{
+				if ((this._ProjectID != value))
+				{
+					if (this._Project.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProjectIDChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectID = value;
+					this.SendPropertyChanged("ProjectID");
+					this.OnProjectIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentTaskID", DbType="Int")]
+		public System.Nullable<int> ParentTaskID
+		{
+			get
+			{
+				return this._ParentTaskID;
+			}
+			set
+			{
+				if ((this._ParentTaskID != value))
+				{
+					if (this._Task1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnParentTaskIDChanging(value);
+					this.SendPropertyChanging();
+					this._ParentTaskID = value;
+					this.SendPropertyChanged("ParentTaskID");
+					this.OnParentTaskIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartDate", DbType="Date")]
+		public System.Nullable<System.DateTime> StartDate
+		{
+			get
+			{
+				return this._StartDate;
+			}
+			set
+			{
+				if ((this._StartDate != value))
+				{
+					this.OnStartDateChanging(value);
+					this.SendPropertyChanging();
+					this._StartDate = value;
+					this.SendPropertyChanged("StartDate");
+					this.OnStartDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="Date")]
+		public System.Nullable<System.DateTime> EndDate
+		{
+			get
+			{
+				return this._EndDate;
+			}
+			set
+			{
+				if ((this._EndDate != value))
+				{
+					this.OnEndDateChanging(value);
+					this.SendPropertyChanging();
+					this._EndDate = value;
+					this.SendPropertyChanged("EndDate");
+					this.OnEndDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Priority", DbType="Int")]
+		public System.Nullable<int> Priority
+		{
+			get
+			{
+				return this._Priority;
+			}
+			set
+			{
+				if ((this._Priority != value))
+				{
+					this.OnPriorityChanging(value);
+					this.SendPropertyChanging();
+					this._Priority = value;
+					this.SendPropertyChanged("Priority");
+					this.OnPriorityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
+		public string Status
+		{
+			get
+			{
+				return this._Status;
+			}
+			set
+			{
+				if ((this._Status != value))
+				{
+					this.OnStatusChanging(value);
+					this.SendPropertyChanging();
+					this._Status = value;
+					this.SendPropertyChanged("Status");
+					this.OnStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Assignment", Storage="_Assignments", ThisKey="TaskID", OtherKey="TaskID")]
+		public EntitySet<Assignment> Assignments
+		{
+			get
+			{
+				return this._Assignments;
+			}
+			set
+			{
+				this._Assignments.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Task", Storage="_Tasks", ThisKey="TaskID", OtherKey="ParentTaskID")]
+		public EntitySet<Task> Tasks
+		{
+			get
+			{
+				return this._Tasks;
+			}
+			set
+			{
+				this._Tasks.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_TaskLog", Storage="_TaskLogs", ThisKey="TaskID", OtherKey="TaskID")]
+		public EntitySet<TaskLog> TaskLogs
+		{
+			get
+			{
+				return this._TaskLogs;
+			}
+			set
+			{
+				this._TaskLogs.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Task", Storage="_Task1", ThisKey="ParentTaskID", OtherKey="TaskID", IsForeignKey=true)]
+		public Task Task1
+		{
+			get
+			{
+				return this._Task1.Entity;
+			}
+			set
+			{
+				Task previousValue = this._Task1.Entity;
 				if (((previousValue != value) 
-							|| (this._Task.HasLoadedOrAssignedValue == false)))
+							|| (this._Task1.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._Task.Entity = null;
-						previousValue.Assignments.Remove(this);
+						this._Task1.Entity = null;
+						previousValue.Tasks.Remove(this);
 					}
-					this._Task.Entity = value;
+					this._Task1.Entity = value;
 					if ((value != null))
 					{
-						value.Assignments.Add(this);
-						this._TaskID = value.TaskID;
+						value.Tasks.Add(this);
+						this._ParentTaskID = value.TaskID;
 					}
 					else
 					{
-						this._TaskID = default(Nullable<int>);
+						this._ParentTaskID = default(Nullable<int>);
 					}
-					this.SendPropertyChanged("Task");
+					this.SendPropertyChanged("Task1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Task", Storage="_Member", ThisKey="AssignedTo", OtherKey="MemberID", IsForeignKey=true)]
+		public Member Member
+		{
+			get
+			{
+				return this._Member.Entity;
+			}
+			set
+			{
+				Member previousValue = this._Member.Entity;
+				if (((previousValue != value) 
+							|| (this._Member.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Member.Entity = null;
+						previousValue.Tasks.Remove(this);
+					}
+					this._Member.Entity = value;
+					if ((value != null))
+					{
+						value.Tasks.Add(this);
+						this._AssignedTo = value.MemberID;
+					}
+					else
+					{
+						this._AssignedTo = default(string);
+					}
+					this.SendPropertyChanged("Member");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Task", Storage="_Project", ThisKey="ProjectID", OtherKey="ProjectID", IsForeignKey=true)]
+		public Project Project
+		{
+			get
+			{
+				return this._Project.Entity;
+			}
+			set
+			{
+				Project previousValue = this._Project.Entity;
+				if (((previousValue != value) 
+							|| (this._Project.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Project.Entity = null;
+						previousValue.Tasks.Remove(this);
+					}
+					this._Project.Entity = value;
+					if ((value != null))
+					{
+						value.Tasks.Add(this);
+						this._ProjectID = value.ProjectID;
+					}
+					else
+					{
+						this._ProjectID = default(string);
+					}
+					this.SendPropertyChanged("Project");
 				}
 			}
 		}
@@ -478,6 +931,42 @@ namespace ManageTaskWeb.Models
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_Assignments(Assignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Task = this;
+		}
+		
+		private void detach_Assignments(Assignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Task = null;
+		}
+		
+		private void attach_Tasks(Task entity)
+		{
+			this.SendPropertyChanging();
+			entity.Task1 = this;
+		}
+		
+		private void detach_Tasks(Task entity)
+		{
+			this.SendPropertyChanging();
+			entity.Task1 = null;
+		}
+		
+		private void attach_TaskLogs(TaskLog entity)
+		{
+			this.SendPropertyChanging();
+			entity.Task = this;
+		}
+		
+		private void detach_TaskLogs(TaskLog entity)
+		{
+			this.SendPropertyChanging();
+			entity.Task = null;
 		}
 	}
 	
@@ -751,13 +1240,13 @@ namespace ManageTaskWeb.Models
 		
 		private EntitySet<Assignment> _Assignments1;
 		
+		private EntitySet<Task> _Tasks;
+		
 		private EntitySet<Interaction> _Interactions;
 		
 		private EntitySet<Report> _Reports;
 		
 		private EntitySet<TaskLog> _TaskLogs;
-		
-		private EntitySet<Task> _Tasks;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -789,10 +1278,10 @@ namespace ManageTaskWeb.Models
 		{
 			this._Assignments = new EntitySet<Assignment>(new Action<Assignment>(this.attach_Assignments), new Action<Assignment>(this.detach_Assignments));
 			this._Assignments1 = new EntitySet<Assignment>(new Action<Assignment>(this.attach_Assignments1), new Action<Assignment>(this.detach_Assignments1));
+			this._Tasks = new EntitySet<Task>(new Action<Task>(this.attach_Tasks), new Action<Task>(this.detach_Tasks));
 			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
 			this._Reports = new EntitySet<Report>(new Action<Report>(this.attach_Reports), new Action<Report>(this.detach_Reports));
 			this._TaskLogs = new EntitySet<TaskLog>(new Action<TaskLog>(this.attach_TaskLogs), new Action<TaskLog>(this.detach_TaskLogs));
-			this._Tasks = new EntitySet<Task>(new Action<Task>(this.attach_Tasks), new Action<Task>(this.detach_Tasks));
 			OnCreated();
 		}
 		
@@ -1022,6 +1511,19 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Task", Storage="_Tasks", ThisKey="MemberID", OtherKey="AssignedTo")]
+		public EntitySet<Task> Tasks
+		{
+			get
+			{
+				return this._Tasks;
+			}
+			set
+			{
+				this._Tasks.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Interaction", Storage="_Interactions", ThisKey="MemberID", OtherKey="MemberID")]
 		public EntitySet<Interaction> Interactions
 		{
@@ -1058,19 +1560,6 @@ namespace ManageTaskWeb.Models
 			set
 			{
 				this._TaskLogs.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Task", Storage="_Tasks", ThisKey="MemberID", OtherKey="AssignedTo")]
-		public EntitySet<Task> Tasks
-		{
-			get
-			{
-				return this._Tasks;
-			}
-			set
-			{
-				this._Tasks.Assign(value);
 			}
 		}
 		
@@ -1118,6 +1607,18 @@ namespace ManageTaskWeb.Models
 			entity.Member1 = null;
 		}
 		
+		private void attach_Tasks(Task entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_Tasks(Task entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
 		private void attach_Interactions(Interaction entity)
 		{
 			this.SendPropertyChanging();
@@ -1153,18 +1654,6 @@ namespace ManageTaskWeb.Models
 			this.SendPropertyChanging();
 			entity.Member = null;
 		}
-		
-		private void attach_Tasks(Task entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_Tasks(Task entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Projects")]
@@ -1193,11 +1682,11 @@ namespace ManageTaskWeb.Models
 		
 		private EntitySet<Assignment> _Assignments;
 		
+		private EntitySet<Task> _Tasks;
+		
 		private EntitySet<Interaction> _Interactions;
 		
 		private EntitySet<Report> _Reports;
-		
-		private EntitySet<Task> _Tasks;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1226,9 +1715,9 @@ namespace ManageTaskWeb.Models
 		public Project()
 		{
 			this._Assignments = new EntitySet<Assignment>(new Action<Assignment>(this.attach_Assignments), new Action<Assignment>(this.detach_Assignments));
+			this._Tasks = new EntitySet<Task>(new Action<Task>(this.attach_Tasks), new Action<Task>(this.detach_Tasks));
 			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
 			this._Reports = new EntitySet<Report>(new Action<Report>(this.attach_Reports), new Action<Report>(this.detach_Reports));
-			this._Tasks = new EntitySet<Task>(new Action<Task>(this.attach_Tasks), new Action<Task>(this.detach_Tasks));
 			OnCreated();
 		}
 		
@@ -1425,6 +1914,19 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Task", Storage="_Tasks", ThisKey="ProjectID", OtherKey="ProjectID")]
+		public EntitySet<Task> Tasks
+		{
+			get
+			{
+				return this._Tasks;
+			}
+			set
+			{
+				this._Tasks.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Interaction", Storage="_Interactions", ThisKey="ProjectID", OtherKey="ProjectID")]
 		public EntitySet<Interaction> Interactions
 		{
@@ -1448,19 +1950,6 @@ namespace ManageTaskWeb.Models
 			set
 			{
 				this._Reports.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Task", Storage="_Tasks", ThisKey="ProjectID", OtherKey="ProjectID")]
-		public EntitySet<Task> Tasks
-		{
-			get
-			{
-				return this._Tasks;
-			}
-			set
-			{
-				this._Tasks.Assign(value);
 			}
 		}
 		
@@ -1496,6 +1985,18 @@ namespace ManageTaskWeb.Models
 			entity.Project = null;
 		}
 		
+		private void attach_Tasks(Task entity)
+		{
+			this.SendPropertyChanging();
+			entity.Project = this;
+		}
+		
+		private void detach_Tasks(Task entity)
+		{
+			this.SendPropertyChanging();
+			entity.Project = null;
+		}
+		
 		private void attach_Interactions(Interaction entity)
 		{
 			this.SendPropertyChanging();
@@ -1515,18 +2016,6 @@ namespace ManageTaskWeb.Models
 		}
 		
 		private void detach_Reports(Report entity)
-		{
-			this.SendPropertyChanging();
-			entity.Project = null;
-		}
-		
-		private void attach_Tasks(Task entity)
-		{
-			this.SendPropertyChanging();
-			entity.Project = this;
-		}
-		
-		private void detach_Tasks(Task entity)
 		{
 			this.SendPropertyChanging();
 			entity.Project = null;
@@ -2034,491 +2523,6 @@ namespace ManageTaskWeb.Models
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Tasks")]
-	public partial class Task : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _TaskID;
-		
-		private string _TaskName;
-		
-		private string _Description;
-		
-		private string _AssignedTo;
-		
-		private string _ProjectID;
-		
-		private System.Nullable<int> _ParentTaskID;
-		
-		private System.Nullable<System.DateTime> _StartDate;
-		
-		private System.Nullable<System.DateTime> _EndDate;
-		
-		private System.Nullable<int> _Priority;
-		
-		private string _Status;
-		
-		private EntitySet<Assignment> _Assignments;
-		
-		private EntitySet<TaskLog> _TaskLogs;
-		
-		private EntitySet<Task> _Tasks;
-		
-		private EntityRef<Member> _Member;
-		
-		private EntityRef<Task> _Task1;
-		
-		private EntityRef<Project> _Project;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnTaskIDChanging(int value);
-    partial void OnTaskIDChanged();
-    partial void OnTaskNameChanging(string value);
-    partial void OnTaskNameChanged();
-    partial void OnDescriptionChanging(string value);
-    partial void OnDescriptionChanged();
-    partial void OnAssignedToChanging(string value);
-    partial void OnAssignedToChanged();
-    partial void OnProjectIDChanging(string value);
-    partial void OnProjectIDChanged();
-    partial void OnParentTaskIDChanging(System.Nullable<int> value);
-    partial void OnParentTaskIDChanged();
-    partial void OnStartDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnStartDateChanged();
-    partial void OnEndDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnEndDateChanged();
-    partial void OnPriorityChanging(System.Nullable<int> value);
-    partial void OnPriorityChanged();
-    partial void OnStatusChanging(string value);
-    partial void OnStatusChanged();
-    #endregion
-		
-		public Task()
-		{
-			this._Assignments = new EntitySet<Assignment>(new Action<Assignment>(this.attach_Assignments), new Action<Assignment>(this.detach_Assignments));
-			this._TaskLogs = new EntitySet<TaskLog>(new Action<TaskLog>(this.attach_TaskLogs), new Action<TaskLog>(this.detach_TaskLogs));
-			this._Tasks = new EntitySet<Task>(new Action<Task>(this.attach_Tasks), new Action<Task>(this.detach_Tasks));
-			this._Member = default(EntityRef<Member>);
-			this._Task1 = default(EntityRef<Task>);
-			this._Project = default(EntityRef<Project>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int TaskID
-		{
-			get
-			{
-				return this._TaskID;
-			}
-			set
-			{
-				if ((this._TaskID != value))
-				{
-					this.OnTaskIDChanging(value);
-					this.SendPropertyChanging();
-					this._TaskID = value;
-					this.SendPropertyChanged("TaskID");
-					this.OnTaskIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string TaskName
-		{
-			get
-			{
-				return this._TaskName;
-			}
-			set
-			{
-				if ((this._TaskName != value))
-				{
-					this.OnTaskNameChanging(value);
-					this.SendPropertyChanging();
-					this._TaskName = value;
-					this.SendPropertyChanged("TaskName");
-					this.OnTaskNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(MAX)")]
-		public string Description
-		{
-			get
-			{
-				return this._Description;
-			}
-			set
-			{
-				if ((this._Description != value))
-				{
-					this.OnDescriptionChanging(value);
-					this.SendPropertyChanging();
-					this._Description = value;
-					this.SendPropertyChanged("Description");
-					this.OnDescriptionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedTo", DbType="NVarChar(14)")]
-		public string AssignedTo
-		{
-			get
-			{
-				return this._AssignedTo;
-			}
-			set
-			{
-				if ((this._AssignedTo != value))
-				{
-					if (this._Member.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnAssignedToChanging(value);
-					this.SendPropertyChanging();
-					this._AssignedTo = value;
-					this.SendPropertyChanged("AssignedTo");
-					this.OnAssignedToChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectID", DbType="NVarChar(14)")]
-		public string ProjectID
-		{
-			get
-			{
-				return this._ProjectID;
-			}
-			set
-			{
-				if ((this._ProjectID != value))
-				{
-					if (this._Project.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnProjectIDChanging(value);
-					this.SendPropertyChanging();
-					this._ProjectID = value;
-					this.SendPropertyChanged("ProjectID");
-					this.OnProjectIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentTaskID", DbType="Int")]
-		public System.Nullable<int> ParentTaskID
-		{
-			get
-			{
-				return this._ParentTaskID;
-			}
-			set
-			{
-				if ((this._ParentTaskID != value))
-				{
-					if (this._Task1.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnParentTaskIDChanging(value);
-					this.SendPropertyChanging();
-					this._ParentTaskID = value;
-					this.SendPropertyChanged("ParentTaskID");
-					this.OnParentTaskIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartDate", DbType="Date")]
-		public System.Nullable<System.DateTime> StartDate
-		{
-			get
-			{
-				return this._StartDate;
-			}
-			set
-			{
-				if ((this._StartDate != value))
-				{
-					this.OnStartDateChanging(value);
-					this.SendPropertyChanging();
-					this._StartDate = value;
-					this.SendPropertyChanged("StartDate");
-					this.OnStartDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="Date")]
-		public System.Nullable<System.DateTime> EndDate
-		{
-			get
-			{
-				return this._EndDate;
-			}
-			set
-			{
-				if ((this._EndDate != value))
-				{
-					this.OnEndDateChanging(value);
-					this.SendPropertyChanging();
-					this._EndDate = value;
-					this.SendPropertyChanged("EndDate");
-					this.OnEndDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Priority", DbType="Int")]
-		public System.Nullable<int> Priority
-		{
-			get
-			{
-				return this._Priority;
-			}
-			set
-			{
-				if ((this._Priority != value))
-				{
-					this.OnPriorityChanging(value);
-					this.SendPropertyChanging();
-					this._Priority = value;
-					this.SendPropertyChanged("Priority");
-					this.OnPriorityChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
-		public string Status
-		{
-			get
-			{
-				return this._Status;
-			}
-			set
-			{
-				if ((this._Status != value))
-				{
-					this.OnStatusChanging(value);
-					this.SendPropertyChanging();
-					this._Status = value;
-					this.SendPropertyChanged("Status");
-					this.OnStatusChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Assignment", Storage="_Assignments", ThisKey="TaskID", OtherKey="TaskID")]
-		public EntitySet<Assignment> Assignments
-		{
-			get
-			{
-				return this._Assignments;
-			}
-			set
-			{
-				this._Assignments.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_TaskLog", Storage="_TaskLogs", ThisKey="TaskID", OtherKey="TaskID")]
-		public EntitySet<TaskLog> TaskLogs
-		{
-			get
-			{
-				return this._TaskLogs;
-			}
-			set
-			{
-				this._TaskLogs.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Task", Storage="_Tasks", ThisKey="TaskID", OtherKey="ParentTaskID")]
-		public EntitySet<Task> Tasks
-		{
-			get
-			{
-				return this._Tasks;
-			}
-			set
-			{
-				this._Tasks.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Task", Storage="_Member", ThisKey="AssignedTo", OtherKey="MemberID", IsForeignKey=true)]
-		public Member Member
-		{
-			get
-			{
-				return this._Member.Entity;
-			}
-			set
-			{
-				Member previousValue = this._Member.Entity;
-				if (((previousValue != value) 
-							|| (this._Member.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Member.Entity = null;
-						previousValue.Tasks.Remove(this);
-					}
-					this._Member.Entity = value;
-					if ((value != null))
-					{
-						value.Tasks.Add(this);
-						this._AssignedTo = value.MemberID;
-					}
-					else
-					{
-						this._AssignedTo = default(string);
-					}
-					this.SendPropertyChanged("Member");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_Task", Storage="_Task1", ThisKey="ParentTaskID", OtherKey="TaskID", IsForeignKey=true)]
-		public Task Task1
-		{
-			get
-			{
-				return this._Task1.Entity;
-			}
-			set
-			{
-				Task previousValue = this._Task1.Entity;
-				if (((previousValue != value) 
-							|| (this._Task1.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Task1.Entity = null;
-						previousValue.Tasks.Remove(this);
-					}
-					this._Task1.Entity = value;
-					if ((value != null))
-					{
-						value.Tasks.Add(this);
-						this._ParentTaskID = value.TaskID;
-					}
-					else
-					{
-						this._ParentTaskID = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Task1");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Task", Storage="_Project", ThisKey="ProjectID", OtherKey="ProjectID", IsForeignKey=true)]
-		public Project Project
-		{
-			get
-			{
-				return this._Project.Entity;
-			}
-			set
-			{
-				Project previousValue = this._Project.Entity;
-				if (((previousValue != value) 
-							|| (this._Project.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Project.Entity = null;
-						previousValue.Tasks.Remove(this);
-					}
-					this._Project.Entity = value;
-					if ((value != null))
-					{
-						value.Tasks.Add(this);
-						this._ProjectID = value.ProjectID;
-					}
-					else
-					{
-						this._ProjectID = default(string);
-					}
-					this.SendPropertyChanged("Project");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_Assignments(Assignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Task = this;
-		}
-		
-		private void detach_Assignments(Assignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Task = null;
-		}
-		
-		private void attach_TaskLogs(TaskLog entity)
-		{
-			this.SendPropertyChanging();
-			entity.Task = this;
-		}
-		
-		private void detach_TaskLogs(TaskLog entity)
-		{
-			this.SendPropertyChanging();
-			entity.Task = null;
-		}
-		
-		private void attach_Tasks(Task entity)
-		{
-			this.SendPropertyChanging();
-			entity.Task1 = this;
-		}
-		
-		private void detach_Tasks(Task entity)
-		{
-			this.SendPropertyChanging();
-			entity.Task1 = null;
 		}
 	}
 }
