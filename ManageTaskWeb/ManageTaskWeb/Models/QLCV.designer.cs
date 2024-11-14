@@ -51,6 +51,7 @@ namespace ManageTaskWeb.Models
     partial void InsertTask(Task instance);
     partial void UpdateTask(Task instance);
     partial void DeleteTask(Task instance);
+
 		#endregion
 
 		public QLCVDataContext() :
@@ -67,6 +68,7 @@ namespace ManageTaskWeb.Models
 		}
 		
 		public QLCVDataContext(System.Data.IDbConnection connection) : 
+
 				base(connection, mappingSource)
 		{
 			OnCreated();

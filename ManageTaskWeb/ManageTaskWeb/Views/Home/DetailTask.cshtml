@@ -1,0 +1,943 @@
+﻿@{
+    ViewBag.Title = "DetailTask";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Comfortaa', sans-serif;
+        background-color: #f7f7f7;
+    }
+
+
+
+    .breadcrumb {
+        font-size: 14px;
+        color: #888;
+        margin: 20px 30px;
+    }
+
+    .title {
+        font-size: 22px;
+        color: #d90000;
+        font-weight: bold;
+        margin-bottom: 15px;
+        line-height: 1.2;
+    }
+
+    .task-info {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .attachment-section {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+    .attachment-icon {
+        width: 60px;
+        height: 60px;
+        margin-right: 10px;
+    }
+
+    .attachment-details {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .progress-bar {
+        width: 100%;
+        background-color: #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 15px 0;
+    }
+
+        .progress-bar .progress {
+            height: 12px;
+            background-color: #4caf50;
+            width: 50%;
+        }
+
+    .status {
+        font-size: 16px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+    }
+
+        .status span {
+            font-weight: bold;
+            background-color: #f5d47d;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #333;
+            margin-left: 10px;
+        }
+
+    .assigned-users, .creator {
+        margin-top: 20px;
+    }
+
+        .assigned-users p, .creator p {
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+    .user {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+        .user img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+    .user-name {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .task-controls {
+        display: flex;
+        flex-direction: column; /* Arrange buttons in a vertical column */
+        align-items: center; /* Center buttons horizontally */
+        gap: 10px; /* Space between buttons */
+    }
+
+
+
+    .btn-discuss {
+        background-color: white;
+        color: black;
+        border: 1px solid #007bff; /* Blue border */
+    }
+
+        .btn-discuss img {
+            filter: invert(34%) sepia(50%) saturate(2866%) hue-rotate(188deg) brightness(95%) contrast(104%);
+        }
+
+    .btn-edit {
+        background-color: #add8e6; /* Light blue */
+        color: black;
+    }
+
+        .btn-edit img {
+            filter: invert(21%) sepia(74%) saturate(626%) hue-rotate(155deg) brightness(92%) contrast(91%);
+        }
+
+    .btn-delete {
+        background-color: #f8d7da; /* Light red */
+        color: black;
+    }
+
+        .btn-delete img {
+            filter: invert(17%) sepia(73%) saturate(3000%) hue-rotate(336deg) brightness(98%) contrast(98%);
+        }
+
+    .task-controls button:hover {
+        transform: translateY(-2px); /* Slightly lift the button on hover */
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    }
+
+    .task-controls {
+        display: flex;
+        flex-direction: column; /* Arrange buttons in a vertical column */
+        align-items: center; /* Center buttons horizontally */
+        gap: 10px; /* Space between buttons */
+    }
+
+        .task-controls button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Space out text and icon */
+            width: 250px; /* Set button width */
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid transparent;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px
+        }
+
+            .task-controls button img {
+                margin-left: auto; /* Push icon to the right side */
+            }
+
+    .btn-discuss {
+        background-color: white;
+        color: black;
+        border: 1px solid #007bff; /* Blue border */
+    }
+
+        .btn-discuss img {
+            filter: invert(34%) sepia(50%) saturate(2866%) hue-rotate(188deg) brightness(95%) contrast(104%);
+        }
+
+    .btn-edit {
+        background-color: #add8e6; /* Light blue */
+        color: black;
+    }
+
+        .btn-edit img {
+            filter: invert(21%) sepia(74%) saturate(626%) hue-rotate(155deg) brightness(92%) contrast(91%);
+        }
+
+    .btn-delete {
+        background-color: #f8d7da; /* Light red */
+        color: black;
+    }
+
+        .btn-delete img {
+            filter: invert(17%) sepia(73%) saturate(3000%) hue-rotate(336deg) brightness(98%) contrast(98%);
+        }
+
+    .task-controls button:hover {
+        transform: translateY(-2px); /* Slightly lift the button on hover */
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    }
+
+    .arrow-right {
+        display: inline-block; /* Keeps the div inline */
+        width: 10px;
+        height: 10px;
+        border: 2px solid #1E3A8A; /* Dark blue color */
+        border-left: none;
+        border-top: none;
+        transform: rotate(45deg);
+        margin: 2px 15px 2px 15px; /* Adjust as needed */
+    }
+
+    .container {
+        display: flex;
+        gap: 40px; /* Adds space between columns */
+        width: 90%%;
+        height: 90%;
+        margin: 30px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .left-container {
+        flex: 2;
+        padding-right: 20px;
+        border-right: 1px solid #ddd;
+    }
+
+    .right-container {
+        flex: 1;
+        padding-left: 20px;
+    }
+
+    .task-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+    }
+
+    .task-icon {
+        font-size: 24px;
+        color: green;
+        margin-right: 10px;
+    }
+
+    .task-details {
+        flex: 1;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .delete-icon {
+        color: #f44336;
+        font-size: 18px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .input-section {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+    }
+
+        .input-section i {
+            color: #888;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+    .input-field {
+        flex: 1;
+        border: none;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .send-icon {
+        font-size: 20px;
+        color: #3b82f6;
+        cursor: pointer;
+    }
+
+    .footer-task {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: #333;
+        cursor: pointer;
+    }
+
+        .footer-task i {
+            margin-left: 5px;
+        }
+
+        .footer-task:hover {
+            color: #007bff;
+        }
+
+    hr {
+        margin-top: 20px;
+        border: none;
+        border-top: 1px solid #ddd;
+    }
+
+    .date-container {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #666;
+        font-family: Arial, sans-serif;
+    }
+
+    .date-text {
+        margin-right: 10px;
+        line-height: 1.5;
+    }
+
+    .double-arrow {
+        color: red;
+        font-size: 25px;
+    }
+
+
+
+
+
+
+
+
+
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5); /* Màu nền bán trong suốt */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999; /* Đảm bảo lớp phủ nằm trên tất cả các phần tử khác */
+        visibility: hidden
+    }
+
+    .blind-container-1 {
+        width: 70%;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000; /* Đảm bảo hộp container nằm trên overlay */
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+        padding: 10px 50px 10px 50px;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .member-section {
+        display: flex;
+        gap: 20px;
+    }
+
+    .panel {
+        flex: 1;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        background: #fafafa;
+    }
+
+        .panel h3 {
+            color: #2d5c89;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+
+        .search-bar input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-bar button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+        }
+
+    .toggle-switch {
+        position: relative;
+        width: 40px;
+        height: 20px;
+    }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-switch label {
+            width: 100%;
+            height: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            display: block;
+            cursor: pointer;
+            position: relative;
+        }
+
+            .toggle-switch label::after {
+                content: "";
+                width: 18px;
+                height: 18px;
+                background-color: #ffffff;
+                border-radius: 50%;
+                position: absolute;
+                top: 1px;
+                left: 1px;
+                transition: 0.3s;
+            }
+
+        .toggle-switch input:checked + label::after {
+            left: 20px;
+        }
+
+    .member-list {
+        list-style: none;
+        margin-bottom: 10px;
+    }
+
+        .member-list li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .avatar-green {
+        background-color: #9bc47d;
+    }
+
+    .avatar-orange {
+        background-color: #f5a623;
+    }
+
+    .avatar-blue {
+        background-color: #4a90e2;
+    }
+
+    .avatar-yellow {
+        background-color: #ffd700;
+    }
+
+    .info {
+        flex: 1;
+    }
+
+        .info p {
+            font-weight: bold;
+            color: #333;
+        }
+
+    .role {
+        font-size: 0.9em;
+        color: #4a90e2;
+    }
+
+        .role.project-manager {
+            color: #e74c3c;
+        }
+
+    .add-button {
+        font-size: 18px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #2d5c89;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+        .pagination button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
+            .pagination button.active {
+                background-color: #2d5c89;
+                color: #ffffff;
+            }
+</style>
+<div class="breadcrumb">
+    <span>Home</span> <div class="arrow-right"></div>
+    <span>Tasks</span> <div class="arrow-right"></div>
+    <span>ToDoList</span>
+</div>
+<div class="container">
+    <div div="left-container">
+        <div class="title">
+            Thiết kế câu hỏi cho thực tập sinh và giảng viên trường HUIT
+            &nbsp;&nbsp;
+            <div class="date-container" style="float:right">
+                <div class="date-text">
+                    <p>Start: 10:20 31/10/2022</p>
+                    <p>End: 10:20 01/11/2022</p>
+                </div>
+                <div class="double-arrow">
+                    <i class="fas fa-angle-double-up"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-info">
+            <p>Mã dự án cho: Câu hỏi thực tập sinh</p>
+            <p>- Thiết kế câu hỏi cho thực tập sinh<br>- Thực tập sinh: Xem câu hỏi, đưa câu hỏi, xem câu trả lời, xóa câu trả lời, hiện thị danh sách câu hỏi / trả lời<br>- Admin: Đăng nhập, xem câu hỏi, thêm câu hỏi, xóa câu trả lời, xóa câu trả lời</p>
+        </div>
+
+        <div class="attachment-section">
+            <img src="word-icon.png" alt="Word Document" class="attachment-icon">
+            <div class="attachment-details">
+                <p><strong>Tệp Đính Kèm:</strong> Mô tả dự án cho: Câu hỏi thực tập sinh</p>
+                <p>2.9 MB</p>
+            </div>
+        </div>
+        <div>1/2 Require Remaining</div>
+        <div class="progress-bar">
+            <div class="progress" style="width: 50%;"></div>
+        </div>
+
+
+        <!-- Task List Section -->
+        <div class="task-container">
+            <i class="fas fa-check task-icon"></i>
+            <div class="task-details">Thiết kế câu hỏi cho thực tập sinh</div>
+            <i class="fas fa-times delete-icon"></i>
+        </div>
+
+        <div class="task-container">
+            <i class="fas fa-square task-icon" style="color: #b0b0b0;"></i>
+            <div class="task-details">Chức năng Admin: Đăng nhập, xem câu hỏi, câu trả lời, xóa câu trả lời</div>
+            <i class="fas fa-times delete-icon"></i>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <i class="fas fa-clipboard-list"></i>
+            <input type="text" class="input-field" placeholder="Create Requirement .....">
+            <i class="fas fa-paper-plane send-icon"></i>
+        </div>
+
+        <!-- Footer Section -->
+        <hr>
+        <div class="footer-task">
+            Turn Back
+            <i class="fas fa-undo-alt"></i>
+        </div>
+    </div>
+
+    <div class="right-container">
+        <div class="status">
+            Status: <span>IN PROGRESS</span>
+        </div>
+
+        <div class="assigned-users">
+            <p><strong>Người Làm</strong></p>
+            <div class="user"><img src="user1.png" alt="User"><span class="user-name">Phạm Nguyễn Vũ - Project Manager</span></div>
+            <div class="user"><img src="user2.png" alt="User"><span class="user-name">Nguyễn Nhật Quân - Developer</span></div>
+            <div class="user"><img src="user3.png" alt="User"><span class="user-name">Nguyễn Nhật Bảo - Developer</span></div>
+        </div>
+
+        <div class="creator">
+            <p><strong>Người Tạo</strong></p>
+            <div class="user"><img src="user1.png" alt="User"><span class="user-name">Phạm Nguyễn Vũ - Project Manager</span></div>
+        </div>
+
+        <div class="task-controls">
+            <button class="btn-discuss">
+                Thảo Luận <img src="discuss-icon.png" alt="Discuss">
+            </button>
+            <button class="btn-edit">
+                Edit Task <img src="edit-icon.png" alt="Edit">
+            </button>
+            <button class="btn-delete">
+                Delete Task <img src="delete-icon.png" alt="Delete">
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="overlay">
+    <div class="blind-container-1">
+        <h2>Add Members To Project</h2>
+        <div class="close-button">✕</div>
+        <div class="member-section">
+            <!-- Members List -->
+            <div class="panel">
+                <h3>Members</h3>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search Name Members...">
+                    <button>🔍</button>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="toggle-members">
+                        <label for="toggle-members"></label>
+                    </div>
+                </div>
+                <ul class="member-list">
+                    <li>
+                        <div class="avatar avatar-green"></div>
+                        <div class="info">
+                            <p>Nguyễn Nhật Quân</p>
+                            <span class="role">Developer</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-orange"></div>
+                        <div class="info">
+                            <p>Huỳnh Bảo Ngọc</p>
+                            <span class="role">Developer</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-blue"></div>
+                        <div class="info">
+                            <p>Trần Phương Uyên</p>
+                            <span class="role">Tester</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-yellow"></div>
+                        <div class="info">
+                            <p>Đỗ Lan Hương</p>
+                            <span class="role">Developer</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button>◀</button>
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>▶</button>
+                </div>
+            </div>
+
+            <!-- Members In Project -->
+            <div class="panel">
+                <h3>Members In Project</h3>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search Name Members...">
+                    <button>🔍</button>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="toggle-project-members">
+                        <label for="toggle-project-members"></label>
+                    </div>
+                </div>
+                <ul class="member-list">
+                    <li>
+                        <div class="avatar avatar-yellow"></div>
+                        <div class="info">
+                            <p>Phạm Nguyên Vũ</p>
+                            <span class="role project-manager">Project Manager</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-orange"></div>
+                        <div class="info">
+                            <p>Trương Minh Trang</p>
+                            <span class="role">Developer</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-blue"></div>
+                        <div class="info">
+                            <p>Trần Phương Lan</p>
+                            <span class="role">Tester</span>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button>◀</button>
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>▶</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .overlay-2 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .container-blind-2 {
+        width: 600px;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #2d5c89;
+        margin-bottom: 20px;
+    }
+
+    .icon {
+        font-size: 24px;
+        vertical-align: middle;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .request-list {
+        list-style: none;
+        margin-bottom: 20px;
+    }
+
+        .request-list li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .avatar-green {
+        background-color: #9bc47d;
+    }
+
+    .avatar-orange {
+        background-color: #f5a623;
+    }
+
+    .avatar-blue {
+        background-color: #4a90e2;
+    }
+
+    .avatar-yellow {
+        background-color: #ffd700;
+    }
+
+    .info {
+        flex: 1;
+    }
+
+        .info p {
+            font-weight: bold;
+            color: #333;
+        }
+
+    .role {
+        font-size: 0.9em;
+        color: #4a90e2;
+    }
+
+    .accept-button,
+    .reject-button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.9em;
+        color: #fff;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .accept-button {
+        background-color: #4CAF50; /* Màu xanh lá */
+    }
+
+    .reject-button {
+        background-color: #E57373; /* Màu đỏ nhạt */
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+        .pagination button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+            .pagination button.active {
+                background-color: #2d5c89;
+                color: #ffffff;
+            }
+</style>
+
+<div class="overlay-2">
+    <div class="container-blind-2">
+        <h2>Request <span class="icon">📄</span></h2>
+        <div class="close-button">✕</div>
+        <ul class="request-list">
+            <li>
+                <div class="avatar avatar-green"></div>
+                <div class="info">
+                    <p>Nguyễn Nhật Quân</p>
+                    <span class="role">Developer</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+            <li>
+                <div class="avatar avatar-orange"></div>
+                <div class="info">
+                    <p>Huỳnh Bảo Ngọc</p>
+                    <span class="role">Developer</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+            <li>
+                <div class="avatar avatar-blue"></div>
+                <div class="info">
+                    <p>Trần Phương Uyên</p>
+                    <span class="role">Tester</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+            <li>
+                <div class="avatar avatar-yellow"></div>
+                <div class="info">
+                    <p>Đỗ Lan Hương</p>
+                    <span class="role">Developer</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+        </ul>
+        <div class="pagination">
+            <button>◀</button>
+            <button>1</button>
+            <button>2</button>
+            <button class="active">3</button>
+            <button>4</button>
+            <button>5</button>
+            <button>▶</button>
+        </div>
+    </div>
+</div>
+</body>
