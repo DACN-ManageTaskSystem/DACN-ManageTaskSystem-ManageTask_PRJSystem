@@ -22,69 +22,166 @@
 
         /* Header styles */
         nav {
+            width: 100%;
+            height: 60px;
+            background-color: #333;
+            color: #fff;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            background-color: #fff;
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            position: fixed; /* Fixes the navbar at the top */
+            top: 0; /* Aligns the navbar to the top of the page */
+            left: 0;
+            z-index: 1000; /* Ensures navbar is on top */
         }
 
-        /* Logo styles */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-            .logo img {
-                width: 40px;
+            nav .logo img {
                 height: 40px;
             }
 
-        /* Menu styles */
-        nav .menu {
-            display: flex;
-            gap: 40px; /* Tăng khoảng cách giữa các mục menu */
-        }
-
-            nav .menu a {
+            nav .menu a,
+            nav .icons a {
+                color: #fff;
                 text-decoration: none;
-                color: #333;
+                margin: 0 10px;
                 font-size: 18px;
+            }
+
+                nav .menu a:hover,
+                nav .icons a:hover {
+                    color: #ddd;
+                }
+
+            nav .icons {
                 display: flex;
                 align-items: center;
-                gap: 8px; /* Khoảng cách giữa icon và text */
             }
 
-            nav .menu i {
-                font-size: 20px; /* Icon size */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+            .dropdown .dropdown-toggle {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
             }
 
-        /* Icon and avatar section */
-        nav .icons {
+                .dropdown .dropdown-toggle img {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    margin-right: 8px;
+                }
+
+            .dropdown .dropdown-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background-color: #444;
+                border-radius: 4px;
+                padding: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                z-index: 1001;
+            }
+
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+
+            .dropdown .dropdown-menu a {
+                color: #fff;
+                text-decoration: none;
+                display: block;
+                padding: 8px 0;
+            }
+
+                .dropdown .dropdown-menu a:hover {
+                    color: #ddd;
+                }
+         /*Notification*/
+        .notification-container {
+            width: 350px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: fixed; /* Để cố định vị trí */
+            top: 60px; /* Cách 20px từ trên xuống */
+            right: 0px; /* Cách 20px từ bên phải */
+            z-index: 1000; /* Đảm bảo hiển thị lên trên */
+            overflow-y: auto; /* Bật thanh cuộn dọc */
+            height: 100vh;
+        }
+        .notification-container::-webkit-scrollbar {
+            width: 8px; /* Độ rộng của thanh cuộn */
+        }
+        .notification-container::-webkit-scrollbar-track {
+             background: #f1f1f1; /* Màu nền của đường dẫn thanh cuộn */
+             border-radius: 8px;
+        }
+            .notification-container::-webkit-scrollbar-thumb {
+                background-color: #888; /* Màu thanh cuộn */
+                border-radius: 8px;
+                border: 2px solid #f1f1f1; /* Khoảng cách giữa thanh cuộn và track */
+            }
+            .notification-container h1 {
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+        .notification {
             display: flex;
             align-items: center;
-            gap: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-            nav .icons a {
-                color: #333;
-                font-size: 24px;
-                text-decoration: none;
+            .notification:last-child {
+                border-bottom: none;
             }
 
-            nav .icons img {
+            .dot img {
                 width: 40px;
                 height: 40px;
-                border-radius: 50%;
+                border-radius: 50%; /* Đảm bảo ảnh sẽ tròn */
+                margin-right:20px
             }
-
-        /* Hover effects */
-        nav a:hover {
-            color: #007bff;
+        .content {
+            flex: 1;
         }
 
+        .title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #2196F3;
+            border-radius: 50%;
+        }
+
+
+        .notification-button {
+            cursor: pointer;
+            font-size: 18px;
+            padding: 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
         /* Nút quay lại đầu trang */
         #scrollToTopBtn {
             position: fixed;
@@ -131,7 +228,7 @@
             </div>
 
             <div class="icons">
-                <a href="#"><i class="fas fa-bell"></i></a>
+                <a class="notification-button" onclick="toggleNotifications()"><i class="fas fa-bell"></i></a>
                 <a href="#"><i class="fas fa-cog"></i></a>
 
                 <!-- User Avatar & Dropdown Menu -->
@@ -157,11 +254,82 @@
                         <a href="/Home/DangNhap" style="font-size: 18px;">Login</a>
                     }
                 </div>
-
-
-
             </div>
         </nav>
+
+        <div class="notification-container" id="notificationContainer">
+            <h1>Notifications</h1>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Task #12 Còn 1 nửa là hết hạn</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Thành Viên: Nguyễn Nhật Quân đã tham gia dự án HUIT</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Thành Viên: Nguyễn Nhật Quân đã tham gia dự án HUIT</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -174,7 +342,7 @@
         <i class="fas fa-chevron-up"></i>
     </div>
 
-    @*Footer
+
         <footer>
             <div class="column">
                 <h3>E-Comm</h3>
@@ -211,7 +379,7 @@
                 <h3>Contact Us</h3>
                 <p>E-Comm, 4578 Marmora Road, Glasgow D04 89GR</p>
             </div>
-        </footer>*@
+        </footer>*
 
 
 
@@ -241,6 +409,26 @@
                 scrollToTopBtn.style.display = 'none';
             }
         });
+
+        // Hàm bật/tắt hiển thị notification container
+        function toggleNotifications() {
+            const notificationContainer = document.getElementById('notificationContainer');
+            notificationContainer.style.display =
+                notificationContainer.style.display === 'none' || notificationContainer.style.display === ''
+                    ? 'block'
+                    : 'none';
+        }
+
+        // Đóng notification container khi bấm ngoài khu vực thông báo
+        window.addEventListener('click', function (event) {
+            const notificationContainer = document.getElementById('notificationContainer');
+            const notificationButton = document.querySelector('.notification-button');
+
+            if (!notificationContainer.contains(event.target) && !notificationButton.contains(event.target)) {
+                notificationContainer.style.display = 'none';
+            }
+        });
+
     </script>
 
 </body>
