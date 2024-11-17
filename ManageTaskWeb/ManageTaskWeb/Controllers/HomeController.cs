@@ -304,5 +304,9 @@ namespace ManageTaskWeb.Controllers
             };
             return View(viewModel);
         }
+        public ActionResult DSMember()
+        {
+            return View();
+        }
     }
 }

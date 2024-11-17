@@ -258,6 +258,7 @@
     <Content Include="Views\Home\MembersOfProject.cshtml" />
     <Content Include="Views\Home\GroupChat.cshtml" />
     <Content Include="Views\Home\DetailTask.cshtml" />
+    <Content Include="Views\Home\DSMember.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
