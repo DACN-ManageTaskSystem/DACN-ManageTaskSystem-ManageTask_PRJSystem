@@ -2,95 +2,68 @@
     ViewBag.Title = "MembersOfProject";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 @model List<ManageTaskWeb.Models.Member>
+<link href="@Url.Content("~/Content/css/membersofproject.css?v=1")" rel="stylesheet" />
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project For HUIT University</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="memberofproject.css">
-</head>
-<body>
-    <div class="memberofproject-header">
-        <div class="logo"></div>
-        <nav>
-            <a href="#">Projects</a>
-            <a href="#">Task</a>
-            <a href="#">Members</a>
-            <a href="#">Need Help ?</a>
-        </nav>
-        <div class="profile">
-            <img src="/api/placeholder/40/40" alt="Profile" />
-            <div class="icons">
-                <i class="fas fa-bell"></i>
-                <i class="fas fa-cog"></i>
+<div class="memberofproject-breadcrumb">
+    <a href="#">Home</a>
+    <span>></span>
+    <a href="#">Project</a>
+    <span>></span>
+    <a href="#">Members of Project</a>
+</div>
+
+<div class="memberofproject-content">
+    <div class="memberofproject-project-section">
+        <div class="memberofproject-project-info">
+            <h1>Project For HUIT University</h1>
+            <div class="project-description">
+                <p>Mô tả dự án cho: Câu hỏi thực tập sinh</p>
+                <p>- Thiết kế câu hỏi cho thực tập sinh</p>
+                <p>- Thực tập sinh: Xem câu hỏi, đưa câu hỏi, xem câu trả lời, xóa câu hỏi, hiển thị danh sách câu hỏi trả lời</p>
+                <p>- Admin: Đăng nhập, xem câu hỏi, thêm câu trả lời, xóa câu trả lời, hiển thị danh sách câu hỏi trả lời</p>
+            </div>
+        </div>
+
+        <div class="memberofproject-owner-status">
+            <div class="memberofproject-owner-info">
+                <img src="/api/placeholder/50/50" alt="Owner" />
+                <div class="memberofproject-owner-details">
+                    <div class="name">Phạm Nguyên Vũ (Owner)</div>
+                    <div class="date">Create at: 11/10/2024</div>
+                </div>
+            </div>
+            <div class="memberofproject-status-section">
+                <div class="memberofproject-status-label">Status</div>
+                <button class="memberofproject-status-button">DONE</button>
             </div>
         </div>
     </div>
 
-    <div class="memberofproject-breadcrumb">
-        <a href="#">Home</a>
-        <span>></span>
-        <a href="#">Project</a>
-        <span>></span>
-        <a href="#">Members of Project</a>
+    <div class="memberofproject-toolbar">
+        <button class="memberofproject-add-member-btn">
+            <span>+</span> Thêm Thành Viên Mới
+        </button>
+        <div class="memberofproject-search-bar">
+            <input type="text" placeholder="Tìm kiếm theo mã hoặc tên" />
+            <i class="fas fa-search"></i>
+        </div>
     </div>
 
-    <div class="memberofproject-content">
-        <div class="memberofproject-project-section">
-            <div class="memberofproject-project-info">
-                <h1>Project For HUIT University</h1>
-                <div class="project-description">
-                    <p>Mô tả dự án cho: Câu hỏi thực tập sinh</p>
-                    <p>- Thiết kế câu hỏi cho thực tập sinh</p>
-                    <p>- Thực tập sinh: Xem câu hỏi, đưa câu hỏi, xem câu trả lời, xóa câu hỏi, hiển thị danh sách câu hỏi trả lời</p>
-                    <p>- Admin: Đăng nhập, xem câu hỏi, thêm câu trả lời, xóa câu trả lời, hiển thị danh sách câu hỏi trả lời</p>
-                </div>
-            </div>
-
-            <div class="memberofproject-owner-status">
-                <div class="memberofproject-owner-info">
-                    <img src="/api/placeholder/50/50" alt="Owner" />
-                    <div class="memberofproject-owner-details">
-                        <div class="name">Phạm Nguyên Vũ (Owner)</div>
-                        <div class="date">Create at: 11/10/2024</div>
-                    </div>
-                </div>
-                <div class="memberofproject-status-section">
-                    <div class="memberofproject-status-label">Status</div>
-                    <button class="memberofproject-status-button">DONE</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="memberofproject-toolbar">
-            <button class="memberofproject-add-member-btn">
-                <span>+</span> Thêm Thành Viên Mới
-            </button>
-            <div class="memberofproject-search-bar">
-                <input type="text" placeholder="Tìm kiếm theo mã hoặc tên" />
-                <i class="fas fa-search"></i>
-            </div>
-        </div>
-      
-        <div class="memberofproject-members-container">
-            <div class="memberofproject-member-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Staff</th>
-                            <th>Create at</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                       @foreach (var member in Model)
-                      {
+    <div class="memberofproject-members-container">
+        <div class="memberofproject-member-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Staff</th>
+                        <th>Create at</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var member in Model)
+                    {
                         <tr>
                             <td>
                                 <div class="memberofproject-member-info">
@@ -102,41 +75,40 @@
                             <td><span class="memberofproject-status-badge status-active">@member.Status</span></td>
                             <td><button class="memberofproject-view-btn">View</button></td>
                         </tr>
-                      }
-                        <!-- More rows as necessary -->
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    <!-- More rows as necessary -->
+                </tbody>
+            </table>
+        </div>
 
-            <div class="memberofproject-member-details">
-                <img src="/api/placeholder/60/60" alt="Selected member" />
-                <div class="memberofproject-detail-row">
-                    <span class="memberofproject-detail-label">Username:</span>
-                    <span>Phạm Nguyên Vũ</span>
-                </div>
-                <div class="memberofproject-detail-row">
-                    <span class="memberofproject-detail-label">Email:</span>
-                    <span>pnv287@gmail.com</span>
-                </div>
-                <div class="memberofproject-detail-row">
-                    <span class="memberofproject-detail-label">Phone:</span>
-                    <span>0123456789</span>
-                </div>
-                <div class="memberofproject-detail-row">
-                    <span class="memberofproject-detail-label">Role:</span>
-                    <span>Staff</span>
-                </div>
-                <div class="memberofproject-detail-row">
-                    <span class="memberofproject-detail-label">Status:</span>
-                    <span>Normal</span>
-                </div>
-                <div class="memberofproject-action-buttons">
-                    <button class="memberofproject-action-btn memberofproject-btn-view">View detail</button>
-                    <button class="memberofproject-action-btn memberofproject-btn-edit">Edit</button>
-                    <button class="memberofproject-action-btn memberofproject-btn-delete">Delete</button>
-                </div>
+        <div class="memberofproject-member-details">
+            <img src="/api/placeholder/60/60" alt="Selected member" />
+            <div class="memberofproject-detail-row">
+                <span class="memberofproject-detail-label">Username:</span>
+                <span>Phạm Nguyên Vũ</span>
+            </div>
+            <div class="memberofproject-detail-row">
+                <span class="memberofproject-detail-label">Email:</span>
+                <span>pnv287@gmail.com</span>
+            </div>
+            <div class="memberofproject-detail-row">
+                <span class="memberofproject-detail-label">Phone:</span>
+                <span>0123456789</span>
+            </div>
+            <div class="memberofproject-detail-row">
+                <span class="memberofproject-detail-label">Role:</span>
+                <span>Staff</span>
+            </div>
+            <div class="memberofproject-detail-row">
+                <span class="memberofproject-detail-label">Status:</span>
+                <span>Normal</span>
+            </div>
+            <div class="memberofproject-action-buttons">
+                <button class="memberofproject-action-btn memberofproject-btn-view">View detail</button>
+                <button class="memberofproject-action-btn memberofproject-btn-edit">Edit</button>
+                <button class="memberofproject-action-btn memberofproject-btn-delete">Delete</button>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+

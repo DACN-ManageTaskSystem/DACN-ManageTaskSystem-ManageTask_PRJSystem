@@ -1,0 +1,204 @@
+﻿@{
+    ViewBag.Title = "Danh Sách Thành Viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<ManageTaskWeb.Models.Members>
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Danh Sách Thành Viên</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif;
+                background-color: #f9f9f9;
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+                .header h1 {
+                    font-size: 24px;
+                    color: #333;
+                }
+
+                .header button {
+                    background-color: #007bff;
+                    color: white;
+                    border: none;
+                    padding: 10px 15px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+
+                    .header button:hover {
+                        background-color: #0056b3;
+                    }
+
+            .search-bar {
+                display: flex;
+                margin-bottom: 20px;
+            }
+
+                .search-bar input, .search-bar select {
+                    padding: 10px;
+                    margin-right: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    width: 30%;
+                }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+                table th, table td {
+                    padding: 12px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                }
+
+                table th {
+                    background-color: #f1f1f1;
+                }
+
+            .status-active {
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            .status-inactive {
+                color: #dc3545;
+                font-weight: bold;
+            }
+
+            .actions i {
+                margin: 0 5px;
+                cursor: pointer;
+            }
+
+                .actions i.edit {
+                    color: #007bff;
+                }
+
+                .actions i.delete {
+                    color: #dc3545;
+                }
+
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+                .pagination a {
+                    padding: 10px 15px;
+                    margin: 0 5px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    text-decoration: none;
+                    color: #007bff;
+                }
+
+                    .pagination a.active {
+                        background-color: #007bff;
+                        color: white;
+                    }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Danh Sách Thành Viên</h1>
+                <button onclick="location.href='/Member/Create'">+ Thêm Thành Viên</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Tìm kiếm theo tên hoặc email" />
+                <select>
+                    <option value="">Tất cả vai trò</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Manager">Manager</option>
+                    <option value="User">User</option>
+                </select>
+                <select>
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="true">Hoạt động</option>
+                    <option value="false">Không hoạt động</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Họ và Tên</th>
+                        <th>Email</th>
+                        <th>Điện Thoại</th>
+                        <th>Vai Trò</th>
+                        <th>Trạng Thái</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                    foreach (var member in Model)
+                    {
+                    <tr>
+                        <td>@member.MemberID</td>
+                        <td>@member.FullName</td>
+                        <td>@member.Email</td>
+                        <td>@member.Phone</td>
+                        <td>@member.Role</td>
+                        <td>@member.Status</td>
+                        @*
+                        <td>
+                            <span class="@((member.Status ? " status-active" : "status-inactive" ))">
+                                @(member.Status ? "Hoạt động" : "Không hoạt động")
+                            </span>
+                        </td>*@
+                        <td class="actions">
+                            <i class="fas fa-edit edit" onclick="location.href='/Member/Edit/@member.MemberID'"></i>
+                            <i class="fas fa-trash delete" onclick="confirm('Bạn có chắc muốn xóa thành viên này?') && location.href='/Member/Delete/@member.MemberID'"></i>
+                        </td>
+                    </tr>
+                    }
+                    }
+                    else
+                    {
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Không có thành viên nào</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="pagination">
+                <a href="#">1</a>
+                <a href="#">2</a>
+                <a class="active" href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+            </div>
+        </div>
+    </body>
+</html>
