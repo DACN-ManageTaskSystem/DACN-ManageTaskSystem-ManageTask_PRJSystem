@@ -95,40 +95,42 @@ namespace ManageTaskWeb.Controllers
                                    Priority = p.Priority,
                                    ImageProject = p.ImageProject,
                                    deleteTime = p.deleteTime,
-                                   MemberCount = data.Assignments
-                                                      .Where(a => a.ProjectID == p.ProjectID)
-                                                      .Select(a => a.AssignedTo)
+                                   MemberCount = data.ProjectMembers
+                                                      .Where(pm => pm.ProjectID == p.ProjectID)
+                                                      .Select(pm => pm.MemberID)
                                                       .Distinct()
                                                       .Count(),
-                                   
+
                                }).ToList();
             }
             else
             {
                 var memberId = Session["MemberID"]?.ToString();
-                projects = data.Assignments
-                               .Where(a => a.AssignedTo == memberId)
-                               .Select(a => a.Project)
-                               .Distinct()
-                               .Where(p => p.deleteTime == null)  
-                               .Select(p => new ProjectExtended
-                               {
-                                   ProjectID = p.ProjectID,
-                                   ProjectName = p.ProjectName,
-                                   StartDate = p.StartDate,
-                                   EndDate = p.EndDate,
-                                   Status = p.Status,
-                                   Priority = p.Priority,
-                                   ImageProject = p.ImageProject,
-                                   MemberCount = data.Assignments
-                                                      .Where(a => a.ProjectID == p.ProjectID)
-                                                      .Select(a => a.AssignedTo)
-                                                      .Distinct()
-                                                      .Count(),
-                               }).ToList();
+
+                projects = data.ProjectMembers
+                                .Where(pm => pm.MemberID == memberId)
+                                .Select(pm => pm.Project)
+                                .Distinct()
+                                .Where(p => p.deleteTime == null)
+                                .Select(p => new ProjectExtended
+                                {
+                                    ProjectID = p.ProjectID,
+                                    ProjectName = p.ProjectName,
+                                    StartDate = p.StartDate,
+                                    EndDate = p.EndDate,
+                                    Status = p.Status,
+                                    Priority = p.Priority,
+                                    ImageProject = p.ImageProject,
+                                    MemberCount = data.ProjectMembers
+                                                       .Where(pm => pm.ProjectID == p.ProjectID)
+                                                       .Select(pm => pm.MemberID)
+                                                       .Distinct()
+                                                       .Count(),
+                                }).ToList();
+
             }
 
-            // Kiểm tra nếu projects vẫn là null hoặc rỗng, gán giá trị mặc định là danh sách rỗng
+            //// Kiểm tra nếu projects vẫn là null hoặc rỗng, gán giá trị mặc định là danh sách rỗng
             if (projects == null)
             {
                 projects = new List<ProjectExtended>();
@@ -204,15 +206,14 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
-        
+
         //Danh sach Member trong Project
         public ActionResult MembersOfProject(string projectId)
         {
-            var members = data.Assignments
-                             .Where(a => a.ProjectID == projectId)
-                             .Select(a => a.Member)
-                             .GroupBy(m => m.MemberID) // Nhóm theo MemberID để loại bỏ trùng lặp
-                             .Select(g => g.First()) // Lấy bản ghi đầu tiên trong mỗi nhóm
+            var members = data.ProjectMembers
+                             .Where(pm => pm.ProjectID == projectId)
+                             .Select(pm => pm.Member)
+                             .Distinct()
                              .ToList();
 
             return View(members);
@@ -229,7 +230,7 @@ namespace ManageTaskWeb.Controllers
             var role = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
 
-            // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
+            //    // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
             if (role == "Manager" || role == "Admin")
             {
                 // Nếu là Manager hoặc Admin, lấy tất cả task của dự án
@@ -240,8 +241,9 @@ namespace ManageTaskWeb.Controllers
             {
                 // Nếu là các role khác, chỉ lấy task mà người dùng tham gia
                 var tasks = data.Tasks
-                                .Where(t => t.ProjectID == projectId && t.AssignedTo == memberId)
-                                .ToList();
+                               .Where(t => t.ProjectID == projectId && data.TaskAssignments
+                                                                     .Any(ta => ta.TaskID == t.TaskID && ta.MemberID == memberId))
+                               .ToList();
                 return View(tasks);
             }
 
@@ -275,9 +277,9 @@ namespace ManageTaskWeb.Controllers
             int totalPages = (int)Math.Ceiling((double)totalChatCount / pageSize);
 
             // Lấy danh sách thành viên của project
-            var members = data.Assignments
-                 .Where(a => a.ProjectID == projectId)
-                 .Select(a => a.Member)
+            var members = data.ProjectMembers
+                 .Where(pm => pm.ProjectID == projectId)
+                 .Select(pm => pm.Member)
                  .Distinct()
                  .Select(m => new MemberViewModel
                  {
@@ -304,9 +306,63 @@ namespace ManageTaskWeb.Controllers
             };
             return View(viewModel);
         }
+
+
         public ActionResult DSMember()
         {
-            return View();
+            var role = Session["Role"]?.ToString();
+            var memberId = Session["MemberID"]?.ToString();
+            List<Members> members;
+
+            // Kiểm tra quyền truy cập
+            if (role == "Manager" || role == "Admin")
+            {
+                // Quản lý hoặc Admin có thể thấy toàn bộ danh sách members
+                members = data.Members
+                              .Where(m => m.deleteTime == null) // Lọc bỏ những người đã xóa
+                              .Select(m => new Members
+                              {
+                                  MemberID = m.MemberID,
+                                  FullName = m.FullName,
+                                  Email = m.Email,
+                                  Phone = m.Phone,
+                                  Role = m.Role,
+                                  Status = m.Status,
+                                  MemberCount = data.TaskAssignments
+                                                     .Where(a => a.MemberID == m.MemberID)
+                                                     .Select(a => a.TaskID)
+                                                     .Distinct()
+                                                     .Count()
+                              })
+                              .ToList();
+            }
+            else
+            {
+                // Thành viên chỉ thấy các thành viên cùng tham gia dự án với họ
+                members = data.TaskAssignments
+                              .Where(a => a.AssignedBy == memberId && a.Member.deleteTime == null)
+                              .Select(a => a.Member)
+                              .Distinct()
+                              .Select(m => new Members
+                              {
+                                  MemberID = m.MemberID,
+                                  FullName = m.FullName,
+                                  Email = m.Email,
+                                  Phone = m.Phone,
+                                  Role = m.Role,
+                                  Status = m.Status,
+                                  MemberCount = data.TaskAssignments
+                                                     .Where(a => a.MemberID == m.MemberID)
+                                                     .Select(a => a.TaskID)
+                                                     .Distinct()
+                                                     .Count()
+                              })
+                              .ToList();
+            }
+
+            return View(members);
         }
+
+
     }
 }
