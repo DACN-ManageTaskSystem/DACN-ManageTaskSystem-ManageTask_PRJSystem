@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="Models\GroupChatViewModel.cs" />
     <Compile Include="Models\MemberDTO.cs" />
+    <Compile Include="Models\Members.cs" />
     <Compile Include="Models\MemberViewModel.cs" />
     <Compile Include="Models\ProjectExtended.cs" />
     <Compile Include="Models\QLCV.designer.cs">
