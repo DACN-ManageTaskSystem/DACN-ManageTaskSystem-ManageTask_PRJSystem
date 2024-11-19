@@ -134,6 +134,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\GroupChatViewModel.cs" />
+    <Compile Include="Models\MemberDTO.cs" />
+    <Compile Include="Models\Members.cs" />
     <Compile Include="Models\MemberViewModel.cs" />
     <Compile Include="Models\ProjectExtended.cs" />
     <Compile Include="Models\QLCV.designer.cs">
@@ -155,6 +157,7 @@
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\member-img\jane_smith.jpg" />
     <Content Include="Content\images\member-img\john_doe.jpg" />
+    <Content Include="Content\images\member-img\michael_brown.jpg" />
     <Content Include="Content\images\project-img\alpha_image.jpg" />
     <Content Include="Content\images\project-img\beta_image.jpg" />
     <Content Include="Content\images\project-img\gamma_image.jpg" />

@@ -20,7 +20,38 @@
                 <div class="university-logo">
                     <img src="~/Content/images/project-img/@Model.Project.ImageProject" alt="University logo">
                     <div>
-                        <p>Piority: @Model.Project.Priority</p>
+                        <p>
+                            Priority:
+                            @{
+                                string priorityText;
+                                if (Model.Project.Priority == 1)
+                                {
+                                    priorityText = "Highest";
+                                }
+                                else if (Model.Project.Priority == 2)
+                                {
+                                    priorityText = "High";
+                                }
+                                else if (Model.Project.Priority == 3)
+                                {
+                                    priorityText = "Medium";
+                                }
+                                else if (Model.Project.Priority == 4)
+                                {
+                                    priorityText = "Low";
+                                }
+                                else if (Model.Project.Priority == 5)
+                                {
+                                    priorityText = "Lowest";
+                                }
+                                else
+                                {
+                                    priorityText = "Unknown";
+                                }
+                            }
+                            @priorityText
+                        </p>
+
                         <p>Start: @(Model.Project.StartDate.HasValue ? Model.Project.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                         <p>End: @(Model.Project.EndDate.HasValue ? Model.Project.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
 
@@ -35,23 +66,86 @@
 
         <div class="activity">
             <h2>Activity</h2>
-            <div class="comment-box">
-                <input type="text" placeholder="Say Something.....">
-                <button><i class="fas fa-paper-plane"></i></button>
-            </div>
+            <p class="total-chat-count">Total chats: @ViewBag.TotalChatCount</p>
 
-            @foreach (var interaction in Model.Interactions)
+            <form id="chatForm" method="post" action="@Url.Action("SendMessage", "Home")">
+                <div class="comment-box">
+                    <input type="text" name="Message" id="messageInput" placeholder="Say Something....." required>
+                    <input type="hidden" name="ProjectID" value="@ViewBag.ProjectID">
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </form>
+
+
+            @foreach (var interaction in Model.Interactions.OrderByDescending(i => i.IsPinned).ThenByDescending(i => i.InteractionDate))
             {
+                var timeElapsed = DateTime.Now - (interaction.InteractionDate ?? DateTime.Now);
+                string timeDisplay;
+
+                if (timeElapsed.TotalMinutes < 1)
+                {
+                    timeDisplay = "Vừa xong";
+                }
+                else if (timeElapsed.TotalMinutes < 60)
+                {
+                    timeDisplay = (int)timeElapsed.TotalMinutes + " phút trước";
+                }
+                else if (timeElapsed.TotalHours < 24)
+                {
+                    timeDisplay = (int)timeElapsed.TotalHours + " giờ trước";
+                }
+                else
+                {
+                    timeDisplay = (int)timeElapsed.TotalDays + " ngày trước";
+                }
+
                 <div class="comment">
                     <img src="~/Content/images/member-img/@interaction.Member.ImageMember" alt="User profile picture">
                     <div class="comment-content">
                         <h3>@interaction.Member.FullName</h3>
-                        <p>@interaction.Message</p>
+                        <p class="time">@timeDisplay</p>
+                        <p class="message short-message">
+                            @if (interaction.IsPinned == true)
+                            {
+                                <span class="pinned-label">Được ghim</span>
+                            }
+                            @interaction.Message
+                            @if (interaction.Message.Length > 100)
+                            {
+                                <span class="dots">...</span>
+                                <span class="more-text">@interaction.Message.Substring(100)</span>
+                                <button class="show-more">Đọc thêm</button>
+                            }
+                        </p>
+
                         <p class="role">@interaction.Member.Role</p>
-                        <p>@(interaction.InteractionDate.HasValue ? interaction.InteractionDate.Value.ToString("HH:mm dd/MM/yyyy") : "")</p>
+
+                        <!-- Icon ba chấm và menu -->
+                        @if (Session["Role"] != null &&
+                            (Session["Role"].ToString() == "Admin" ||
+                             Session["Role"].ToString() == "Manager" ||
+                             Session["MemberID"].ToString() == interaction.MemberID.ToString()))
+                        {
+                            <div class="options-menu-container">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                <ul class="options-menu">
+                                    <li onclick="editMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">Sửa</li>
+                                    <li onclick="deleteMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">Xóa</li>
+                                    @if (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager")
+                                    {
+                                        <li onclick="togglePinMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">
+                                            @(interaction.IsPinned == true ? "Bỏ ghim" : "Ghim")
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
                     </div>
                 </div>
             }
+
+
+
 
             <div class="pagination">
                 @for (int i = 1; i <= ViewBag.TotalPages; i++)
@@ -62,14 +156,25 @@
                     </button>
                 }
             </div>
-
         </div>
+
     </div>
+
+
     <div class="sidebar">
         @foreach (var member in Model.Members)
         {
             <div class="member">
-                <img src="~/Content/images/member-img/@member.ImageMember" alt="User profile picture">
+                <div class="avatar-container">
+                    <img src="~/Content/images/member-img/@member.ImageMember" alt="User profile picture">
+                    <div class="member-info">
+                        <h3>@member.FullName</h3>
+                        <p>Email: @member.Email</p>
+                        <p>Phone: @member.Phone</p>
+                        <p>Role: @member.Role</p>
+                        <p>Status: @member.Status</p>
+                    </div>
+                </div>
                 <div>
                     <h3>@member.FullName</h3>
                     <p>@member.Role</p>
@@ -82,4 +187,140 @@
         }
     </div>
 
+
 </div>
+<style>
+   
+
+
+    .pinned-label {
+        display: inline-block;
+        background-color: #ffcc00;
+        color: #333;
+        padding: 2px 6px;
+        font-size: 12px;
+        border-radius: 4px;
+        margin-right: 5px;
+        font-weight: bold;
+    }
+
+    .options-menu-container {
+        position: relative;
+        display: inline-block;
+        margin-left: auto;
+        cursor: pointer;
+    }
+
+    .options-icon {
+        font-size: 16px;
+        color: #333;
+    }
+
+    .options-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 20px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+    }
+
+        .options-menu li {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+        }
+
+            .options-menu li:hover {
+                background-color: #f0f0f0;
+            }
+
+    /* Hiển thị menu khi có class 'show' */
+    .options-menu-container:hover .options-menu {
+        display: block;
+    }
+
+</style>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sửa tin nhắn
+        window.editMessage = function (messageId, projectId) {
+            const newMessage = prompt("Nhập nội dung mới:");
+            if (newMessage) {
+                // Gửi yêu cầu sửa tin nhắn đến server
+                window.location.href = `/Home/EditMessage?messageId=${messageId}&newMessage=${encodeURIComponent(newMessage)}&projectId=${projectId}`;
+            }
+        };
+
+        // Xóa tin nhắn
+        window.deleteMessage = function (messageId, projectId) {
+            if (confirm("Bạn có chắc muốn xóa tin nhắn này?")) {
+                // Gửi yêu cầu xóa tin nhắn đến server
+                window.location.href = `/Home/DeleteMessage?messageId=${messageId}&projectId=${projectId}`;
+            }
+        };
+
+        // Ghim tin nhắn
+        window.pinMessage = function (messageId, projectId) {
+            // Gửi yêu cầu ghim tin nhắn đến server
+            window.location.href = `/Home/PinMessage?messageId=${messageId}&projectId=${projectId}`;
+        };
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        window.togglePinMessage = function (messageId, projectId) {
+            // Gửi yêu cầu ghim/bỏ ghim đến server
+            fetch(`/Home/TogglePinMessage?messageId=${messageId}&projectId=${projectId}`, {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Tải lại trang sau khi ghim/bỏ ghim thành công
+                        location.reload();
+                    } else {
+                        alert("Có lỗi xảy ra khi thay đổi trạng thái ghim.");
+                    }
+                });
+        };
+    });
+
+
+
+
+    //Doc them  - an bot
+    document.addEventListener("DOMContentLoaded", function () {
+        const showMoreButtons = document.querySelectorAll(".show-more");
+
+        showMoreButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const message = this.closest(".message"); // Find the message container
+                const dots = message.querySelector(".dots");
+                const moreText = message.querySelector(".more-text");
+                const showMoreButton = message.querySelector(".show-more");
+
+                // Toggle the message
+                if (dots.style.display === "none") {
+                    // If the full message is shown, hide it and show the truncated version
+                    dots.style.display = "inline";
+                    moreText.style.display = "none";
+                    showMoreButton.innerText = "Đọc thêm"; // Change button text
+                } else {
+                    // If the message is truncated, show the full message
+                    dots.style.display = "none";
+                    moreText.style.display = "inline";
+                    showMoreButton.innerText = "Ẩn bớt"; // Change button text
+                }
+            });
+        });
+    });
+
+</script>

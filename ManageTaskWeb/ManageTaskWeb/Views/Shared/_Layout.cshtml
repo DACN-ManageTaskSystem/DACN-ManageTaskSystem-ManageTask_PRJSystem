@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -14,138 +15,6 @@
 
 
     <link href="@Url.Content("~/Content/css/layout.css?v=1")" rel="stylesheet" />
-
-    <style>
-        /* Header styles */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #fff;
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        /* Logo styles */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-            .logo img {
-                width: 40px;
-                height: 40px;
-            }
-        /* Menu styles */
-        nav .menu {
-            display: flex;
-            gap: 40px; /* Tăng khoảng cách giữa các mục menu */
-        }
-            nav .menu a {
-                text-decoration: none;
-                color: #333;
-                font-size: 18px;
-                display: flex;
-                align-items: center;
-                gap: 8px; /* Khoảng cách giữa icon và text */
-            }
-            nav .menu i {
-                font-size: 20px; /* Icon size */
-            }
-        nav .icons {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-            nav .icons a {
-                color: #333;
-                font-size: 24px;
-                text-decoration: none;
-            }
-            nav .icons img {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-            }
-        nav a:hover,
-        nav label:hover {
-            color: #007bff;
-        }
-        /* Nút quay lại đầu trang */
-        #scrollToTopBtn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20%;
-            cursor: pointer;
-            font-size: 24px;
-            display: none;
-            z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-            #scrollToTopBtn:hover {
-                background-color: #0056b3;
-            }
-            #scrollToTopBtn i {
-                font-size: 20px;
-            }
-        /*Dark Mode*/
-        .dark-mode {
-            background-color: rgb(27, 26, 28);
-            color: white;
-        }
-            .dark-mode nav,
-            .dark-mode .dropdown-menu,
-            .dark-mode .selected-option {
-                background-color: rgb(27, 26, 28);
-                color: white;
-            }
-            .dark-mode .menu a,
-            .dark-mode .icons a,
-            .dark-mode .dropdown-item,
-            .dark-mode .label-dark {
-                color: white;
-            }
-                .dark-mode .menu a:hover,
-                .dark-mode .icons a:hover,
-                .dark-mode label:hover {
-                    color: #007bff;
-                }
-        /* Switch styles */
-        .switch {
-            width: 40px;
-            height: 20px;
-            background-color: #ccc;
-            border-radius: 20px;
-            position: relative;
-            cursor: pointer;
-            display: inline-block;
-        }
-            .switch::before {
-                content: "";
-                width: 18px;
-                height: 18px;
-                background-color: white;
-                border-radius: 50%;
-                position: absolute;
-                top: 1px;
-                left: 1px;
-                transition: transform 0.3s;
-            }
-        /* When the checkbox is checked */
-        #darkModeToggle:checked + .switch::before {
-            transform: translateX(20px);
-        }
-        #darkModeToggle:checked + .switch {
-            background-color: #007bff;
-        }
-        </style>
-
-
-    <link rel="stylesheet" type="text/css" href="~/Content/css/membersofproject.css">
 
 </head>
 
@@ -164,19 +33,19 @@
             </div>
 
             <div class="icons">
-                <a class="notification-button" onclick="toggleNotifications()"><i class="fas fa-bell"></i></a>
-                <a href="#"><i class="fas fa-cog"></i></a>
+                @if (Session["FullName"] != null)
+                {
+                    <a class="notification-button" onclick="toggleNotifications()"><i class="fas fa-bell"></i></a>
+                    <a href="#"><i class="fas fa-cog"></i></a>
 
-                <!-- User Avatar & Dropdown Menu -->
-                <div class="dropdown">
-                    @if (Session["FullName"] != null)
-                    {
+                    <!-- User Avatar & Dropdown Menu -->
+                    <div class="dropdown">
                         <a href="#" class="dropdown-toggle">
                             <img src="~/Content/images/member-img/@Session["ImageMember"]">
-                            <span style=" font-size:18px">@Session["FullName"]</span>
+                            <span style="font-size: 18px">@Session["FullName"]</span>
                         </a>
-                        <div class="dropdown-menu" st>
-                            <div style="display:flex; flex-direction: column; padding:10px">
+                        <div class="dropdown-menu">
+                            <div style="display: flex; flex-direction: column; padding: 10px">
                                 <a href="/Home/TTCaNhan" style="font-size: 18px;">Edit Profile</a>
                                 <a href="#" style="font-size: 18px;">Settings</a>
                                 <div style="display: flex; align-items: center; font-size: 18px;">
@@ -186,39 +55,23 @@
                                 </div>
                                 <a href="/Home/Logout" style="font-size: 18px;">Logout</a>
                             </div>
-
                         </div>
-                    }
-                    else
-                    {
-                        <a href="/Home/DangNhap" style="font-size: 18px;">Login</a>
-                    }
-                </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Chỉ hiện nút đăng nhập khi chưa đăng nhập -->
+                    <a href="/Home/DangNhap" style="font-size: 18px;">Login</a>
+                }
             </div>
-        </nav>
 
-        @*<div class="notification-container" id="notificationContainer">
-            <h1>Notifications</h1>
-            <div class="notification">
-                <div class="dot">
-                    <img src="~/Content/images/logo.png" alt="image description">
-                </div>
-                <div class="content">
-                    <p class="title">Task #12 Còn 1 nửa là hết hạn</p>
-                    <p class="time">1 ngày trước</p>
-                </div>
-                <div class="status-dot"></div>
+        </nav>
+        <!--Thong bao-->
+        <div id="notificationContainer" class="notification-container" style="display: none;">
+            <h3>Notifications</h3>
+            <div class="notifications-list">
+
             </div>
-            <div class="notification">
-                <div class="dot">
-                    <img src="~/Content/images/logo.png" alt="image description">
-                </div>
-                <div class="content">
-                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
-                    <p class="time">1 ngày trước</p>
-                </div>
-                <div class="status-dot"></div>
-            </div>*@
         </div>
     </header>
 
@@ -226,56 +79,154 @@
         @RenderBody()
     </main>
     <footer>
-            <div class="column">
-                <h3>E-Comm</h3>
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-            </div>
-            <div class="column">
-                <h3>Information</h3>
-                <ul>
-                    <li>About Us</li>
-                    <li>Infomation</li>
-                    <li>Privacy Policy</li>
-                    <li>Terms & Conditions</li>
-                </ul>
-            </div>
-            <div class="column">
-                <h3>Service</h3>
-                <ul>
-                    <li>About Us</li>
-                    <li>Infomation</li>
-                    <li>Privacy Policy</li>
-                    <li>Terms & Conditions</li>
-                </ul>
-            </div>
-            <div class="column">
-                <h3>My Account</h3>
-                <ul>
-                    <li>About Us</li>
-                    <li>Infomation</li>
-                    <li>Privacy Policy</li>
-                    <li>Terms & Conditions</li>
-                </ul>
-            </div>
-            <div class="column">
-                <h3>Contact Us</h3>
-                <p>E-Comm, 4578 Marmora Road, Glasgow D04 89GR</p>
-            </div>
 
-        </footer>
+        <div class="column">
+            <h3>E-Comm</h3>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+        </div>
+        <div class="column">
+            <h3>Information</h3>
+            <ul>
+                <li>About Us</li>
+                <li>Infomation</li>
+                <li>Privacy Policy</li>
+                <li>Terms & Conditions</li>
+            </ul>
+        </div>
+        <div class="column">
+            <h3>Service</h3>
+            <ul>
+                <li>About Us</li>
+                <li>Infomation</li>
+                <li>Privacy Policy</li>
+                <li>Terms & Conditions</li>
+            </ul>
+        </div>
+        <div class="column">
+            <h3>My Account</h3>
+            <ul>
+                <li>About Us</li>
+                <li>Infomation</li>
+                <li>Privacy Policy</li>
+                <li>Terms & Conditions</li>
+            </ul>
+        </div>
+        <div class="column">
+            <h3>Contact Us</h3>
+            <p>E-Comm, 4578 Marmora Road, Glasgow D04 89GR</p>
+        </div>
 
-
+    </footer>
 
     <div id="scrollToTopBtn" title="Go to top">
         <i class="fas fa-chevron-up"></i>
     </div>
 
-
-
-
-
-
     <script>
+
+
+        function toggleNotifications() {
+            const notificationContainer = document.getElementById('notificationContainer');
+            notificationContainer.style.display =
+                notificationContainer.style.display === 'none' || notificationContainer.style.display === ''
+                    ? 'block'
+                    : 'none';
+
+            if (notificationContainer.style.display === 'block') {
+                fetch('/Home/GetNotifications') // Lấy thông báo từ server
+                    .then(response => response.json())
+                    .then(data => {
+                        const notificationList = notificationContainer.querySelector('.notifications-list');
+                        notificationList.innerHTML = ''; // Clear previous notifications
+
+                        if (data.success && data.notifications.length > 0) {
+                            data.notifications.forEach(notification => {
+                                const statusClass = notification.IsRead ? 'notification-read' : 'notification-unread';
+                                let notificationItem = `
+                        <div class="notification ${statusClass}">
+                            <div class="content">
+                                <p class="title">${notification.Content}</p>
+                                <p class="time">${notification.NotificationDate}</p>
+                            </div>
+                            <div class="status">${notification.IsRead ? 'Read' : 'Unread'}</div>`;
+
+                                // Nếu đây là thông báo yêu cầu gia nhập, thêm nút Accept/Reject
+                                if (notification.ShowAcceptReject) {
+                                    notificationItem += `
+                            <div class="actions">
+                                <button class="btn btn-success" onclick="acceptJoinRequest(${notification.NotificationID})">Accept</button>
+                                <button class="btn btn-danger" onclick="rejectJoinRequest(${notification.NotificationID})">Reject</button>
+                            </div>`;
+                                }
+
+                                notificationItem += `</div>`;
+                                notificationList.insertAdjacentHTML('beforeend', notificationItem);
+                            });
+                        } else {
+                            notificationList.innerHTML = '<p>No notifications</p>';
+                        }
+                    })
+                    .catch(error => console.error('Error fetching notifications:', error));
+            }
+        }
+
+
+        function acceptJoinRequest(notificationId) {
+            fetch(`/Home/AcceptJoinRequest?notificationId=${notificationId}`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // Hiển thị thông báo từ server
+                        toggleNotifications(); // Reload danh sách thông báo sau khi xử lý thành công
+                    } else {
+                        alert('Error: ' + data.message); // Hiển thị lỗi nếu có
+                    }
+                })
+                .catch(error => {
+                    console.error('Error accepting join request:', error);
+                    alert('There was an error while processing your request: ' + error.message); // Thông báo lỗi chi tiết
+                });
+        }
+
+        function rejectJoinRequest(notificationId) {
+            fetch(`/Home/RejectJoinRequest?notificationId=${notificationId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // Thông báo khi từ chối yêu cầu
+                        toggleNotifications(); // Refresh notifications
+                    } else {
+                        alert('Error: ' + data.message); // Thông báo lỗi nếu có
+                    }
+                })
+                .catch(error => {
+                    console.error('Error rejecting join request:', error);
+                    alert('There was an error while rejecting your request.');
+                });
+        }
+
+
+
+        // Đóng danh sách thông báo khi nhấn ra ngoài
+        window.addEventListener('click', function (event) {
+            const notificationContainer = document.getElementById('notificationContainer');
+            const notificationButton = document.querySelector('.notification-button');
+
+            if (!notificationContainer.contains(event.target) && !notificationButton.contains(event.target)) {
+                notificationContainer.style.display = 'none';
+            }
+        });
+
         //Dropdown Menu
         document.addEventListener('click', function (e) {
             var dropdown = document.querySelector('.dropdown-menu');
@@ -293,32 +244,11 @@
         scrollToTopBtn.addEventListener('click', function () {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-
         window.addEventListener('scroll', function () {
             if (window.scrollY > 160) {
                 scrollToTopBtn.style.display = 'block';
             } else {
                 scrollToTopBtn.style.display = 'none';
-            }
-        });
-
-
-        // Hàm bật/tắt hiển thị notification container
-        function toggleNotifications() {
-            const notificationContainer = document.getElementById('notificationContainer');
-            notificationContainer.style.display =
-                notificationContainer.style.display === 'none' || notificationContainer.style.display === ''
-                    ? 'block'
-                    : 'none';
-        }
-
-        // Đóng notification container khi bấm ngoài khu vực thông báo
-        window.addEventListener('click', function (event) {
-            const notificationContainer = document.getElementById('notificationContainer');
-            const notificationButton = document.querySelector('.notification-button');
-
-            if (!notificationContainer.contains(event.target) && !notificationButton.contains(event.target)) {
-                notificationContainer.style.display = 'none';
             }
         });
 
