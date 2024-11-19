@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="@Url.Content("~/Content/css/styleproject.css?v=1")" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <div>
     <div class="container">
@@ -16,21 +17,33 @@
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
                         <i class="fas fa-plus-circle"></i> Thêm Dự Án Mới
                     </button>
-                    <button class="btn btn-outline-secondary"><i class="fas fa-edit"></i> Tham gia dự án</button>
+                    <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#joinProjectModal">
+                        <i class="fas fa-edit"></i> Tham gia dự án
+                    </button>
+
                 }
                 else
                 {
-                    <button class="btn btn-outline-secondary"><i class="fas fa-edit"></i> Tham gia dự án</button>
+                    <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#joinProjectModal">
+                        <i class="fas fa-edit"></i> Tham gia dự án
+                    </button>
+
                 }
             </div>
 
         </div>
 
         <div class="search-bar">
-            <input type="text" placeholder="Enter project name...">
-            <button type="button"><i class="fas fa-search"></i></button>
+            <input type="text" id="projectSearchInput" placeholder="Enter project name...">
+            <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="filter">
+            <button class="btn btn-outline-secondary" id="btnPending">Pending</button>
+            <button class="btn btn-outline-primary" id="btnInProgress">In Progress</button>
+            <button class="btn btn-outline-success" id="btnCompleted">Completed</button>
         </div>
 
+        <!-- Project Table -->
         <table class="project-table table table-striped">
             <thead>
                 <tr>
@@ -43,20 +56,16 @@
                     <th>Số lượng</th>
                     <th>Status</th>
                     <th></th>
-                    <!-- Cột DeleteTime chỉ hiển thị cho Admin và Manager -->   
-                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
-                    {
-                        <th>Delete Time</th>
-                    }
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="projectTableBody">
                 @if (Model != null)
                 {
                     foreach (var project in Model)
                     {
-                        <tr>
-                            <td><input type="checkbox" class="project-checkbox"></td>
+                        @Html.AntiForgeryToken()
+                        <tr class="project-row" data-status="@project.Status">
+                            <td><input type="checkbox" class="project-checkbox" data-project-id="@project.ProjectID"></td>
                             <td>
                                 <img src="~/Content/images/project-img/@project.ImageProject" alt="Project Image" width="80">
                                 <div class="action-buttons">
@@ -74,15 +83,11 @@
                                                 data-status="@project.Status">
                                             <i class="fas fa-pencil-alt"></i> <span>Edit Project</span>
                                         </button>
-
-                                        <button class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i><span>Delete Project</span></button>
                                     }
                                     <a href="@Url.Action("DSTask", "Home", new { projectId = project.ProjectID })" class="btn btn-outline-dark">
                                         <i class="fas fa-eye"></i><span>View Task</span>
                                     </a>
                                 </div>
-
-
                             </td>
                             <td>
                                 <div>
@@ -95,19 +100,30 @@
                             <td>
                                 <div class="avatar-group">
                                     <a href="@Url.Action("MembersOfProject", "Home", new { projectId = project.ProjectID })">
-                                        <img src="https://via.placeholder.com/30" alt="Team Member">
-                                        <img src="https://via.placeholder.com/30" alt="Team Member">
-                                        <img src="https://via.placeholder.com/30" alt="Team Member">
-                                        <span>+@project.MemberCount</span>
+                                        @for (int i = 0; i < Math.Min(3, project.Members.Count); i++)
+                                        {
+                                            var member = project.Members[i];
+                                            <img src="~/Content/images/member-img/@member.ImageMember" alt="Team Member" width="30">
+                                        }
+
+                                        @if (project.MemberCount > 3)
+                                        {
+                                            <span>+@(project.MemberCount - 3)</span>
+                                        }
                                     </a>
                                 </div>
                             </td>
+
+
+
+
+
                             <td><span>@project.MemberCount</span></td>
                             <td>
                                 <div>
                                     @if (project.Status == "Completed")
                                     {
-                                        <span class="status-done">DONE</span>
+                                        <span class="status-done">Completed</span>
                                     }
                                     else
                                     {
@@ -120,22 +136,6 @@
                                     <i class="fas fa-comments"></i> Thảo Luận
                                 </a>
                             </td>
-                            <!-- Hiển thị DeleteTime chỉ cho Admin và Manager -->
-                            @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
-                            {
-                                <td>
-                                    @if (project.deleteTime != null)
-                                    {
-                                        @project.deleteTime.Value.ToString("HH:mm dd/MM/yyyy")
-                                    }
-                                    else
-                                    {
-                                        <span>Not deleted</span> <!-- Hoặc có thể là "N/A" tùy vào yêu cầu của bạn -->
-                                    }
-                                </td>
-
-
-                            }
                         </tr>
                     }
                 }
@@ -146,8 +146,6 @@
                     </tr>
                 }
             </tbody>
-
-
         </table>
 
         <!-- Add Project Modal -->
@@ -312,80 +310,225 @@
         </div>
 
         <!-- Success/Error Message Modal -->
-        <div id="notificationPopup"  style="display: none;">
+        <div id="notificationPopup" style="display: none;">
             <span id="notificationMessage">Notification message here</span>
             <span class="close-btn" onclick="closeNotificationPopup()">×</span>
         </div>
 
-
-        @* Delete popup *@
-    <div class="popup-delete-container" id="popupDeleteContainer" style="display: none;">
-        <button class="close-btn" onclick="closeProjectDeletePopup()()">×</button>
-        <div class="project-select">
-            <span id="projectSelectCount">Select Project</span>
+        <!-- Delete Popup -->
+        <div class="popup-delete-container" id="popupDeleteContainer" style="display: none;">
+            <button class="close-btn" onclick="closeProjectDeletePopup()()">×</button>
+            <div class="project-select">
+                <span id="projectSelectCount">Select Project</span>
+            </div>
+            <button class="delete-btn" onclick="deleteSelectedProjects()">
+                <i class="fas fa-trash-alt" style="margin-right:5px"></i><span>Delete</span>
+            </button>
         </div>
-        <button class="delete-btn" onclick="deleteSelectedProjects()">
-            <i class="fas fa-trash-alt" style="margin-right:5px"></i><span>Delete</span>
-        </button>
-    </div>
 
+        <!-- Popup xác nhận xóa -->
+        <div id="deleteConfirmationPopup" style="display:none;" class="popup-overlay">
+            <div class="popup-content">
+                <h3>Bạn có chắc chắn muốn xóa các dự án này?</h3>
+                <ul id="selectedProjectList"></ul>
+                <button id="confirmDeleteBtn" class="confirm-btn">Xác nhận</button>
+                <button id="cancelDeleteBtn" class="cancel-btn">Hủy</button>
+            </div>
+        </div>
 
-
+        <!-- Popup Nhập mã dự án -->
+        <div class="modal fade" id="joinProjectModal" tabindex="-1" aria-labelledby="joinProjectModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="joinProjectModalLabel">Join Project</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="display:block">
+                        <form id="joinProjectForm">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <label for="projectCodeInput" class="form-label">Project Code</label>
+                                <input type="text" class="form-control" id="projectCodeInput" placeholder="Enter project code" required>
+                            </div>
+                            <div id="joinProjectError" class="text-danger" style="display:none;"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="joinProjectSubmit">Join</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
     <script>
+        /* --- JoinProject By ID - START --- */
+        document.getElementById("joinProjectSubmit").addEventListener("click", function () {
+            console.log("Join button clicked"); // Kiểm tra xem có chạy đến đây không
+            const projectCode = document.getElementById("projectCodeInput").value.trim();
+
+            if (projectCode === "") {
+                showNotificationPopup("Please enter a project code.", "error"); // Hiển thị thông báo lỗi
+                return;
+            }
+
+            $.ajax({
+                url: '/Home/JoinProject',
+                type: 'POST',
+                data: {
+                    projectCode: projectCode,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // Gửi token cùng request
+                },
+                success: function (response) {
+                    console.log(response); // Xem kết quả trả về
+                    if (response.success) {
+                        showNotificationPopup(response.message, "success"); // Hiển thị thông báo thành công
+                        $('#joinProjectModal').modal('hide');
+                    } else {
+                        showNotificationPopup(response.error, "error"); // Hiển thị thông báo lỗi
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error); // Xem lỗi chi tiết
+                    showNotificationPopup("An error occurred while processing your request.", "error"); // Hiển thị thông báo lỗi
+                }
+            });
+        });
+        /* ---  JoinProject By ID - END --- */
+
+
+        /* --- Tim Kiem Theo Ten Project - START   --- */
+        document.getElementById("searchBtn").addEventListener("click", function () {
+            var input = document.getElementById("projectSearchInput").value.toLowerCase();
+            var rows = document.querySelectorAll(".project-row");
+
+            rows.forEach(function (row) {
+                var projectName = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
+                if (projectName.includes(input)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+        /* ---Tim Kiem Theo Ten Project - END   --- */
+
+        /* --- Loc project theo trang thai - START   --- */
+        let currentFilter = "All";
+        document.getElementById("btnPending").addEventListener("click", function () {
+            toggleFilter("Pending");
+        });
+        document.getElementById("btnInProgress").addEventListener("click", function () {
+            toggleFilter("In Progress");
+        });
+        document.getElementById("btnCompleted").addEventListener("click", function () {
+            toggleFilter("Completed");
+        });
+        function toggleFilter(status) {
+            if (currentFilter === status) {
+                currentFilter = "All";
+                showAllProjects();
+            } else {
+                currentFilter = status;
+                filterProjects(status);
+            }
+        }
+        function filterProjects(status) {
+            var rows = document.querySelectorAll(".project-row");
+
+            rows.forEach(function (row) {
+                if (row.getAttribute("data-status") === status) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+        function showAllProjects() {
+            var rows = document.querySelectorAll(".project-row");
+            rows.forEach(function (row) {
+                row.style.display = "";
+            });
+        }
+        /* --- Loc project theo trang thai - END --- */
+
+        /* --- Delete Popip - START --- */
         function showProjectDeletePopup(selectedCount) {
             var popup = document.getElementById('popupDeleteContainer');
             var projectCountSpan = document.getElementById('projectSelectCount');
-
-
             projectCountSpan.textContent = selectedCount + " Project" + (selectedCount > 1 ? "s" : "");
 
             if (selectedCount > 0) {
-                popup.style.display = 'flex';  
+                popup.style.display = 'flex';
             } else {
-                popup.style.display = 'none';  
+                popup.style.display = 'none';
             }
         }
-
-        // Function to close the project delete popup
         function closeProjectDeletePopup() {
             var popup = document.getElementById('popupDeleteContainer');
-            popup.style.display = 'none';  // Hide the project delete popup
+            popup.style.display = 'none';
             document.querySelectorAll('.project-checkbox').forEach(function (checkbox) {
-                checkbox.checked = false;  // Uncheck each checkbox
-            });
-
-            // Optionally, you can also update the project count text when the popup is closed
-            showProjectDeletePopup(0);
-        }
-
-        // Example of handling checkboxes to count selected projects and show the delete popup
-        document.querySelectorAll('.project-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                // Count the number of checked checkboxes
-                var selectedCount = document.querySelectorAll('.project-checkbox:checked').length;
-                showProjectDeletePopup(selectedCount);  // Show the project delete popup with the updated count
-            });
-        });
-
-        // Optional: Function to delete selected projects when 'Delete' is clicked
-        function deleteSelectedProjects() {
-            // You can add your logic to delete selected projects here
-            alert("Deleting selected projects...");
-
-            // Reset the checkboxes and hide the popup
-            document.querySelectorAll('.project-checkbox:checked').forEach(checkbox => {
                 checkbox.checked = false;
             });
-            showProjectDeletePopup(0);  // Hide the project delete popup after delete
+            showProjectDeletePopup(0);
         }
+        document.querySelectorAll('.project-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                var selectedCount = document.querySelectorAll('.project-checkbox:checked').length;
+                showProjectDeletePopup(selectedCount);
+            });
+        });
+        function deleteSelectedProjects() {
+            const selectedProjectIds = Array.from(document.querySelectorAll('.project-checkbox:checked'))
+                .map(checkbox => checkbox.dataset.projectId);
+            if (selectedProjectIds.length === 0) {
+                alert("Vui lòng chọn ít nhất một dự án để xóa.");
+                return;
+            }
+            const projectListElement = document.getElementById('selectedProjectList');
+            projectListElement.innerHTML = '';
+            selectedProjectIds.forEach(projectId => {
+                const li = document.createElement('li');
+                li.textContent = `Dự án: ${projectId}`;
+                projectListElement.appendChild(li);
+            });
+            const deletePopup = document.getElementById('deleteConfirmationPopup');
+            deletePopup.style.display = 'flex';
+            document.getElementById('confirmDeleteBtn').onclick = function () {
 
-        //////////////
-        //////////
-        /////////
-        // Popup Thong bao - start
+                fetch('/Home/DeleteProjects', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ projectIds: selectedProjectIds })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotificationPopup(data.message, "success");
+                        } else {
+                            showNotificationPopup(data.message, "error");
+                        }
+                        setTimeout(() => location.reload(), 3000);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotificationPopup("Đã xảy ra lỗi khi xóa dự án.", "error");
+                    });
+                deletePopup.style.display = 'none';
+            };
+            document.getElementById('cancelDeleteBtn').onclick = function () {
+                deletePopup.style.display = 'none';
+            };
+        }
+        /* --- Delete Popip - END --- */
+
+        /* --- Popup ThongBao - START --- */
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const message = urlParams.get('notificationMessage');
@@ -395,7 +538,6 @@
                 showNotificationPopup(message, type);
             }
         };
-
         function showNotificationPopup(message, type) {
             const popup = document.getElementById('notificationPopup');
             const messageSpan = document.getElementById('notificationMessage');
@@ -413,14 +555,13 @@
 
 
             setTimeout(function () {
-                // Use history.pushState to change the URL without reloading the page
                 window.history.pushState({}, document.title, "/Home/DSProject");
             }, 5000);
         }
-
         function closeNotificationPopup() {
             document.getElementById('notificationPopup').style.display = 'none';
         }
+        /* --- Popup Thong Bao - END --- */
 
         // Function to handle priority selection
         function handlePrioritySelection(modalId) {
@@ -508,5 +649,6 @@
 
     <!-- Bootstrap and JavaScript dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </div>
 

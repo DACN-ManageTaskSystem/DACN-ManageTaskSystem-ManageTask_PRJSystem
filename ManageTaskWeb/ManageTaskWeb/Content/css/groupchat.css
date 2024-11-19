@@ -50,6 +50,14 @@
             margin-right: 5px;
         }
 
+            .sidebar .status .dot.online {
+                background-color: #3FBB46; /* Màu xanh lá cây cho trạng thái online */
+            }
+
+            .sidebar .status .dot.offline {
+                background-color: gray; /* Màu xám cho trạng thái offline */
+            }
+
 .main-content {
     flex: 1;
     padding: 20px;
@@ -216,3 +224,63 @@
         }
 
 
+.short-message .dots {
+    display: inline;
+}
+
+.short-message .more-text {
+    display: none;
+}
+
+.short-message .show-more {
+    background: none;
+    border: none;
+    color: #606060;
+    cursor: pointer;
+    text-decoration: none;
+}
+.short-message .show-more:hover {
+
+    text-decoration: underline;
+}
+
+
+.member {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-container {
+    position: relative;
+}
+
+.member-info {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%; 
+    margin-left: 10px; 
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    width: 250px; 
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s; 
+}
+
+.member:hover .member-info {
+    display: block;
+    opacity: 1; 
+    visibility: visible; 
+}
+
+.avatar-container img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
