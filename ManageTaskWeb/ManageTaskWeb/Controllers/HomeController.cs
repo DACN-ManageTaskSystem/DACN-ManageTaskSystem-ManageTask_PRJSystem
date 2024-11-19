@@ -1,4 +1,5 @@
 ﻿using ManageTaskWeb.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -13,7 +14,11 @@ namespace ManageTaskWeb.Controllers
     public class HomeController : Controller
     {
         QLCVDataContext data = new QLCVDataContext();
-
+        //TrangChu
+        public ActionResult TrangChu()
+        {
+            return View();
+        }
         //DangNhap-GET
         public ActionResult DangNhap()
         {
@@ -49,6 +54,103 @@ namespace ManageTaskWeb.Controllers
                 return View();
             }
         }
+        //Load Thong bao 
+
+        public JsonResult GetNotifications()
+        {
+            if (Session["MemberID"] != null)
+            {
+                string memberId = Session["MemberID"].ToString();
+
+                // Fetch the notifications from the database
+                var notifications = data.Notifications
+                .Where(n => n.MemberID == memberId)
+                .OrderByDescending(n => n.NotificationDate)
+                .Select(n => new
+                {
+                    n.NotificationID,
+                    n.Content,
+                    NotificationDate = n.NotificationDate.ToString(), // Format date to a more readable format
+                    IsRead = n.IsRead.HasValue ? n.IsRead.Value : false, // Ensure IsRead is not null, default to false if null
+                    n.NotificationType,
+                    ShowAcceptReject = n.NotificationType == "JoinRequest" // Flag to show buttons
+                })
+                .ToList();
+
+
+                // If no notifications, return an empty list
+                if (!notifications.Any())
+                {
+                    return Json(new { success = true, message = "No notifications" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true, notifications }, JsonRequestBehavior.AllowGet);
+            }
+
+            // If MemberID is null, return an error response
+            return Json(new { success = false, message = "User not logged in" }, JsonRequestBehavior.AllowGet);
+        }
+
+        //An Accept trong thong bao
+        [HttpPost]
+        public JsonResult AcceptJoinRequest(string notificationId)
+        {
+            try
+            {
+                if (Session["MemberID"] == null)
+                {
+                    return Json(new { success = false, message = "User not logged in" });
+                }
+
+                string memberId = Session["MemberID"].ToString();
+
+                // Lấy thông báo từ bảng Notifications theo NotificationID
+                var notification = data.Notifications.FirstOrDefault(n => n.NotificationID.ToString() == notificationId);
+                if (notification == null)
+                {
+                    return Json(new { success = false, message = "Notification not found" });
+                }
+
+                // Phân tích extraData để lấy RequestMemberID và ProjectID
+                var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(notification.ExtraData);
+                string requestMemberId = extraData["RequestMemberID"];
+                string projectId = extraData["ProjectID"];
+
+                // Cập nhật trạng thái thành viên trong bảng ProjectMembers
+                var projectMember = data.ProjectMembers
+                    .FirstOrDefault(pm => pm.MemberID == requestMemberId && pm.ProjectID == projectId && pm.Status == "Pending");
+                if (projectMember != null)
+                {
+                    projectMember.Status = "Accepted";
+                    data.SubmitChanges();
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Request not found or already accepted" });
+                }
+
+                // Xóa tất cả các thông báo có cùng extraData
+                var notificationsToDelete = data.Notifications
+                    .Where(n => n.ExtraData == notification.ExtraData)
+                    .ToList();
+
+                foreach (var notif in notificationsToDelete)
+                {
+                    data.Notifications.DeleteOnSubmit(notif);
+                }
+                data.SubmitChanges();
+
+                return Json(new { success = true, message = "Request accepted successfully, notifications cleared" });
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi chi tiết
+                return Json(new { success = false, message = "Error processing your request: " + ex.Message });
+            }
+        }
+
+
+
         //DangXuat
         public ActionResult Logout()
         {
@@ -70,13 +172,9 @@ namespace ManageTaskWeb.Controllers
             // Chuyển hướng về trang đăng nhập
             return RedirectToAction("DangNhap");
         }
-        //TrangChu
-        public ActionResult TrangChu()
-        {
-            return View();
-        }
+        //PROJECT - START
         //Danh sach project
-        public ActionResult DSProject()
+        public ActionResult DSProject(string statusFilter = "All")
         {
             var role = Session["Role"]?.ToString();
             List<ProjectExtended> projects;
@@ -85,6 +183,7 @@ namespace ManageTaskWeb.Controllers
             if (role == "Manager" || role == "Admin")
             {
                 projects = data.Projects
+                               .Where(p => statusFilter == "All" || p.Status == statusFilter)
                                .Select(p => new ProjectExtended
                                {
                                    ProjectID = p.ProjectID,
@@ -95,22 +194,36 @@ namespace ManageTaskWeb.Controllers
                                    Priority = p.Priority,
                                    ImageProject = p.ImageProject,
                                    deleteTime = p.deleteTime,
-                                   MemberCount = data.Assignments
-                                                      .Where(a => a.ProjectID == p.ProjectID)
-                                                      .Select(a => a.AssignedTo)
+                                   MemberCount = data.ProjectMembers
+                                                      .Where(pm => pm.ProjectID == p.ProjectID && pm.Status == "Accepted")
+                                                      .Select(pm => pm.MemberID)
                                                       .Distinct()
                                                       .Count(),
-                                   
-                               }).ToList();
+                               })
+                               .ToList();
+
+                // Fetch members for each project separately
+                foreach (var project in projects)
+                {
+                    project.Members = data.ProjectMembers
+                                           .Where(pm => pm.ProjectID == project.ProjectID && pm.Status == "Accepted")
+                                           .Join(data.Members, pm => pm.MemberID, m => m.MemberID, (pm, m) => new MemberDTO
+                                           {
+                                               MemberID = m.MemberID,
+                                               FullName = m.FullName,
+                                               ImageMember = m.ImageMember
+                                           })
+                                           .ToList();
+                }
             }
             else
             {
                 var memberId = Session["MemberID"]?.ToString();
-                projects = data.Assignments
-                               .Where(a => a.AssignedTo == memberId)
-                               .Select(a => a.Project)
+                projects = data.ProjectMembers
+                               .Where(pm => pm.MemberID == memberId && pm.Status == "Accepted")
+                               .Select(pm => pm.Project )
                                .Distinct()
-                               .Where(p => p.deleteTime == null)  
+                               .Where(p => p.deleteTime == null)
                                .Select(p => new ProjectExtended
                                {
                                    ProjectID = p.ProjectID,
@@ -120,15 +233,29 @@ namespace ManageTaskWeb.Controllers
                                    Status = p.Status,
                                    Priority = p.Priority,
                                    ImageProject = p.ImageProject,
-                                   MemberCount = data.Assignments
-                                                      .Where(a => a.ProjectID == p.ProjectID)
-                                                      .Select(a => a.AssignedTo)
+                                   MemberCount = data.ProjectMembers
+                                                      .Where(pm => pm.ProjectID == p.ProjectID && pm.Status == "Accepted")
+                                                      .Select(pm => pm.MemberID)
                                                       .Distinct()
                                                       .Count(),
-                               }).ToList();
+                               })
+                               .ToList();
+
+                // Fetch members for each project separately
+                foreach (var project in projects)
+                {
+                    project.Members = data.ProjectMembers
+                                           .Where(pm => pm.ProjectID == project.ProjectID && pm.Status == "Accepted")
+                                           .Join(data.Members, pm => pm.MemberID, m => m.MemberID, (pm, m) => new MemberDTO
+                                           {
+                                               MemberID = m.MemberID,
+                                               FullName = m.FullName,
+                                               ImageMember = m.ImageMember
+                                           })
+                                           .ToList();
+                }
             }
 
-            // Kiểm tra nếu projects vẫn là null hoặc rỗng, gán giá trị mặc định là danh sách rỗng
             if (projects == null)
             {
                 projects = new List<ProjectExtended>();
@@ -136,7 +263,6 @@ namespace ManageTaskWeb.Controllers
 
             return View(projects);
         }
-
         public string GenerateUniqueProjectID()
         {
             string prefix = "PRJ";
@@ -154,12 +280,12 @@ namespace ManageTaskWeb.Controllers
             while (!isUnique)
             {
                 projectIDnew = GenerateUniqueProjectID();
-                isUnique = !data.Projects.Any(p => p.ProjectID == projectIDnew); 
+                isUnique = !data.Projects.Any(p => p.ProjectID == projectIDnew);
             }
 
             return projectIDnew;
         }
-        //Add Project
+        //Them Project
         [HttpPost]
         public ActionResult AddProject(string ProjectName, string Description, DateTime StartDate, DateTime EndDate, int Priority, string Status, string ImageProject, HttpPostedFileBase ImageFile)
         {
@@ -203,24 +329,164 @@ namespace ManageTaskWeb.Controllers
                 return RedirectToAction("DSProject", new { notificationMessage = "Đã xảy ra lỗi khi thêm dự án!", notificationType = "error" });
             }
         }
+        //Xoa project 
+        [HttpPost]
+        public JsonResult DeleteProjects(List<string> projectIds)
+        {
+            try
+            {
+                if (projectIds == null || !projectIds.Any())
+                {
+                    return Json(new { success = false, message = "Không có dự án nào được chọn để xóa!" });
+                }
 
-        
+                // Danh sách các project không thể xóa (có task)
+                List<string> failedProjects = new List<string>();
+                List<string> deletedProjects = new List<string>();
+
+                foreach (var projectId in projectIds)
+                {
+                    var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+                    if (project == null) continue;
+
+                    // Kiểm tra nếu project có task thì thêm vào danh sách failedProjects
+                    bool hasTasks = data.Tasks.Any(t => t.ProjectID == projectId);
+                    if (hasTasks)
+                    {
+                        failedProjects.Add(projectId);
+                    }
+                    else
+                    {
+                        // Xóa project nếu không có task
+                        data.Projects.DeleteOnSubmit(project);
+                        deletedProjects.Add(projectId);
+                    }
+                }
+
+                // Lưu thay đổi vào database
+                data.SubmitChanges();
+
+                // Tạo thông báo kết quả
+                if (deletedProjects.Any() && failedProjects.Any())
+                {
+                    string deleted = string.Join(", ", deletedProjects);
+                    string failed = string.Join(", ", failedProjects);
+                    return Json(new { success = true, message = $"Đã xóa các dự án: {deleted}. Không thể xóa các dự án: {failed} do có task." });
+                }
+                else if (deletedProjects.Any())
+                {
+                    string deleted = string.Join(", ", deletedProjects);
+                    return Json(new { success = true, message = $"Đã xóa các dự án: {deleted}." });
+                }
+                else
+                {
+                    string failed = string.Join(", ", failedProjects);
+                    return Json(new { success = false, message = $"Không thể xóa các dự án: {failed} do có task." });
+                }
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi xóa dự án!" });
+            }
+        }
+        //Join Project by ProjectID
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult JoinProject(string projectCode)
+        {
+            // Kiểm tra xem projectCode có tồn tại trong bảng Projects hay không
+            var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectCode && p.deleteTime == null);
+
+            if (project == null)
+            {
+                return Json(new { success = false, error = "Project does not exist or has been deleted." });
+            }
+
+            // Lấy MemberID của người dùng hiện tại từ Session
+            var memberID = Session["MemberID"]?.ToString();
+            if (string.IsNullOrEmpty(memberID))
+            {
+                return Json(new { success = false, error = "You need to log in to join a project." });
+            }
+
+            // Lấy FullName của Member
+            var member = data.Members.FirstOrDefault(m => m.MemberID == memberID);
+            if (member == null)
+            {
+                return Json(new { success = false, error = "Member not found." });
+            }
+
+            // Kiểm tra xem Member đã là thành viên của dự án hay chưa
+            var isMember = data.ProjectMembers.Any(pm => pm.ProjectID == projectCode && pm.MemberID == memberID && pm.Status == "Accepted");
+            if (isMember)
+            {
+                return Json(new { success = false, error = "You are already a member of this project." });
+            }
+
+            // Kiểm tra xem Member đã gửi yêu cầu trước đó hay chưa
+            var existingRequest = data.ProjectMembers.FirstOrDefault(pm => pm.ProjectID == projectCode && pm.MemberID == memberID);
+            if (existingRequest != null)
+            {
+                return Json(new { success = false, error = "You have already submitted a join request for this project." });
+            }
+
+            // Thêm yêu cầu vào bảng ProjectMembers
+            var newRequest = new ProjectMember
+            {
+                ProjectID = projectCode,
+                MemberID = memberID,
+                Status = "Pending",
+                JoinDate = DateTime.Now
+            };
+            data.ProjectMembers.InsertOnSubmit(newRequest);
+            data.SubmitChanges();
+
+            // Tìm tất cả Admin/Manager trong bảng Members
+            var adminOrManagers = data.Members
+                .Where(m => m.Role == "Admin" || m.Role == "Manager")
+                .Select(m => m.MemberID)
+                .ToList();
+
+
+            // Gửi thông báo cho Admin/Manager
+            foreach (var adminID in adminOrManagers)
+            {
+                var notification = new Notification
+                {
+                    MemberID = adminID,
+                    Content = $"{member.FullName} (ID: {memberID}) requested to join project {project.ProjectName} (ID: {projectCode}).",
+                    NotificationType = "JoinRequest",
+                    ExtraData = $"{{\"RequestMemberID\": \"{memberID}\", \"ProjectID\": \"{projectCode}\"}}",
+                    NotificationDate = DateTime.Now,
+                    IsRead = false
+                };
+                data.Notifications.InsertOnSubmit(notification);
+            }
+            data.SubmitChanges();
+
+            return Json(new { success = true, message = "Your join request has been submitted successfully." });
+        }
+
+        //PROJECT - END
+
+
+
         //Danh sach Member trong Project
         public ActionResult MembersOfProject(string projectId)
         {
-            var members = data.Assignments
-                             .Where(a => a.ProjectID == projectId)
-                             .Select(a => a.Member)
-                             .GroupBy(m => m.MemberID) // Nhóm theo MemberID để loại bỏ trùng lặp
-                             .Select(g => g.First()) // Lấy bản ghi đầu tiên trong mỗi nhóm
+            var members = data.ProjectMembers
+                             .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted") // Lọc theo Status
+                             .Select(pm => pm.Member)
+                             .Distinct()
                              .ToList();
 
             return View(members);
         }
+
         //Thong tin ca nhan
         public ActionResult TTCaNhan()
         {
-            return View();            
+            return View();
         }
 
         //Danh sach task
@@ -251,19 +517,23 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
-        //Chat
 
+        //CHAT - START
+        //Load Chat
         public ActionResult GroupChat(string projectId, int page = 1)
         {
             int pageSize = 6;
 
             // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
             var interactions = data.Interactions
-                                  .Where(i => i.ProjectID == projectId)
-                                  .OrderByDescending(i => i.InteractionDate)
-                                  .Skip((page - 1) * pageSize)
-                                  .Take(pageSize)
-                                  .ToList();
+                .Where(i => i.ProjectID == projectId)
+                .OrderByDescending(i => i.IsPinned) // Các tin nhắn được ghim ở trên
+                .ThenByDescending(i => i.InteractionDate) // Các tin nhắn không ghim sẽ sắp xếp theo ngày
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+
 
             var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
             if (project == null)
@@ -275,13 +545,16 @@ namespace ManageTaskWeb.Controllers
             int totalPages = (int)Math.Ceiling((double)totalChatCount / pageSize);
 
             // Lấy danh sách thành viên của project
-            var members = data.Assignments
-                 .Where(a => a.ProjectID == projectId)
-                 .Select(a => a.Member)
+
+            var members = data.ProjectMembers
+                 .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted")
+                 .Select(pm => pm.Member)
                  .Distinct()
                  .Select(m => new MemberViewModel
                  {
                      FullName = m.FullName,
+                     Email = m.Email,
+                     Phone = m.Phone,
                      Status = m.Status,
                      Role = m.Role,
                      ImageMember = m.ImageMember
@@ -289,7 +562,7 @@ namespace ManageTaskWeb.Controllers
                  .ToList();
 
             ViewBag.Members = members;
-
+            ViewBag.TotalChatCount = totalChatCount;
 
             // Truyền các giá trị cần thiết cho view
             ViewBag.ProjectID = projectId;
@@ -304,5 +577,93 @@ namespace ManageTaskWeb.Controllers
             };
             return View(viewModel);
         }
+        //Them Chat
+        [HttpPost]
+        public ActionResult SendMessage(string Message, string ProjectID)
+        {
+            // Lấy MemberID của người dùng hiện tại (ví dụ từ Session hoặc User.Identity)
+            string memberID = Session["MemberID"]?.ToString(); // Bạn có thể thay thế cách lấy MemberID theo cách của bạn
+
+            if (!string.IsNullOrEmpty(Message) && !string.IsNullOrEmpty(memberID) && !string.IsNullOrEmpty(ProjectID))
+            {
+                // Tạo đối tượng Interaction để lưu vào cơ sở dữ liệu
+                var interaction = new Interaction
+                {
+                    ProjectID = ProjectID,
+                    MemberID = memberID,
+                    InteractionDate = DateTime.Now,
+                    Message = Message
+                };
+
+                // Lưu vào cơ sở dữ liệu
+                data.Interactions.InsertOnSubmit(interaction);
+                data.SubmitChanges();
+            }
+
+            // Sau khi lưu tin nhắn, chuyển hướng về trang GroupChat
+            return RedirectToAction("GroupChat", new { projectId = ProjectID });
+        }
+        //Sua chat
+        public ActionResult EditMessage(int messageId, string newMessage, string projectId)
+        {
+            if (messageId <= 0 || string.IsNullOrEmpty(newMessage) || string.IsNullOrEmpty(projectId))
+            {
+                return HttpNotFound();
+            }
+            var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
+            if (message != null)
+            {
+                message.Message = newMessage;
+                data.SubmitChanges();
+            }
+            return RedirectToAction("GroupChat", new { projectId = projectId });
+        }
+        //Xoa chat
+        public ActionResult DeleteMessage(int messageId, string projectId)
+        {
+            if (messageId <= 0 || string.IsNullOrEmpty(projectId))
+            {
+                return HttpNotFound();
+            }
+            var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
+            if (message != null)
+            {
+                data.Interactions.DeleteOnSubmit(message);
+                data.SubmitChanges();
+            }
+            return RedirectToAction("GroupChat", new { projectId = projectId });
+        }
+        //Ghim chat
+        public ActionResult PinMessage(int messageId, string projectId)
+        {
+            if (messageId <= 0 || string.IsNullOrEmpty(projectId))
+            {
+                return HttpNotFound();
+            }
+            var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
+            if (message != null)
+            {
+                message.IsPinned = true;
+                data.SubmitChanges();
+            }
+            return RedirectToAction("GroupChat", new { projectId = projectId });
+        }
+        //Bo ghim chat
+        [HttpPost]
+        public ActionResult TogglePinMessage(int messageId, string projectId)
+        {
+            var interaction = data.Interactions.FirstOrDefault(i => i.InteractionID == messageId && i.ProjectID == projectId);
+            if (interaction != null)
+            {
+                // Đảo trạng thái ghim và cập nhật ngày tương tác
+                interaction.IsPinned = !(interaction.IsPinned ?? false);
+                interaction.InteractionDate = DateTime.Now;
+                data.SubmitChanges();
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+        //CHAT - END
     }
+
 }

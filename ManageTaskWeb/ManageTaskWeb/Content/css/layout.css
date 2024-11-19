@@ -238,3 +238,196 @@ nav a:hover {
     }
 
 
+
+
+/* Header styles */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+/* Logo styles */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .logo img {
+        width: 40px;
+        height: 40px;
+    }
+/* Menu styles */
+nav .menu {
+    display: flex;
+    gap: 40px; /* Tăng khoảng cách giữa các mục menu */
+}
+
+    nav .menu a {
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Khoảng cách giữa icon và text */
+    }
+
+    nav .menu i {
+        font-size: 20px; /* Icon size */
+    }
+
+nav .icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+    nav .icons a {
+        color: #333;
+        font-size: 24px;
+        text-decoration: none;
+    }
+
+    nav .icons img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+nav a:hover,
+nav label:hover {
+    color: #007bff;
+}
+/* Nút quay lại đầu trang */
+#scrollToTopBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20%;
+    cursor: pointer;
+    font-size: 24px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+    #scrollToTopBtn:hover {
+        background-color: #0056b3;
+    }
+
+    #scrollToTopBtn i {
+        font-size: 20px;
+    }
+/*Dark Mode*/
+.dark-mode {
+    background-color: rgb(27, 26, 28);
+    color: white;
+}
+
+    .dark-mode main,
+    .dark-mode nav,
+    .dark-mode .dropdown-menu,
+    .dark-mode .selected-option {
+        background-color: rgb(27, 26, 28);
+        color: white;
+    }
+
+    .dark-mode .menu a,
+    .dark-mode .icons a,
+    .dark-mode .dropdown-item,
+    .dark-mode .label-dark {
+        color: white;
+    }
+
+        .dark-mode .menu a:hover,
+        .dark-mode .icons a:hover,
+        .dark-mode label:hover {
+            color: #007bff;
+        }
+/* Switch styles */
+.switch {
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+}
+
+    .switch::before {
+        content: "";
+        width: 18px;
+        height: 18px;
+        background-color: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        transition: transform 0.3s;
+    }
+/* When the checkbox is checked */
+#darkModeToggle:checked + .switch::before {
+    transform: translateX(20px);
+}
+
+#darkModeToggle:checked + .switch {
+    background-color: #007bff;
+}
+
+
+
+/*Thong bao*/
+.notification-container {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 300px;
+    max-height: 600px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    overflow-y: auto; /* Thanh cuộn dọc nếu nội dung quá dài */
+    padding: 10px;
+}
+
+.notifications-list .notification {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+    .notifications-list .notification:last-child {
+        border-bottom: none;
+    }
+
+.notifications-list .title {
+    font-weight: bold;
+}
+
+.notifications-list .time {
+    font-size: 12px;
+    color: #888;
+}
+
+.notifications-list .status {
+    font-size: 12px;
+    font-style: italic;
+    color: green;
+}
+
+.notification-read {
+    background-color: #65686C;
+}
+
+.notification-unread {
+    background-color: #FFFFFF;
+}
