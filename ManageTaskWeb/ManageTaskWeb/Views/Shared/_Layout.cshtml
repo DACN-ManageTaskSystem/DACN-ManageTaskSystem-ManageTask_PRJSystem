@@ -15,6 +15,7 @@
 
 
     <link href="@Url.Content("~/Content/css/layout.css?v=1")" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -32,6 +33,10 @@
             </div>
 
             <div class="icons">
+
+                <a class="notification-button" onclick="toggleNotifications()"><i class="fas fa-bell"></i></a>
+                <a href="#"><i class="fas fa-cog"></i></a>
+
 
                 @if (Session["FullName"] != null)
                 {
@@ -79,6 +84,7 @@
         @RenderBody()
     </main>
     <footer>
+
         <div class="column">
             <h3>E-Comm</h3>
             <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
@@ -250,6 +256,7 @@
                 scrollToTopBtn.style.display = 'none';
             }
         });
+
         // Toggle Dark Mode
         document.getElementById('darkModeToggle').addEventListener('change', function () {
             document.body.classList.toggle('dark-mode');
