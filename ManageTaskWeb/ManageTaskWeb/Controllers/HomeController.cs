@@ -106,6 +106,7 @@ namespace ManageTaskWeb.Controllers
             else
             {
                 var memberId = Session["MemberID"]?.ToString();
+
                 projects = data.ProjectMembers
                                 .Where(pm => pm.MemberID == memberId)
                                 .Select(pm => pm.Project)
@@ -126,9 +127,10 @@ namespace ManageTaskWeb.Controllers
                                                        .Distinct()
                                                        .Count(),
                                 }).ToList();
+
             }
 
-            // Kiểm tra nếu projects vẫn là null hoặc rỗng, gán giá trị mặc định là danh sách rỗng
+            //// Kiểm tra nếu projects vẫn là null hoặc rỗng, gán giá trị mặc định là danh sách rỗng
             if (projects == null)
             {
                 projects = new List<ProjectExtended>();
@@ -204,7 +206,7 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
-        
+
         //Danh sach Member trong Project
         public ActionResult MembersOfProject(string projectId)
         {
@@ -228,7 +230,7 @@ namespace ManageTaskWeb.Controllers
             var role = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
 
-            // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
+            //    // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
             if (role == "Manager" || role == "Admin")
             {
                 // Nếu là Manager hoặc Admin, lấy tất cả task của dự án
@@ -304,5 +306,61 @@ namespace ManageTaskWeb.Controllers
             };
             return View(viewModel);
         }
+
+        public ActionResult DSMember()
+        {
+            var role = Session["Role"]?.ToString();
+            var memberId = Session["MemberID"]?.ToString();
+            List<Members> members;
+
+            // Kiểm tra quyền truy cập
+            if (role == "Manager" || role == "Admin")
+            {
+                // Quản lý hoặc Admin có thể thấy toàn bộ danh sách members
+                members = data.Members
+                              .Where(m => m.deleteTime == null) // Lọc bỏ những người đã xóa
+                              .Select(m => new Members
+                              {
+                                  MemberID = m.MemberID,
+                                  FullName = m.FullName,
+                                  Email = m.Email,
+                                  Phone = m.Phone,
+                                  Role = m.Role,
+                                  Status = m.Status,
+                                  MemberCount = data.TaskAssignments
+                                                     .Where(a => a.MemberID == m.MemberID)
+                                                     .Select(a => a.TaskID)
+                                                     .Distinct()
+                                                     .Count()
+                              })
+                              .ToList();
+            }
+            else
+            {
+                // Thành viên chỉ thấy các thành viên cùng tham gia dự án với họ
+                members = data.TaskAssignments
+                              .Where(a => a.AssignedBy == memberId && a.Member.deleteTime == null)
+                              .Select(a => a.Member)
+                              .Distinct()
+                              .Select(m => new Members
+                              {
+                                  MemberID = m.MemberID,
+                                  FullName = m.FullName,
+                                  Email = m.Email,
+                                  Phone = m.Phone,
+                                  Role = m.Role,
+                                  Status = m.Status,
+                                  MemberCount = data.TaskAssignments
+                                                     .Where(a => a.MemberID == m.MemberID)
+                                                     .Select(a => a.TaskID)
+                                                     .Distinct()
+                                                     .Count()
+                              })
+                              .ToList();
+            }
+
+            return View(members);
+        }
+
     }
 }
