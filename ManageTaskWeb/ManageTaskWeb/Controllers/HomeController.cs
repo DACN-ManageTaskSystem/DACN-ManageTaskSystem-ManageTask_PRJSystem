@@ -140,7 +140,71 @@ namespace ManageTaskWeb.Controllers
                 }
                 data.SubmitChanges();
 
-                return Json(new { success = true, message = "Request accepted successfully, notifications cleared" });
+                // Lấy thông tin chi tiết về dự án và thành viên vừa được chấp nhận
+                var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+                var newMember = data.Members.FirstOrDefault(m => m.MemberID == requestMemberId);
+                if (project == null || newMember == null)
+                {
+                    return Json(new { success = false, message = "Error: Project or member not found." });
+                }
+
+                string projectName = project.ProjectName;
+                string fullName = newMember.FullName;
+
+                // Lấy danh sách tất cả thành viên trong dự án (trạng thái Accepted)
+                var projectMembers = data.ProjectMembers
+                    .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted")
+                    .Select(pm => pm.MemberID)
+                    .ToList();
+
+                // Tạo thông báo cho requestMemberId
+                data.Notifications.InsertOnSubmit(new Notification
+                {
+                    MemberID = requestMemberId,
+                    Content = $"Bạn đã được thêm vào project '{projectName}'.",
+                    NotificationDate = DateTime.Now,
+                    IsRead = false,
+                    NotificationType = "JoinAccepted"
+                });
+
+                // Tạo thông báo cho tất cả thành viên còn lại trong dự án
+                foreach (var member in projectMembers)
+                {
+                    if (member != requestMemberId) // Loại bỏ requestMemberId để không gửi trùng lặp
+                    {
+                        data.Notifications.InsertOnSubmit(new Notification
+                        {
+                            MemberID = member,
+                            Content = $"Project '{projectName}' has a new member: {fullName}.",
+                            NotificationDate = DateTime.Now,
+                            IsRead = false,
+                            NotificationType = "JoinAccepted"
+                        });
+                    }
+                }
+                // Lấy danh sách Admin và Manager từ bảng Members
+                var adminAndManagers = data.Members
+                    .Where(m => m.Role == "Admin" || m.Role == "Manager")
+                    .Select(m => m.MemberID)
+                    .ToList();
+
+                // Tạo thông báo riêng cho Admin và Manager
+                foreach (var admin in adminAndManagers)
+                {
+                    data.Notifications.InsertOnSubmit(new Notification
+                    {
+                        MemberID = admin,
+                        Content = $"A new member '{fullName}' has joined your project '{projectName}'.",
+                        NotificationDate = DateTime.Now,
+                        IsRead = false,
+                        NotificationType = "JoinAccepted"
+                    });
+                }
+
+                // Lưu thay đổi
+                data.SubmitChanges();
+
+                return Json(new { success = true, message = "Request accepted successfully, notifications sent." });
             }
             catch (Exception ex)
             {
@@ -148,6 +212,72 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = "Error processing your request: " + ex.Message });
             }
         }
+
+        //An Reject trong thong bao
+        [HttpPost]
+        public JsonResult RejectJoinRequest(int notificationId, string reason)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(reason))
+                {
+                    return Json(new { success = false, message = "Reason is required." });
+                }
+
+                // Tìm thông báo bị từ chối
+                var notification = data.Notifications.FirstOrDefault(n => n.NotificationID == notificationId);
+                if (notification == null)
+                {
+                    return Json(new { success = false, message = "Notification not found." });
+                }
+
+                // Phân tích ExtraData
+                var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(notification.ExtraData);
+                string requestMemberId = extraData["RequestMemberID"];
+                string projectId = extraData["ProjectID"];
+
+                // Tìm và cập nhật trạng thái thành viên trong bảng ProjectMembers
+                var projectMember = data.ProjectMembers
+                    .FirstOrDefault(pm => pm.MemberID == requestMemberId && pm.ProjectID == projectId && pm.Status == "Pending");
+                if (projectMember != null)
+                {
+                    projectMember.Status = "Rejected";
+                    projectMember.Reason = reason; // Lưu lý do từ chối
+                    data.SubmitChanges();
+                }
+
+                // Xóa tất cả thông báo có cùng ExtraData
+                var notificationsToDelete = data.Notifications
+                    .Where(n => n.ExtraData == notification.ExtraData)
+                    .ToList();
+
+                foreach (var notif in notificationsToDelete)
+                {
+                    data.Notifications.DeleteOnSubmit(notif);
+                }
+
+                // Tạo thông báo cho người bị từ chối
+                data.Notifications.InsertOnSubmit(new Notification
+                {
+                    MemberID = requestMemberId,
+                    Content = $"Your join request for project '{projectId}' was rejected due to: {reason}.",
+                    NotificationDate = DateTime.Now,
+                    IsRead = false,
+                    NotificationType = "JoinRejected"
+                });
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                data.SubmitChanges();
+
+                return Json(new { success = true, message = "Request rejected successfully, notifications updated." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
+
 
 
 
