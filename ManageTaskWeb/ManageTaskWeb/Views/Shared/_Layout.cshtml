@@ -25,25 +25,21 @@
             padding: 10px 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         /* Logo styles */
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
             .logo img {
                 width: 40px;
                 height: 40px;
             }
-
         /* Menu styles */
         nav .menu {
             display: flex;
             gap: 40px; /* Tăng khoảng cách giữa các mục menu */
         }
-
             nav .menu a {
                 text-decoration: none;
                 color: #333;
@@ -52,36 +48,28 @@
                 align-items: center;
                 gap: 8px; /* Khoảng cách giữa icon và text */
             }
-
             nav .menu i {
                 font-size: 20px; /* Icon size */
             }
-
-
         nav .icons {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-
             nav .icons a {
                 color: #333;
                 font-size: 24px;
                 text-decoration: none;
             }
-
             nav .icons img {
                 width: 40px;
                 height: 40px;
                 border-radius: 50%;
             }
-
-
         nav a:hover,
         nav label:hover {
             color: #007bff;
         }
-
         /* Nút quay lại đầu trang */
         #scrollToTopBtn {
             position: fixed;
@@ -98,43 +86,34 @@
             z-index: 1000;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
             #scrollToTopBtn:hover {
                 background-color: #0056b3;
             }
-
             #scrollToTopBtn i {
                 font-size: 20px;
             }
-
-
         /*Dark Mode*/
         .dark-mode {
             background-color: rgb(27, 26, 28);
             color: white;
         }
-
             .dark-mode nav,
             .dark-mode .dropdown-menu,
             .dark-mode .selected-option {
                 background-color: rgb(27, 26, 28);
                 color: white;
             }
-
-
             .dark-mode .menu a,
             .dark-mode .icons a,
             .dark-mode .dropdown-item,
             .dark-mode .label-dark {
                 color: white;
             }
-
                 .dark-mode .menu a:hover,
                 .dark-mode .icons a:hover,
                 .dark-mode label:hover {
                     color: #007bff;
                 }
-
         /* Switch styles */
         .switch {
             width: 40px;
@@ -145,7 +124,6 @@
             cursor: pointer;
             display: inline-block;
         }
-
             .switch::before {
                 content: "";
                 width: 18px;
@@ -157,16 +135,14 @@
                 left: 1px;
                 transition: transform 0.3s;
             }
-
         /* When the checkbox is checked */
         #darkModeToggle:checked + .switch::before {
             transform: translateX(20px);
         }
-
         #darkModeToggle:checked + .switch {
             background-color: #007bff;
         }
-    </style>
+        </style>
 
 
     <link rel="stylesheet" type="text/css" href="~/Content/css/membersofproject.css">
@@ -188,7 +164,7 @@
             </div>
 
             <div class="icons">
-                <a href="#"><i class="fas fa-bell"></i></a>
+                <a class="notification-button" onclick="toggleNotifications()"><i class="fas fa-bell"></i></a>
                 <a href="#"><i class="fas fa-cog"></i></a>
 
                 <!-- User Avatar & Dropdown Menu -->
@@ -218,18 +194,38 @@
                         <a href="/Home/DangNhap" style="font-size: 18px;">Login</a>
                     }
                 </div>
-
-
-
             </div>
         </nav>
+
+        @*<div class="notification-container" id="notificationContainer">
+            <h1>Notifications</h1>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Task #12 Còn 1 nửa là hết hạn</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="notification">
+                <div class="dot">
+                    <img src="~/Content/images/logo.png" alt="image description">
+                </div>
+                <div class="content">
+                    <p class="title">Task #13 Còn 1 nửa là hết hạn</p>
+                    <p class="time">1 ngày trước</p>
+                </div>
+                <div class="status-dot"></div>
+            </div>*@
+        </div>
     </header>
 
     <main>
         @RenderBody()
     </main>
     <footer>
-
             <div class="column">
                 <h3>E-Comm</h3>
                 <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
@@ -265,7 +261,10 @@
                 <h3>Contact Us</h3>
                 <p>E-Comm, 4578 Marmora Road, Glasgow D04 89GR</p>
             </div>
+
         </footer>
+
+
 
     <div id="scrollToTopBtn" title="Go to top">
         <i class="fas fa-chevron-up"></i>
@@ -300,6 +299,26 @@
                 scrollToTopBtn.style.display = 'block';
             } else {
                 scrollToTopBtn.style.display = 'none';
+            }
+        });
+
+
+        // Hàm bật/tắt hiển thị notification container
+        function toggleNotifications() {
+            const notificationContainer = document.getElementById('notificationContainer');
+            notificationContainer.style.display =
+                notificationContainer.style.display === 'none' || notificationContainer.style.display === ''
+                    ? 'block'
+                    : 'none';
+        }
+
+        // Đóng notification container khi bấm ngoài khu vực thông báo
+        window.addEventListener('click', function (event) {
+            const notificationContainer = document.getElementById('notificationContainer');
+            const notificationButton = document.querySelector('.notification-button');
+
+            if (!notificationContainer.contains(event.target) && !notificationButton.contains(event.target)) {
+                notificationContainer.style.display = 'none';
             }
         });
 
