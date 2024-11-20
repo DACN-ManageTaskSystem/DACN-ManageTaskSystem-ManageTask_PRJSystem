@@ -1,5 +1,82 @@
 ﻿
+/* Nút chứa biểu tượng */
+.request-icon-wrapper {
+    position: relative;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 40px; /* Kích thước nút */
+    height: 40px;
+    border-radius: 50%; /* Tạo nút tròn */
+    transition: background-color 0.3s ease;
+}
 
+    /* Biểu tượng phong bì */
+    .request-icon-wrapper .request-icon {
+        width: 24px; /* Kích thước biểu tượng */
+        height: auto;
+    }
+
+    /* Chấm đỏ thông báo */
+    .request-icon-wrapper .notification-dot {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 10px;
+        height: 10px;
+        background-color: red;
+        border-radius: 50%;
+        border: 2px solid white; /* Viền trắng xung quanh chấm đỏ */
+    }
+
+    /* Hiệu ứng hover cho nút */
+    .request-icon-wrapper:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+    /* Button chứa văn bản và chấm đỏ */
+            .request-icon-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center; /* Văn bản nằm giữa */
+                background-color: #f9f9f9;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px 15px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, border-color 0.3s ease;
+                gap: 10px; /* Khoảng cách giữa các phần tử */
+            }
+
+                /* Văn bản trong nút */
+                .request-icon-wrapper .button-text {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #333;
+                }
+
+                /* Chấm đỏ nằm bên phải */
+                .request-icon-wrapper .notification-dot {
+                    position: absolute;
+                    top: 50%; /* Căn giữa theo chiều dọc */
+                    right: 10px; /* Cách mép phải 10px */
+                    transform: translateY(-50%); /* Đảm bảo căn giữa hoàn hảo */
+                    width: 10px;
+                    height: 10px;
+                    background-color: red;
+                    border-radius: 50%;
+                    border: 2px solid white; /* Viền trắng bao quanh chấm đỏ */
+                }
+
+                /* Hiệu ứng hover */
+                .request-icon-wrapper:hover {
+                    background-color: #e6e6e6;
+                    border-color: #999;
+                }
 .memberofproject-header {
     display: flex;
     align-items: center;
@@ -327,3 +404,43 @@
     background: #FFEBEE;
     color: #F44336;
 }
+/* Button chứa văn bản và chấm đỏ */
+            .request-icon-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center; /* Văn bản nằm giữa */
+                background-color: #f9f9f9;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px 15px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, border-color 0.3s ease;
+                gap: 10px; /* Khoảng cách giữa các phần tử */
+            }
+
+                /* Văn bản trong nút */
+                .request-icon-wrapper .button-text {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #333;
+                }
+
+                /* Chấm đỏ nằm bên phải */
+                .request-icon-wrapper .notification-dot {
+                    position: absolute;
+                    top: 50%; /* Căn giữa theo chiều dọc */
+                    right: 10px; /* Cách mép phải 10px */
+                    transform: translateY(-50%); /* Đảm bảo căn giữa hoàn hảo */
+                    width: 10px;
+                    height: 10px;
+                    background-color: red;
+                    border-radius: 50%;
+                    border: 2px solid white; /* Viền trắng bao quanh chấm đỏ */
+                }
+
+                /* Hiệu ứng hover */
+                .request-icon-wrapper:hover {
+                    background-color: #e6e6e6;
+                    border-color: #999;
+                }

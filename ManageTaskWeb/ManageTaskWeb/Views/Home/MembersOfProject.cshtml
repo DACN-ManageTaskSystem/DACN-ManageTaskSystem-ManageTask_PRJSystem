@@ -42,13 +42,63 @@
     </div>
 
     <div class="memberofproject-toolbar">
+        <!-- Nút thêm thành viên -->
         <button class="memberofproject-add-member-btn">
             <span>+</span> Thêm Thành Viên Mới
         </button>
+
+        <!-- Thanh tìm kiếm nằm giữa -->
         <div class="memberofproject-search-bar">
             <input type="text" placeholder="Tìm kiếm theo mã hoặc tên" />
             <i class="fas fa-search"></i>
         </div>
+        <style>
+            /* Button chứa văn bản và chấm đỏ */
+            .request-icon-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center; /* Văn bản nằm giữa */
+                background-color: #f9f9f9;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px 15px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, border-color 0.3s ease;
+                gap: 10px; /* Khoảng cách giữa các phần tử */
+            }
+
+                /* Văn bản trong nút */
+                .request-icon-wrapper .button-text {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #333;
+                }
+
+                /* Chấm đỏ nằm bên phải */
+                .request-icon-wrapper .notification-dot {
+                    position: absolute;
+                    top: 50%; /* Căn giữa theo chiều dọc */
+                    right: 10px; /* Cách mép phải 10px */
+                    transform: translateY(-50%); /* Đảm bảo căn giữa hoàn hảo */
+                    width: 10px;
+                    height: 10px;
+                    background-color: red;
+                    border-radius: 50%;
+                    border: 2px solid white; /* Viền trắng bao quanh chấm đỏ */
+                }
+
+                /* Hiệu ứng hover */
+                .request-icon-wrapper:hover {
+                    background-color: #e6e6e6;
+                    border-color: #999;
+                }
+        </style>
+        <!-- Biểu tượng giống hình ảnh -->
+        <button class="request-icon-wrapper" id="request-button">
+            <span class="button-text">Request</span> &nbsp;
+            <span class="notification-dot"></span>
+        </button>
     </div>
 
     <div class="memberofproject-members-container">
@@ -112,4 +162,201 @@
         </div>
     </div>
 </div>
+<<div class="overlay-2" id="overlay-2">
+    <div class="container-blind-2">
+        <h2>Request <span class="icon">📄</span></h2>
+        <div class="close-button">✕</div>
+        <ul class="request-list">
+            <li>
+                <div class="avatar avatar-green"></div>
+                <div class="info">
+                    <p>Nguyễn Nhật Quân</p>
+                    <span class="role">Developer</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+            <li>
+                <div class="avatar avatar-orange"></div>
+                <div class="info">
+                    <p>Huỳnh Bảo Ngọc</p>
+                    <span class="role">Developer</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+            <li>
+                <div class="avatar avatar-blue"></div>
+                <div class="info">
+                    <p>Trần Phương Uyên</p>
+                    <span class="role">Tester</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+            <li>
+                <div class="avatar avatar-yellow"></div>
+                <div class="info">
+                    <p>Đỗ Lan Hương</p>
+                    <span class="role">Developer</span>
+                </div>
+                <button class="accept-button">✔ Accept</button>
+                <button class="reject-button">✖ Reject</button>
+            </li>
+        </ul>
+        <div class="pagination">
+            <button>◀</button>
+            <button>1</button>
+            <button>2</button>
+            <button class="active">3</button>
+            <button>4</button>
+            <button>5</button>
+            <button>▶</button>
+        </div>
+    </div>
+</div>
+<style>
+    .overlay-2 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+        visibility:hidden;
+    }
+
+    .container-blind-2 {
+        width: 600px;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #2d5c89;
+        margin-bottom: 20px;
+    }
+
+    .icon {
+        font-size: 24px;
+        vertical-align: middle;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .request-list {
+        list-style: none;
+        margin-bottom: 20px;
+    }
+
+        .request-list li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .avatar-green {
+        background-color: #9bc47d;
+    }
+
+    .avatar-orange {
+        background-color: #f5a623;
+    }
+
+    .avatar-blue {
+        background-color: #4a90e2;
+    }
+
+    .avatar-yellow {
+        background-color: #ffd700;
+    }
+
+    .info {
+        flex: 1;
+    }
+        .info p {
+            font-weight: bold;
+            color: #333;
+        }
+
+    .role {
+        font-size: 0.9em;
+        color: #4a90e2;
+    }
+
+    .accept-button,
+    .reject-button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.9em;
+        color: #fff;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .accept-button {
+        background-color: #4CAF50; /* Màu xanh lá */
+    }
+
+    .reject-button {
+        background-color: #E57373; /* Màu đỏ nhạt */
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+        .pagination button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+            .pagination button.active {
+                background-color: #2d5c89;
+                color: #ffffff;
+            }
+</style>
+
+<script>
+    // Khi nhấn vào nút Request, hiển thị overlay
+    document.getElementById('request-button').addEventListener('click', function () {
+        var overlay = document.getElementById('overlay-2');
+        overlay.style.visibility = 'visible'; // Hiển thị overlay
+    });
+    // Khi nhấn vào nút đóng (✕), ẩn overlay
+    document.querySelector('.close-button').addEventListener('click', function () {
+        var overlay = document.getElementById('overlay-2');
+        overlay.style.visibility = 'hidden'; // Ẩn overlay
+    });
+</script>
+
 
