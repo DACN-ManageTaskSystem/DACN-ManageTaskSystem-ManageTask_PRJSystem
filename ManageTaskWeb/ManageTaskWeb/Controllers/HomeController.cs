@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Security.Cryptography;
+using System.Text;
 
 
 namespace ManageTaskWeb.Controllers
@@ -22,38 +24,87 @@ namespace ManageTaskWeb.Controllers
         //DangNhap-GET
         public ActionResult DangNhap()
         {
+          
             return View();
+        }
+        //public static string EncryptPassword(string plainText, string key)
+        //{
+        //    using (Aes aes = Aes.Create())
+        //    {
+        //        aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32).Substring(0, 32)); // Khóa 256-bit
+        //        aes.IV = new byte[16]; // Vector khởi tạo mặc định (16 byte)
+
+        //        using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
+        //        {
+        //            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+        //            byte[] encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
+
+        //            return Convert.ToBase64String(encryptedBytes);
+        //        }
+        //    }
+        //}
+        public static string DecryptPassword(string encryptedText, string key)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32).Substring(0, 32)); // Khóa 256-bit
+                aes.IV = new byte[16]; // Vector khởi tạo mặc định (16 byte)
+                aes.Padding = PaddingMode.PKCS7; // Chế độ padding (nên đồng nhất khi mã hóa)
+
+                using (var decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                {
+                    try
+                    {
+                        byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
+                        byte[] decryptedBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+                        return Encoding.UTF8.GetString(decryptedBytes);
+                    }
+                    catch (CryptographicException ex)
+                    {
+                        throw new Exception("Giải mã thất bại: Dữ liệu không hợp lệ hoặc khóa sai.", ex);
+                    }
+                }
+            }
         }
         //DangNhap-POST
         [HttpPost]
         public ActionResult DangNhap(string username, string password)
         {
-            // Kiểm tra xem tên đăng nhập và mật khẩu có hợp lệ không
-            var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.Password == password && m.deleteTime == null);
+           
+            // Tìm kiếm thành viên
+            var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.deleteTime == null);
 
-            if (member != null)
+            if (member == null)
             {
-                member.Status = "Active";
-                data.SubmitChanges();
-
-                // Nếu đăng nhập thành công, lưu thông tin vào session
-                Session["MemberID"] = member.MemberID;
-                Session["FullName"] = member.FullName;
-                Session["Role"] = member.Role;
-                Session["Email"] = member.Email;
-                Session["Phone"] = member.Phone;
-                Session["ImageMember"] = member.ImageMember;
-
-                // Chuyển hướng về trang chủ sau khi đăng nhập thành công
-                return RedirectToAction("TrangChu");
-            }
-            else
-            {
-                // Nếu đăng nhập không thành công, hiển thị thông báo lỗi
+                // Không tìm thấy người dùng
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
+            
+            // Giải mã mật khẩu
+            string decryptedPassword = DecryptPassword(member.Password, "mysecretkey");
+            if (decryptedPassword != password)
+            {
+                // Sai mật khẩu
+                ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
+                return View();
+            }
+            
+            member.Status = "Active";
+            data.SubmitChanges();
+
+            // Nếu đăng nhập thành công, lưu thông tin vào session
+            Session["MemberID"] = member.MemberID;
+            Session["FullName"] = member.FullName;
+            Session["Role"] = member.Role;
+            Session["Email"] = member.Email;
+            Session["Phone"] = member.Phone;
+            Session["ImageMember"] = member.ImageMember;
+
+            // Chuyển hướng về trang chủ sau khi đăng nhập thành công
+            return RedirectToAction("TrangChu");
         }
+   
         //Load Thong bao 
 
         public JsonResult GetNotifications()
@@ -526,8 +577,8 @@ namespace ManageTaskWeb.Controllers
             // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
             var interactions = data.Interactions
                 .Where(i => i.ProjectID == projectId)
-                .OrderByDescending(i => i.IsPinned) // Các tin nhắn được ghim ở trên
-                .ThenByDescending(i => i.InteractionDate) // Các tin nhắn không ghim sẽ sắp xếp theo ngày
+                //.OrderByDescending(i => i.IsPinned) // Các tin nhắn được ghim ở trên
+                //ThenByDescending(i => i.InteractionDate) // Các tin nhắn không ghim sẽ sắp xếp theo ngày
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -644,7 +695,7 @@ namespace ManageTaskWeb.Controllers
             var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
             if (message != null)
             {
-                message.IsPinned = true;
+                //message.IsPinned = true;
                 data.SubmitChanges();
             }
             return RedirectToAction("GroupChat", new { projectId = projectId });
@@ -657,7 +708,7 @@ namespace ManageTaskWeb.Controllers
             if (interaction != null)
             {
                 // Đảo trạng thái ghim và cập nhật ngày tương tác
-                interaction.IsPinned = !(interaction.IsPinned ?? false);
+                //interaction.IsPinned = !(interaction.IsPinned ?? false);
                 interaction.InteractionDate = DateTime.Now;
                 data.SubmitChanges();
                 return Json(new { success = true });
