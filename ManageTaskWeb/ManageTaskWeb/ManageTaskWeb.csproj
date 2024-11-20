@@ -143,6 +143,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>QLCV.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\TaskViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

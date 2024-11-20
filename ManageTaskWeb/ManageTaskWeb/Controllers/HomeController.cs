@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Security.Cryptography;
 using System.Text;
+using System.Net;
 
 
 namespace ManageTaskWeb.Controllers
@@ -563,9 +564,66 @@ namespace ManageTaskWeb.Controllers
 
         }
 
-        public ActionResult DetailTask()
+        public ActionResult DetailTask(string taskId)
         {
-            return View();
+            if (taskId == null)
+                return HttpNotFound();  // Nếu không có taskId, trả về lỗi Not Found
+
+            using (var context = new QLCVDataContext())
+            {
+                // Nếu taskId là kiểu string và cần ép kiểu sang int để tìm kiếm trong CSDL
+                if (!int.TryParse(taskId, out int taskIdInt))
+                {
+                    return HttpNotFound(); // Nếu không thể chuyển đổi taskId thành int, trả về lỗi Not Found
+                }
+
+                var task = context.Tasks
+                                  .Include(t => t.Project)
+                                  .Include(t => t.TaskAssignments.Select(ta => ta.Member))
+                                  .FirstOrDefault(t => t.TaskID == taskIdInt); // Sử dụng kiểu int cho truy vấn
+
+                if (task == null)
+                    return HttpNotFound();  // Nếu không tìm thấy task trong CSDL, trả về lỗi Not Found
+                var creator = task.TaskAssignments
+                        .Where(ta => ta.AssignedBy != null)
+                        .Join(context.Members,
+                              ta => ta.AssignedBy, // Liên kết theo MemberID (AssignedBy)
+                              m => m.MemberID,      // Với MemberID trong bảng Members
+                              (ta, m) => new MemberViewModel
+                              {
+                                  MemberID = ta.AssignedBy,
+                                  FullName = m.FullName,   // Tên của người giao nhiệm vụ
+                                  Role = m.Role,           // Vai trò của người giao nhiệm vụ
+                                  ImageMember = m.ImageMember // Hình ảnh của người giao nhiệm vụ
+                              })
+                        .FirstOrDefault();  // Lấy thông tin của người giao nhiệm vụ đầu tiên
+
+                var viewModel = new TaskViewModel
+                {
+                    TaskID = task.TaskID,
+                    TaskName = task.TaskName,
+                    Description = task.Description,
+                    StartDate = task.StartDate ?? DateTime.MinValue,  
+                    EndDate = task.EndDate ?? DateTime.MinValue,      
+                    Priority = task.Priority ?? 0,
+                    Status = task.Status,
+                    // If you want to get the MemberID from TaskAssignments, you can map it like so
+                    AssignedMembers = (from ta in task.TaskAssignments
+                                       join member in context.Members on ta.MemberID equals member.MemberID
+                                       select new MemberViewModel
+                                       {
+                                           MemberID = ta.MemberID,
+                                           FullName = member.FullName,
+                                           Role = member.Role,
+                                           ImageMember = member.ImageMember
+                                       }).ToList(),
+
+                    Creator = creator  // Assign the creator here
+
+                };
+
+                return View(viewModel);
+            }
         }
 
         //CHAT - START
