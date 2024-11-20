@@ -351,7 +351,7 @@ namespace ManageTaskWeb.Controllers
                 var memberId = Session["MemberID"]?.ToString();
                 projects = data.ProjectMembers
                                .Where(pm => pm.MemberID == memberId && pm.Status == "Accepted")
-                               .Select(pm => pm.Project )
+                               .Select(pm => pm.Project)
                                .Distinct()
                                .Where(p => p.deleteTime == null)
                                .Select(p => new ProjectExtended
@@ -456,6 +456,45 @@ namespace ManageTaskWeb.Controllers
             {
                 // Redirect with error message
                 return RedirectToAction("DSProject", new { notificationMessage = "Đã xảy ra lỗi khi thêm dự án!", notificationType = "error" });
+            }
+        }
+        //Sua Project
+        [HttpPost]
+        public ActionResult EditProject(string ProjectID, string ProjectName, string Description, DateTime StartDate, DateTime EndDate, int Priority, string Status, HttpPostedFileBase ImageFile)
+        {
+            try
+            {
+                var project = data.Projects.FirstOrDefault(p => p.ProjectID == ProjectID);
+                if (project == null)
+                {
+                    return RedirectToAction("DSProject", new { notificationMessage = "Project not found!", notificationType = "error" });
+                }
+
+                // Update project details
+                project.ProjectName = ProjectName;
+                project.Description = Description;
+                project.StartDate = StartDate;
+                project.EndDate = EndDate;
+                project.Priority = Priority;
+                project.Status = Status;
+
+                // Update image if a new file is uploaded
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    string path = Server.MapPath("~/Content/images/project-img/");
+                    Directory.CreateDirectory(path); // Ensure directory exists
+                    string imagePath = Path.Combine(path, ImageFile.FileName);
+                    ImageFile.SaveAs(imagePath);
+                    project.ImageProject = ImageFile.FileName;
+                }
+
+                data.SubmitChanges();
+
+                return RedirectToAction("DSProject", new { notificationMessage = "Project updated successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("DSProject", new { notificationMessage = "An error occurred while updating the project!", notificationType = "error" });
             }
         }
         //Xoa project 

@@ -26,10 +26,20 @@
             </div>
 
             <div class="menu">
-                <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
-                <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
-                <a href="#"><i class="fas fa-users"></i> GroupChat</a>
-                <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                {
+                    <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                    <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
+                    <a href="#"><i class="fas fa-users"></i> GroupChat</a>
+                    <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                }
+                else
+                {
+                    <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                    <a href="#"><i class="fas fa-users"></i> GroupChat</a>
+                    <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                }
+
             </div>
 
             <div class="icons">
