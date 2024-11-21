@@ -1,5 +1,4 @@
-﻿
-.header {
+﻿.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -162,4 +161,198 @@
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Modal Styles */
+.modal-content {
+    border-radius: 15px;
+    padding: 30px;
+    border: none;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+}
 
+.modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.8rem;
+    color: #4a4a8c;
+    font-weight: 600;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #a0a0a0;
+    cursor: pointer;
+}
+
+.modal-body {
+    display: flex;
+    gap: 20px;
+}
+
+.column {
+    flex: 1;
+    min-width: 250px;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+
+input[type="text"],
+input[type="date"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #6c63ff;
+    outline: none;
+}
+
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.selected-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 100%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
+}
+.custom-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.icon {
+    margin-left: 10px;
+}
+
+.ic1 {
+    color: red;
+}
+
+.ic2 {
+    color: orangered;
+}
+
+.ic3 {
+    color: #FFC100;
+}
+
+.ic4 {
+    color: green;
+}
+
+.ic5 {
+    color: dodgerblue;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 20px;
+}
+
+.modal-footer .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-footer .btn-primary {
+    background-color: #6c63ff;
+    color: #fff;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #4a4a8c;
+}
+
+
+/*PopUP*/
+#notificationPopup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    height: 80px;
+    color: white;
+    display: none; /* Hidden by default */
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    z-index: 1051; /* Ensure it appears above other content */
+}
+
+.popup-success {
+    background-color: #88C273;
+}
+
+/* Error styling */
+.popup-error {
+    background-color: #FF8A8A;
+}
+
+#notificationPopup .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#messageModal .modal-body {
+    font-size: 16px;
+    color: #333;
+}

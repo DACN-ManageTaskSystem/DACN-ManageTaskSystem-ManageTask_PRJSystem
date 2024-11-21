@@ -26,10 +26,20 @@
             </div>
 
             <div class="menu">
-                <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
-                <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
-                <a href="#"><i class="fas fa-users"></i> GroupChat</a>
-                <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                {
+                    <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                    <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
+                    <a href="#"><i class="fas fa-users"></i> GroupChat</a>
+                    <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                }
+                else
+                {
+                    <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                    <a href="#"><i class="fas fa-users"></i> GroupChat</a>
+                    <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                }
+
             </div>
 
             <div class="icons">
@@ -143,25 +153,26 @@
                             data.notifications.forEach(notification => {
                                 const statusClass = notification.IsRead ? 'notification-read' : 'notification-unread';
                                 let notificationItem = `
-                        <div class="notification ${statusClass}">
-                            <div class="content">
-                                <p class="title">${notification.Content}</p>
-                                <p class="time">${notification.NotificationDate}</p>
-                            </div>
-                            <div class="status">${notification.IsRead ? 'Read' : 'Unread'}</div>`;
+        <div class="notification ${statusClass}" data-id="${notification.NotificationID}">
+            <div class="content">
+                <p class="title">${notification.Content}</p>
+                <p class="time">${notification.NotificationDate}</p>
+            </div>
+            <div class="status">${notification.IsRead ? 'Read' : 'Unread'}</div>`;
 
                                 // Nếu đây là thông báo yêu cầu gia nhập, thêm nút Accept/Reject
                                 if (notification.ShowAcceptReject) {
                                     notificationItem += `
-                            <div class="actions">
-                                <button class="btn btn-success" onclick="acceptJoinRequest(${notification.NotificationID})">Accept</button>
-                                <button class="btn btn-danger" onclick="rejectJoinRequest(${notification.NotificationID})">Reject</button>
-                            </div>`;
+            <div class="actions">
+                <button class="btn btn-success" onclick="acceptJoinRequest(${notification.NotificationID})">Accept</button>
+                <button class="btn btn-danger" onclick="rejectJoinRequest(${notification.NotificationID})">Reject</button>
+            </div>`;
                                 }
 
                                 notificationItem += `</div>`;
                                 notificationList.insertAdjacentHTML('beforeend', notificationItem);
                             });
+
                         } else {
                             notificationList.innerHTML = '<p>No notifications</p>';
                         }
@@ -199,21 +210,60 @@
         }
 
         function rejectJoinRequest(notificationId) {
-            fetch(`/Home/RejectJoinRequest?notificationId=${notificationId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message); // Thông báo khi từ chối yêu cầu
-                        toggleNotifications(); // Refresh notifications
-                    } else {
-                        alert('Error: ' + data.message); // Thông báo lỗi nếu có
-                    }
+            // Tìm thông báo chứa nút reject vừa được nhấn
+            const notificationElement = document.querySelector(`.notification[data-id="${notificationId}"]`);
+
+            // Kiểm tra nếu input đã tồn tại
+            if (notificationElement.querySelector('.reject-reason')) return;
+
+            // Tạo thẻ input và nút confirm
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Enter reject reason...';
+            input.classList.add('reject-reason', 'form-control', 'mt-2');
+
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Confirm';
+            confirmButton.classList.add('btn', 'btn-primary', 'mt-2');
+
+            // Gửi lý do reject khi nhấn Confirm
+            confirmButton.addEventListener('click', function () {
+                const reason = input.value.trim();
+                if (!reason) {
+                    alert('Please enter a reason.');
+                    return;
+                }
+
+                fetch(`/Home/RejectJoinRequest`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        notificationId: notificationId,
+                        reason: reason
+                    })
                 })
-                .catch(error => {
-                    console.error('Error rejecting join request:', error);
-                    alert('There was an error while rejecting your request.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message); // Hiển thị thông báo từ server
+                            toggleNotifications(); // Refresh notifications sau khi reject
+                        } else {
+                            alert('Error: ' + data.message); // Thông báo lỗi nếu có
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error rejecting join request:', error);
+                        alert('There was an error while rejecting your request.');
+                    });
+            });
+
+            // Thêm thẻ input và nút confirm vào giao diện
+            notificationElement.appendChild(input);
+            notificationElement.appendChild(confirmButton);
         }
+
 
 
 

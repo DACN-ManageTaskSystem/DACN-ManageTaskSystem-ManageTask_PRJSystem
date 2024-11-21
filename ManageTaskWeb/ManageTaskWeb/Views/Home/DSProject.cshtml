@@ -240,71 +240,72 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                     </div>
 
-                    <form>
+                    <form action="/Home/EditProject" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
                         <div class="modal-body">
                             <!-- Left Column -->
                             <div class="column">
                                 <label for="editProjectID">Project ID</label>
-                                <input type="text" class="form-control" id="editProjectID" readonly>
+                                <input type="text" class="form-control" name="ProjectID" id="editProjectID" readonly>
 
                                 <label for="editProjectName">Project Name *</label>
-                                <input type="text" class="form-control" id="editProjectName" placeholder="Name Project...">
+                                <input type="text" class="form-control" name="ProjectName" id="editProjectName" placeholder="Name Project..." required>
 
                                 <label for="editDescription">Description *</label>
-                                <textarea class="form-control" id="editDescription" placeholder="Enter Description..."></textarea>
+                                <textarea class="form-control" name="Description" id="editDescription" placeholder="Enter Description..." required></textarea>
 
                                 <label for="editStartDate">Start Date *</label>
-                                <input type="date" class="form-control" id="editStartDate">
+                                <input type="date" class="form-control" name="StartDate" id="editStartDate" required>
 
                                 <label for="editEndDate">End Date *</label>
-                                <input type="date" class="form-control" id="editEndDate">
+                                <input type="date" class="form-control" name="EndDate" id="editEndDate" required>
                             </div>
 
                             <!-- Right Column -->
                             <div class="column">
                                 <label for="editPriority">Priority</label>
+                                <input type="hidden" name="Priority" id="editPriorityValue">
                                 <div class="custom-dropdown">
                                     <div class="selected-option">
                                         <span> Medium</span> <i class="fa-solid fa-bars icon ic3"></i>
                                     </div>
                                     <div class="dropdown-menu">
-                                        <div class="dropdown-item">
+                                        <div class="dropdown-item" onclick="selectPriority(1, 'Highest')">
                                             <i class="fa-solid fa-angles-up icon ic1"></i> Highest
                                         </div>
-                                        <div class="dropdown-item">
+                                        <div class="dropdown-item" onclick="selectPriority(2, 'High')">
                                             <i class="fa-solid fa-angle-up icon ic2"></i> High
                                         </div>
-                                        <div class="dropdown-item">
+                                        <div class="dropdown-item" onclick="selectPriority(3, 'Medium')">
                                             <i class="fa-solid fa-bars icon ic3"></i> Medium
                                         </div>
-                                        <div class="dropdown-item">
+                                        <div class="dropdown-item" onclick="selectPriority(4, 'Low')">
                                             <i class="fa-solid fa-angle-down icon ic4"></i> Low
                                         </div>
-                                        <div class="dropdown-item">
+                                        <div class="dropdown-item" onclick="selectPriority(5, 'Lowest')">
                                             <i class="fa-solid fa-angles-down icon ic5"></i> Lowest
                                         </div>
                                     </div>
                                 </div>
 
                                 <label for="editStatusProject">Status Project</label>
-                                <select class="form-select" id="editStatusProject">
+                                <select class="form-select" name="Status" id="editStatusProject">
                                     <option>Pending</option>
                                     <option>In Progress</option>
                                     <option>Completed</option>
                                 </select>
 
                                 <label for="editImage">Image</label>
-                                <button type="button" class="btn-upload" id="uploadBtnEdit">
+                                <button type="button" class="btn-upload" id="uploadBtnEdit" onclick="document.getElementById('imageInputEdit').click();">
                                     <i class="fas fa-upload"></i> Upload
                                 </button>
-                                <input type="file" id="imageInputEdit" style="display: none;" />
+                                <input type="file" name="ImageFile" id="imageInputEdit" style="display: none;" />
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
                     </form>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Save Changes</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -644,6 +645,15 @@
                 document.getElementById('editStatusProject').value = projectStatus;
             });
         });
+
+        function selectPriority(value, text) {
+            document.getElementById('editPriorityValue').value = value;
+            const selectedOption = document.querySelector('#editProjectModal .selected-option span');
+            const selectedIcon = document.querySelector('#editProjectModal .selected-option i');
+            selectedOption.textContent = ` ${text}`;
+            selectedIcon.className = ''; // Reset icon class
+            selectedIcon.classList.add(`fa-solid`, `fa-${text.toLowerCase().replace(' ', '-')}`, `icon`);
+        }
 
     </script>
 

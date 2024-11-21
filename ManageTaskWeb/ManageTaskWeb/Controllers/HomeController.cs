@@ -192,7 +192,71 @@ namespace ManageTaskWeb.Controllers
                 }
                 data.SubmitChanges();
 
-                return Json(new { success = true, message = "Request accepted successfully, notifications cleared" });
+                // Lấy thông tin chi tiết về dự án và thành viên vừa được chấp nhận
+                var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+                var newMember = data.Members.FirstOrDefault(m => m.MemberID == requestMemberId);
+                if (project == null || newMember == null)
+                {
+                    return Json(new { success = false, message = "Error: Project or member not found." });
+                }
+
+                string projectName = project.ProjectName;
+                string fullName = newMember.FullName;
+
+                // Lấy danh sách tất cả thành viên trong dự án (trạng thái Accepted)
+                var projectMembers = data.ProjectMembers
+                    .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted")
+                    .Select(pm => pm.MemberID)
+                    .ToList();
+
+                // Tạo thông báo cho requestMemberId
+                data.Notifications.InsertOnSubmit(new Notification
+                {
+                    MemberID = requestMemberId,
+                    Content = $"Bạn đã được thêm vào project '{projectName}'.",
+                    NotificationDate = DateTime.Now,
+                    IsRead = false,
+                    NotificationType = "JoinAccepted"
+                });
+
+                // Tạo thông báo cho tất cả thành viên còn lại trong dự án
+                foreach (var member in projectMembers)
+                {
+                    if (member != requestMemberId) // Loại bỏ requestMemberId để không gửi trùng lặp
+                    {
+                        data.Notifications.InsertOnSubmit(new Notification
+                        {
+                            MemberID = member,
+                            Content = $"Project '{projectName}' has a new member: {fullName}.",
+                            NotificationDate = DateTime.Now,
+                            IsRead = false,
+                            NotificationType = "JoinAccepted"
+                        });
+                    }
+                }
+                // Lấy danh sách Admin và Manager từ bảng Members
+                var adminAndManagers = data.Members
+                    .Where(m => m.Role == "Admin" || m.Role == "Manager")
+                    .Select(m => m.MemberID)
+                    .ToList();
+
+                // Tạo thông báo riêng cho Admin và Manager
+                foreach (var admin in adminAndManagers)
+                {
+                    data.Notifications.InsertOnSubmit(new Notification
+                    {
+                        MemberID = admin,
+                        Content = $"A new member '{fullName}' has joined your project '{projectName}'.",
+                        NotificationDate = DateTime.Now,
+                        IsRead = false,
+                        NotificationType = "JoinAccepted"
+                    });
+                }
+
+                // Lưu thay đổi
+                data.SubmitChanges();
+
+                return Json(new { success = true, message = "Request accepted successfully, notifications sent." });
             }
             catch (Exception ex)
             {
@@ -200,6 +264,72 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = "Error processing your request: " + ex.Message });
             }
         }
+
+        //An Reject trong thong bao
+        [HttpPost]
+        public JsonResult RejectJoinRequest(int notificationId, string reason)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(reason))
+                {
+                    return Json(new { success = false, message = "Reason is required." });
+                }
+
+                // Tìm thông báo bị từ chối
+                var notification = data.Notifications.FirstOrDefault(n => n.NotificationID == notificationId);
+                if (notification == null)
+                {
+                    return Json(new { success = false, message = "Notification not found." });
+                }
+
+                // Phân tích ExtraData
+                var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(notification.ExtraData);
+                string requestMemberId = extraData["RequestMemberID"];
+                string projectId = extraData["ProjectID"];
+
+                // Tìm và cập nhật trạng thái thành viên trong bảng ProjectMembers
+                var projectMember = data.ProjectMembers
+                    .FirstOrDefault(pm => pm.MemberID == requestMemberId && pm.ProjectID == projectId && pm.Status == "Pending");
+                if (projectMember != null)
+                {
+                    projectMember.Status = "Rejected";
+                    projectMember.Reason = reason; // Lưu lý do từ chối
+                    data.SubmitChanges();
+                }
+
+                // Xóa tất cả thông báo có cùng ExtraData
+                var notificationsToDelete = data.Notifications
+                    .Where(n => n.ExtraData == notification.ExtraData)
+                    .ToList();
+
+                foreach (var notif in notificationsToDelete)
+                {
+                    data.Notifications.DeleteOnSubmit(notif);
+                }
+
+                // Tạo thông báo cho người bị từ chối
+                data.Notifications.InsertOnSubmit(new Notification
+                {
+                    MemberID = requestMemberId,
+                    Content = $"Your join request for project '{projectId}' was rejected due to: {reason}.",
+                    NotificationDate = DateTime.Now,
+                    IsRead = false,
+                    NotificationType = "JoinRejected"
+                });
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                data.SubmitChanges();
+
+                return Json(new { success = true, message = "Request rejected successfully, notifications updated." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
+
 
 
 
@@ -273,7 +403,7 @@ namespace ManageTaskWeb.Controllers
                 var memberId = Session["MemberID"]?.ToString();
                 projects = data.ProjectMembers
                                .Where(pm => pm.MemberID == memberId && pm.Status == "Accepted")
-                               .Select(pm => pm.Project )
+                               .Select(pm => pm.Project)
                                .Distinct()
                                .Where(p => p.deleteTime == null)
                                .Select(p => new ProjectExtended
@@ -378,6 +508,45 @@ namespace ManageTaskWeb.Controllers
             {
                 // Redirect with error message
                 return RedirectToAction("DSProject", new { notificationMessage = "Đã xảy ra lỗi khi thêm dự án!", notificationType = "error" });
+            }
+        }
+        //Sua Project
+        [HttpPost]
+        public ActionResult EditProject(string ProjectID, string ProjectName, string Description, DateTime StartDate, DateTime EndDate, int Priority, string Status, HttpPostedFileBase ImageFile)
+        {
+            try
+            {
+                var project = data.Projects.FirstOrDefault(p => p.ProjectID == ProjectID);
+                if (project == null)
+                {
+                    return RedirectToAction("DSProject", new { notificationMessage = "Project not found!", notificationType = "error" });
+                }
+
+                // Update project details
+                project.ProjectName = ProjectName;
+                project.Description = Description;
+                project.StartDate = StartDate;
+                project.EndDate = EndDate;
+                project.Priority = Priority;
+                project.Status = Status;
+
+                // Update image if a new file is uploaded
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    string path = Server.MapPath("~/Content/images/project-img/");
+                    Directory.CreateDirectory(path); // Ensure directory exists
+                    string imagePath = Path.Combine(path, ImageFile.FileName);
+                    ImageFile.SaveAs(imagePath);
+                    project.ImageProject = ImageFile.FileName;
+                }
+
+                data.SubmitChanges();
+
+                return RedirectToAction("DSProject", new { notificationMessage = "Project updated successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("DSProject", new { notificationMessage = "An error occurred while updating the project!", notificationType = "error" });
             }
         }
         //Xoa project 
@@ -631,8 +800,6 @@ namespace ManageTaskWeb.Controllers
         //public ActionResult GroupChat(string projectId, int page = 1)
         //{
         //    int pageSize = 6;
-
-
         //    // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
         //    var interactions = data.Interactions
         //        .Where(i => i.ProjectID == projectId)
@@ -839,6 +1006,7 @@ namespace ManageTaskWeb.Controllers
             return View(members);
         }
 
+
         public string GenerateMemberID()
         {
             // Lấy thời gian hiện tại
@@ -902,9 +1070,42 @@ namespace ManageTaskWeb.Controllers
             {
                 return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi thêm thành viên!", notificationType = "error" });
             }
+            }
+        [HttpPost]
+        public ActionResult AddTask(string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string ProjectID, int? ParentTaskID = null)
+        {
+            try
+            {
+                // Create a new Task object
+                var task = new Task
+                {
+                    TaskName = TaskName,
+                    Description = Description,
+                    StartDate = StartDate,
+                    EndDate = EndDate,
+                    Priority = Priority,
+                    Status = Status,
+                    ProjectID = ProjectID,
+                    ParentTaskID = ParentTaskID // Set ParentTaskID, can be null
+                };
+
+                // Insert the task into the database
+                data.Tasks.InsertOnSubmit(task);
+                data.SubmitChanges();
+
+                // Redirect with success message
+                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "Task added successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                // Redirect with error message
+                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "An error occurred while adding the task!", notificationType = "error" });
+
+            }
         }
 
         [HttpPost]
+
         public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, DateTime HireDate, HttpPostedFileBase ImageFile)
         {
             try
@@ -959,6 +1160,35 @@ namespace ManageTaskWeb.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = "Có lỗi xảy ra khi xóa thành viên: " + ex.Message });
+}}
+
+        public ActionResult EditTask(int TaskID, string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, int? ParentTaskID = null)
+        {
+            try
+            {
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == TaskID);
+                if (task == null)
+                {
+                    return RedirectToAction("DSTask", new { notificationMessage = "Task not found!", notificationType = "error" });
+                }
+
+                // Update task details
+                task.TaskName = TaskName;
+                task.Description = Description;
+                task.StartDate = StartDate;
+                task.EndDate = EndDate;
+                task.Priority = Priority;
+                task.Status = Status;
+                task.ParentTaskID = ParentTaskID; // Update ParentTaskID, can be null
+
+                data.SubmitChanges();
+
+                return RedirectToAction("DSTask", new { projectId = task.ProjectID, notificationMessage = "Task updated successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("DSTask", new { notificationMessage = "An error occurred while updating the task!", notificationType = "error" });
+
             }
         }
     }
