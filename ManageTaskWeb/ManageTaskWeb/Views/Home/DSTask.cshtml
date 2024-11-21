@@ -1,16 +1,26 @@
 ﻿@{
     ViewBag.Title = "Task Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var projectId = Request.QueryString["projectId"];
 }
 @model List<ManageTaskWeb.Models.Task>
 <link href="@Url.Content("~/Content/css/task.css?v=1")" rel="stylesheet" />
 
+<!-- Include Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Include Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <div class="header">
     <div>
         <a href="/Home/TrangChu"><i class="fas fa-home"></i> Home</a> > <a href="#">Tasks</a>
     </div>
-
+    <div class="action-buttons">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+            <i class="fas fa-plus-circle"></i> Add New Task
+        </button>
+    </div>
 </div>
 <div class="search-bar">
     <input placeholder="Enter Task nameaa...." type="text" />
@@ -55,14 +65,26 @@
                 @taskBackgroundColor;
             }">
                 <div class="task-info">
-                    <p>@task.Description</p>
+                    <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    <button class="btn btn-outline-secondary edit-task-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editTaskModal"
+                            data-task-id="@task.TaskID"
+                            data-task-name="@task.TaskName"
+                            data-description="@task.Description"
+                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                            data-priority="@task.Priority"
+                            data-status="@task.Status">
+                        <i class="fas fa-pencil-alt"></i> Edit
+                    </button>
                 </div>
                 <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
-        <div class="create-issue">+ Create Issue</div>
+        
     </div>
 
     <!-- IN PROGRESS Column -->
@@ -99,14 +121,26 @@
                 @taskBackgroundColor;
             }">
                 <div class="task-info">
-                    <p>@task.Description</p>
+                    <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    <button class="btn btn-outline-secondary edit-task-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editTaskModal"
+                            data-task-id="@task.TaskID"
+                            data-task-name="@task.TaskName"
+                            data-description="@task.Description"
+                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                            data-priority="@task.Priority"
+                            data-status="@task.Status">
+                        <i class="fas fa-pencil-alt"></i> Edit
+                    </button>
                 </div>
                 <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
-        <div class="create-issue">+ Create Issue</div>
+        
     </div>
 
     <!-- IN REVIEW Column -->
@@ -143,14 +177,26 @@
                 @taskBackgroundColor;
             }">
                 <div class="task-info">
-                    <p>@task.Description</p>
+                    <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    <button class="btn btn-outline-secondary edit-task-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editTaskModal"
+                            data-task-id="@task.TaskID"
+                            data-task-name="@task.TaskName"
+                            data-description="@task.Description"
+                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                            data-priority="@task.Priority"
+                            data-status="@task.Status">
+                        <i class="fas fa-pencil-alt"></i> Edit
+                    </button>
                 </div>
                 <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
-        <div class="create-issue">+ Create Issue</div>
+        
     </div>
 
     <!-- DONE Column -->
@@ -187,14 +233,297 @@
                 @taskBackgroundColor;
             }">
                 <div class="task-info">
-                    <p>@task.Description</p>
+                    <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    <button class="btn btn-outline-secondary edit-task-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editTaskModal"
+                            data-task-id="@task.TaskID"
+                            data-task-name="@task.TaskName"
+                            data-description="@task.Description"
+                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                            data-priority="@task.Priority"
+                            data-status="@task.Status">
+                        <i class="fas fa-pencil-alt"></i> Edit
+                    </button>
                 </div>
                 <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
-        <div class="create-issue">+ Create Issue</div>
+        
     </div>
 </div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTaskModalLabel">Add New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/Home/AddTask" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="taskName">Task Name *</label>
+                            <input type="text" class="form-control" name="TaskName" id="taskName" placeholder="Enter task name..." required>
+
+                            <label for="description">Description</label>
+                            <textarea class="form-control" name="Description" id="description" placeholder="Enter description..."></textarea>
+
+                            <label for="projectId">Project ID *</label>
+                            <input type="text" class="form-control" name="ProjectID" id="projectId" value="@projectId" readonly>
+
+                            <label for="parentTaskId">Parent Task ID</label>
+                            <input type="text" class="form-control" name="ParentTaskID" id="parentTaskId" placeholder="Enter parent task ID...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" class="form-control" name="StartDate" id="startDate" required>
+
+                            <label for="endDate">End Date</label>
+                            <input type="date" class="form-control" name="EndDate" id="endDate" required>
+
+                            <label for="priority">Priority</label>
+                            <div class="custom-dropdown">
+                                <div class="selected-option" onclick="toggleDropdown('addTaskModal')">
+                                    <span id="selectedPriorityAdd">Medium</span>
+                                    <i class="fa-solid fa-bars icon ic3"></i>
+                                </div>
+                                <div class="dropdown-menu" id="priorityDropdownAdd">
+                                    <div class="dropdown-item" data-value="1" onclick="selectPriority(1, 'Highest', 'addTaskModal')">
+                                        <i class="fa-solid fa-angles-up icon ic1"></i> Highest
+                                    </div>
+                                    <div class="dropdown-item" data-value="2" onclick="selectPriority(2, 'High', 'addTaskModal')">
+                                        <i class="fa-solid fa-angle-up icon ic2"></i> High
+                                    </div>
+                                    <div class="dropdown-item" data-value="3" onclick="selectPriority(3, 'Medium', 'addTaskModal')">
+                                        <i class="fa-solid fa-bars icon ic3"></i> Medium
+                                    </div>
+                                    <div class="dropdown-item" data-value="4" onclick="selectPriority(4, 'Low', 'addTaskModal')">
+                                        <i class="fa-solid fa-angle-down icon ic4"></i> Low
+                                    </div>
+                                    <div class="dropdown-item" data-value="5" onclick="selectPriority(5, 'Lowest', 'addTaskModal')">
+                                        <i class="fa-solid fa-angles-down icon ic5"></i> Lowest
+                                    </div>
+                                </div>
+                                <input type="hidden" name="Priority" id="priorityValueAdd" value="3">
+                            </div>
+
+                            <label for="status">Status</label>
+                            <select class="form-select" name="Status" id="status">
+                                <option>On Hold</option>
+                                <option>Pending</option>
+                                <option>In Progress</option>
+                                <option>Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/Home/EditTask" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editTaskID">Task ID</label>
+                            <input type="text" class="form-control" name="TaskID" id="editTaskID" readonly>
+
+                            <label for="editTaskName">Task Name *</label>
+                            <input type="text" class="form-control" name="TaskName" id="editTaskName" placeholder="Enter task name..." required>
+
+                            <label for="editDescription">Description</label>
+                            <textarea class="form-control" name="Description" id="editDescription" placeholder="Enter description..."></textarea>
+
+                            <label for="editProjectId">Project ID *</label>
+                            <input type="text" class="form-control" name="ProjectID" id="editProjectId" value="@projectId" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editParentTaskId">Parent Task ID</label>
+                            <input type="text" class="form-control" name="ParentTaskID" id="editParentTaskId" placeholder="Enter parent task ID...">
+
+                            <label for="editStartDate">Start Date</label>
+                            <input type="date" class="form-control" name="StartDate" id="editStartDate" required>
+
+                            <label for="editEndDate">End Date</label>
+                            <input type="date" class="form-control" name="EndDate" id="editEndDate" required>
+
+                            <label for="priority">Priority</label>
+                            <div class="custom-dropdown">
+                                <div class="selected-option" onclick="toggleDropdown('editTaskModal')">
+                                    <span id="selectedPriorityEdit">Medium</span>
+                                    <i class="fa-solid fa-bars icon ic3"></i>
+                                </div>
+                                <div class="dropdown-menu" id="priorityDropdownEdit">
+                                    <div class="dropdown-item" data-value="1" onclick="selectPriority(1, 'Highest', 'editTaskModal')">
+                                        <i class="fa-solid fa-angles-up icon ic1"></i> Highest
+                                    </div>
+                                    <div class="dropdown-item" data-value="2" onclick="selectPriority(2, 'High', 'editTaskModal')">
+                                        <i class="fa-solid fa-angle-up icon ic2"></i> High
+                                    </div>
+                                    <div class="dropdown-item" data-value="3" onclick="selectPriority(3, 'Medium', 'editTaskModal')">
+                                        <i class="fa-solid fa-bars icon ic3"></i> Medium
+                                    </div>
+                                    <div class="dropdown-item" data-value="4" onclick="selectPriority(4, 'Low', 'editTaskModal')">
+                                        <i class="fa-solid fa-angle-down icon ic4"></i> Low
+                                    </div>
+                                    <div class="dropdown-item" data-value="5" onclick="selectPriority(5, 'Lowest', 'editTaskModal')">
+                                        <i class="fa-solid fa-angles-down icon ic5"></i> Lowest
+                                    </div>
+                                </div>
+                                <input type="hidden" name="Priority" id="priorityValueEdit" value="3">
+                            </div>
+
+                            <label for="editStatus">Status</label>
+                            <select class="form-select" name="Status" id="editStatus">
+                                <option>On Hold</option>
+                                <option>Pending</option>
+                                <option>In Progress</option>
+                                <option>Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Popup -->
+<div id="notificationPopup" class="popup-success" style="display: none;">
+    <span id="notificationMessage"></span>
+    <span class="close-btn" onclick="closeNotificationPopup()">&times;</span>
+</div>
+
+<script>
+    // JavaScript to handle opening the edit task modal and populating it with task data
+    document.querySelectorAll('.edit-task-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const taskId = this.getAttribute('data-task-id');
+            const taskName = this.getAttribute('data-task-name');
+            const taskDescription = this.getAttribute('data-description');
+            const startDate = this.getAttribute('data-start-date');
+            const endDate = this.getAttribute('data-end-date');
+            const taskPriority = this.getAttribute('data-priority');
+            const taskStatus = this.getAttribute('data-status');
+
+            document.getElementById('editTaskID').value = taskId;
+            document.getElementById('editTaskName').value = taskName;
+            document.getElementById('editDescription').value = taskDescription;
+            document.getElementById('editStartDate').value = startDate;
+            document.getElementById('editEndDate').value = endDate;
+            document.getElementById('editPriority').value = taskPriority;
+            document.getElementById('editStatus').value = taskStatus;
+        });
+    });
+
+    function toggleDropdown(modalId) {
+        const dropdown = document.querySelector(`#${modalId} .dropdown-menu`);
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function selectPriority(value, text, modalId) {
+        const priorityInputId = modalId === 'addTaskModal' ? 'priorityValueAdd' : 'priorityValueEdit';
+        document.getElementById(priorityInputId).value = value;
+        const selectedOption = document.querySelector(`#${modalId} .selected-option span`);
+        const selectedIcon = document.querySelector(`#${modalId} .selected-option i`);
+        selectedOption.textContent = ` ${text}`;
+        selectedIcon.className = ''; // Reset icon class
+        selectedIcon.classList.add(`fa-solid`, `fa-${text.toLowerCase().replace(' ', '-')}`, `icon`);
+    }
+
+    // Function to handle priority selection
+    function handlePrioritySelection(modalId) {
+        document.querySelectorAll(`#${modalId} .dropdown-item`).forEach(item => {
+            item.addEventListener('click', function () {
+                const selectedText = this.innerText.trim();
+                const selectedIconClass = this.querySelector('i').classList;
+                const selectedOption = document.querySelector(`#${modalId} .selected-option span`);
+                const selectedIcon = document.querySelector(`#${modalId} .selected-option i`);
+
+                selectedOption.textContent = selectedText;
+                selectedIcon.className = ''; // Reset icon class
+                selectedIcon.classList.add(...selectedIconClass);
+                
+                // Update hidden input value
+                const priorityValue = this.getAttribute('data-value');
+                document.querySelector(`#${modalId} #priorityValue`).value = priorityValue;
+
+                // Close the dropdown
+                toggleDropdown(modalId);
+            });
+        });
+    }
+
+    // Initialize priority selection for both modals
+    handlePrioritySelection('addTaskModal');
+    handlePrioritySelection('editTaskModal');
+
+    // Function to toggle dropdown visibility
+    function toggleDropdown(modalId) {
+        const dropdown = document.querySelector(`#${modalId} .dropdown-menu`);
+        if (dropdown) {
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    }
+
+    // Function to show notification popup
+    function showNotificationPopup(message, type) {
+        const popup = document.getElementById('notificationPopup');
+        const messageSpan = document.getElementById('notificationMessage');
+
+        popup.classList.remove('popup-success', 'popup-error');
+        if (type === "success") {
+            popup.classList.add('popup-success');
+        } else if (type === "error") {
+            popup.classList.add('popup-error');
+        }
+
+        messageSpan.textContent = message;
+        popup.style.display = 'flex';
+        setTimeout(closeNotificationPopup, 5000);
+
+        // Optionally, remove query parameters from URL after showing the notification
+        setTimeout(function () {
+            window.history.pushState({}, document.title, window.location.pathname);
+        }, 5000);
+    }
+
+    function closeNotificationPopup() {
+        document.getElementById('notificationPopup').style.display = 'none';
+    }
+
+    // Show notification on page load if message and type are present in URL
+    window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('notificationMessage');
+        const type = urlParams.get('notificationType');
+
+        if (message && type) {
+            showNotificationPopup(message, type);
+        }
+    };
+</script>
 

@@ -890,5 +890,67 @@ namespace ManageTaskWeb.Controllers
 
             return View(members);
         }
+
+        [HttpPost]
+        public ActionResult AddTask(string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string ProjectID, int? ParentTaskID = null)
+        {
+            try
+            {
+                // Create a new Task object
+                var task = new Task
+                {
+                    TaskName = TaskName,
+                    Description = Description,
+                    StartDate = StartDate,
+                    EndDate = EndDate,
+                    Priority = Priority,
+                    Status = Status,
+                    ProjectID = ProjectID,
+                    ParentTaskID = ParentTaskID // Set ParentTaskID, can be null
+                };
+
+                // Insert the task into the database
+                data.Tasks.InsertOnSubmit(task);
+                data.SubmitChanges();
+
+                // Redirect with success message
+                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "Task added successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                // Redirect with error message
+                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "An error occurred while adding the task!", notificationType = "error" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditTask(int TaskID, string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, int? ParentTaskID = null)
+        {
+            try
+            {
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == TaskID);
+                if (task == null)
+                {
+                    return RedirectToAction("DSTask", new { notificationMessage = "Task not found!", notificationType = "error" });
+                }
+
+                // Update task details
+                task.TaskName = TaskName;
+                task.Description = Description;
+                task.StartDate = StartDate;
+                task.EndDate = EndDate;
+                task.Priority = Priority;
+                task.Status = Status;
+                task.ParentTaskID = ParentTaskID; // Update ParentTaskID, can be null
+
+                data.SubmitChanges();
+
+                return RedirectToAction("DSTask", new { projectId = task.ProjectID, notificationMessage = "Task updated successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("DSTask", new { notificationMessage = "An error occurred while updating the task!", notificationType = "error" });
+            }
+        }
     }
 }
