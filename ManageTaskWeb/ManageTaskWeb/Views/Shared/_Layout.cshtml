@@ -133,7 +133,13 @@
     </div>
 
     <script>
-
+        document.addEventListener('DOMContentLoaded', function () {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeToggle').checked = true;
+            }
+        });
 
         function toggleNotifications() {
             const notificationContainer = document.getElementById('notificationContainer');
@@ -304,7 +310,13 @@
 
         // Toggle Dark Mode
         document.getElementById('darkModeToggle').addEventListener('change', function () {
-            document.body.classList.toggle('dark-mode');
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'disabled');
+            }
         });
     </script>
 </body>

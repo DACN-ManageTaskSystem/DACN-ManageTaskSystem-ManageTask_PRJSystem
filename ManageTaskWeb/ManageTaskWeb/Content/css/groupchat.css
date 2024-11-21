@@ -6,7 +6,6 @@
 
 .sidebar {
     width: 300px;
-    background-color: #fff;
     border-left: 1px solid #ddd;
     padding: 20px;
     overflow-y: auto;
@@ -257,8 +256,8 @@
 .member-info {
     display: none;
     position: absolute;
-    top: 0;
-    left: 100%; 
+    top: 11px;
+    left: 71%;
     margin-left: 10px; 
     background-color: white;
     border: 1px solid #ddd;
@@ -266,16 +265,22 @@
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 100;
-    width: 250px; 
+    width: 225px;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s; 
 }
 
-.member:hover .member-info {
+.avatar-container:hover .member-info {
     display: block;
     opacity: 1; 
     visibility: visible; 
+}
+
+.member-name {
+    color: red  ;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .avatar-container img {
