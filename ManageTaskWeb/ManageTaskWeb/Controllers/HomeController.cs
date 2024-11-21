@@ -7,6 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Security.Cryptography;
+using System.Text;
+using System.Net;
 
 
 namespace ManageTaskWeb.Controllers
@@ -22,38 +25,87 @@ namespace ManageTaskWeb.Controllers
         //DangNhap-GET
         public ActionResult DangNhap()
         {
+          
             return View();
+        }
+        //public static string EncryptPassword(string plainText, string key)
+        //{
+        //    using (Aes aes = Aes.Create())
+        //    {
+        //        aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32).Substring(0, 32)); // Khóa 256-bit
+        //        aes.IV = new byte[16]; // Vector khởi tạo mặc định (16 byte)
+
+        //        using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
+        //        {
+        //            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+        //            byte[] encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
+
+        //            return Convert.ToBase64String(encryptedBytes);
+        //        }
+        //    }
+        //}
+        public static string DecryptPassword(string encryptedText, string key)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32).Substring(0, 32)); // Khóa 256-bit
+                aes.IV = new byte[16]; // Vector khởi tạo mặc định (16 byte)
+                aes.Padding = PaddingMode.PKCS7; // Chế độ padding (nên đồng nhất khi mã hóa)
+
+                using (var decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                {
+                    try
+                    {
+                        byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
+                        byte[] decryptedBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+                        return Encoding.UTF8.GetString(decryptedBytes);
+                    }
+                    catch (CryptographicException ex)
+                    {
+                        throw new Exception("Giải mã thất bại: Dữ liệu không hợp lệ hoặc khóa sai.", ex);
+                    }
+                }
+            }
         }
         //DangNhap-POST
         [HttpPost]
         public ActionResult DangNhap(string username, string password)
         {
-            // Kiểm tra xem tên đăng nhập và mật khẩu có hợp lệ không
-            var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.Password == password && m.deleteTime == null);
+           
+            // Tìm kiếm thành viên
+            var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.deleteTime == null);
 
-            if (member != null)
+            if (member == null)
             {
-                member.Status = "Active";
-                data.SubmitChanges();
-
-                // Nếu đăng nhập thành công, lưu thông tin vào session
-                Session["MemberID"] = member.MemberID;
-                Session["FullName"] = member.FullName;
-                Session["Role"] = member.Role;
-                Session["Email"] = member.Email;
-                Session["Phone"] = member.Phone;
-                Session["ImageMember"] = member.ImageMember;
-
-                // Chuyển hướng về trang chủ sau khi đăng nhập thành công
-                return RedirectToAction("TrangChu");
-            }
-            else
-            {
-                // Nếu đăng nhập không thành công, hiển thị thông báo lỗi
+                // Không tìm thấy người dùng
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
+            
+            // Giải mã mật khẩu
+            string decryptedPassword = DecryptPassword(member.Password, "mysecretkey");
+            if (decryptedPassword != password)
+            {
+                // Sai mật khẩu
+                ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
+                return View();
+            }
+            
+            member.Status = "Active";
+            data.SubmitChanges();
+
+            // Nếu đăng nhập thành công, lưu thông tin vào session
+            Session["MemberID"] = member.MemberID;
+            Session["FullName"] = member.FullName;
+            Session["Role"] = member.Role;
+            Session["Email"] = member.Email;
+            Session["Phone"] = member.Phone;
+            Session["ImageMember"] = member.ImageMember;
+
+            // Chuyển hướng về trang chủ sau khi đăng nhập thành công
+            return RedirectToAction("TrangChu");
         }
+   
         //Load Thong bao 
 
         public JsonResult GetNotifications()
@@ -512,9 +564,66 @@ namespace ManageTaskWeb.Controllers
 
         }
 
-        public ActionResult DetailTask()
+        public ActionResult DetailTask(string taskId)
         {
-            return View();
+            if (taskId == null)
+                return HttpNotFound();  // Nếu không có taskId, trả về lỗi Not Found
+
+            using (var context = new QLCVDataContext())
+            {
+                // Nếu taskId là kiểu string và cần ép kiểu sang int để tìm kiếm trong CSDL
+                if (!int.TryParse(taskId, out int taskIdInt))
+                {
+                    return HttpNotFound(); // Nếu không thể chuyển đổi taskId thành int, trả về lỗi Not Found
+                }
+
+                var task = context.Tasks
+                                  .Include(t => t.Project)
+                                  .Include(t => t.TaskAssignments.Select(ta => ta.Member))
+                                  .FirstOrDefault(t => t.TaskID == taskIdInt); // Sử dụng kiểu int cho truy vấn
+
+                if (task == null)
+                    return HttpNotFound();  // Nếu không tìm thấy task trong CSDL, trả về lỗi Not Found
+                var creator = task.TaskAssignments
+                        .Where(ta => ta.AssignedBy != null)
+                        .Join(context.Members,
+                              ta => ta.AssignedBy, // Liên kết theo MemberID (AssignedBy)
+                              m => m.MemberID,      // Với MemberID trong bảng Members
+                              (ta, m) => new MemberViewModel
+                              {
+                                  MemberID = ta.AssignedBy,
+                                  FullName = m.FullName,   // Tên của người giao nhiệm vụ
+                                  Role = m.Role,           // Vai trò của người giao nhiệm vụ
+                                  ImageMember = m.ImageMember // Hình ảnh của người giao nhiệm vụ
+                              })
+                        .FirstOrDefault();  // Lấy thông tin của người giao nhiệm vụ đầu tiên
+
+                var viewModel = new TaskViewModel
+                {
+                    TaskID = task.TaskID,
+                    TaskName = task.TaskName,
+                    Description = task.Description,
+                    StartDate = task.StartDate ?? DateTime.MinValue,  
+                    EndDate = task.EndDate ?? DateTime.MinValue,      
+                    Priority = task.Priority ?? 0,
+                    Status = task.Status,
+                    // If you want to get the MemberID from TaskAssignments, you can map it like so
+                    AssignedMembers = (from ta in task.TaskAssignments
+                                       join member in context.Members on ta.MemberID equals member.MemberID
+                                       select new MemberViewModel
+                                       {
+                                           MemberID = ta.MemberID,
+                                           FullName = member.FullName,
+                                           Role = member.Role,
+                                           ImageMember = member.ImageMember
+                                       }).ToList(),
+
+                    Creator = creator  // Assign the creator here
+
+                };
+
+                return View(viewModel);
+            }
         }
 
         //CHAT - START
@@ -522,6 +631,7 @@ namespace ManageTaskWeb.Controllers
         //public ActionResult GroupChat(string projectId, int page = 1)
         //{
         //    int pageSize = 6;
+
 
         //    // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
         //    var interactions = data.Interactions
@@ -635,35 +745,36 @@ namespace ManageTaskWeb.Controllers
             return RedirectToAction("GroupChat", new { projectId = projectId });
         }
         //Ghim chat
-        //public ActionResult PinMessage(int messageId, string projectId)
-        //{
-        //    if (messageId <= 0 || string.IsNullOrEmpty(projectId))
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
-        //    if (message != null)
-        //    {
-        //        message.IsPinned = true;
-        //        data.SubmitChanges();
-        //    }
-        //    return RedirectToAction("GroupChat", new { projectId = projectId });
-        //}
-        ////Bo ghim chat
-        //[HttpPost]
-        //public ActionResult TogglePinMessage(int messageId, string projectId)
-        //{
-        //    var interaction = data.Interactions.FirstOrDefault(i => i.InteractionID == messageId && i.ProjectID == projectId);
-        //    if (interaction != null)
-        //    {
-        //        // Đảo trạng thái ghim và cập nhật ngày tương tác
-        //        interaction.IsPinned = !(interaction.IsPinned ?? false);
-        //        interaction.InteractionDate = DateTime.Now;
-        //        data.SubmitChanges();
-        //        return Json(new { success = true });
-        //    }
-        //    return Json(new { success = false });
-        //}
+        public ActionResult PinMessage(int messageId, string projectId)
+        {
+            if (messageId <= 0 || string.IsNullOrEmpty(projectId))
+            {
+                return HttpNotFound();
+            }
+            var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
+            if (message != null)
+            {
+                //message.IsPinned = true;
+                data.SubmitChanges();
+            }
+            return RedirectToAction("GroupChat", new { projectId = projectId });
+        }
+        //Bo ghim chat
+        [HttpPost]
+        public ActionResult TogglePinMessage(int messageId, string projectId)
+        {
+            var interaction = data.Interactions.FirstOrDefault(i => i.InteractionID == messageId && i.ProjectID == projectId);
+            if (interaction != null)
+            {
+                // Đảo trạng thái ghim và cập nhật ngày tương tác
+                //interaction.IsPinned = !(interaction.IsPinned ?? false);
+                interaction.InteractionDate = DateTime.Now;
+                data.SubmitChanges();
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
         //CHAT - END
 
 

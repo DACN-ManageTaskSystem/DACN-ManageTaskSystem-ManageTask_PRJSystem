@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ManageTaskWeb.Models.TaskViewModel
+@{
     ViewBag.Title = "DetailTask";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -13,8 +14,6 @@
         font-family: 'Comfortaa', sans-serif;
         background-color: #f7f7f7;
     }
-
-
 
     .breadcrumb {
         font-size: 14px;
@@ -229,7 +228,7 @@
     .container {
         display: flex;
         gap: 40px; /* Adds space between columns */
-        width: 90%%;
+        width: 90%;
         height: 90%;
         margin: 30px auto;
         background-color: #fff;
@@ -239,15 +238,16 @@
     }
 
     .left-container {
-        flex: 2;
+        flex: 8; /* Left container takes 80% of the space */
         padding-right: 20px;
         border-right: 1px solid #ddd;
     }
 
     .right-container {
-        flex: 1;
+        flex: 2; /* Right container takes 20% of the space */
         padding-left: 20px;
     }
+
 
     .task-container {
         display: flex;
@@ -347,211 +347,6 @@
         color: red;
         font-size: 25px;
     }
-
-
-
-
-
-
-
-
-
-
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5); /* Màu nền bán trong suốt */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 999; /* Đảm bảo lớp phủ nằm trên tất cả các phần tử khác */
-        visibility: hidden
-    }
-
-    .blind-container-1 {
-        width: 70%;
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        position: relative;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 1000; /* Đảm bảo hộp container nằm trên overlay */
-    }
-
-    h2 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 10px;
-        padding: 10px 50px 10px 50px;
-    }
-
-    .close-button {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 20px;
-        cursor: pointer;
-        color: #666;
-    }
-
-    .member-section {
-        display: flex;
-        gap: 20px;
-    }
-
-    .panel {
-        flex: 1;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 15px;
-        background: #fafafa;
-    }
-
-        .panel h3 {
-            color: #2d5c89;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-    .search-bar {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        margin-bottom: 15px;
-    }
-
-        .search-bar input[type="text"] {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .search-bar button {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #666;
-        }
-
-    .toggle-switch {
-        position: relative;
-        width: 40px;
-        height: 20px;
-    }
-
-        .toggle-switch input {
-            display: none;
-        }
-
-        .toggle-switch label {
-            width: 100%;
-            height: 100%;
-            background-color: #ddd;
-            border-radius: 10px;
-            display: block;
-            cursor: pointer;
-            position: relative;
-        }
-
-            .toggle-switch label::after {
-                content: "";
-                width: 18px;
-                height: 18px;
-                background-color: #ffffff;
-                border-radius: 50%;
-                position: absolute;
-                top: 1px;
-                left: 1px;
-                transition: 0.3s;
-            }
-
-        .toggle-switch input:checked + label::after {
-            left: 20px;
-        }
-
-    .member-list {
-        list-style: none;
-        margin-bottom: 10px;
-    }
-
-        .member-list li {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-    .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-
-    .avatar-green {
-        background-color: #9bc47d;
-    }
-
-    .avatar-orange {
-        background-color: #f5a623;
-    }
-
-    .avatar-blue {
-        background-color: #4a90e2;
-    }
-
-    .avatar-yellow {
-        background-color: #ffd700;
-    }
-
-    .info {
-        flex: 1;
-    }
-
-        .info p {
-            font-weight: bold;
-            color: #333;
-        }
-
-    .role {
-        font-size: 0.9em;
-        color: #4a90e2;
-    }
-
-        .role.project-manager {
-            color: #e74c3c;
-        }
-
-    .add-button {
-        font-size: 18px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #2d5c89;
-    }
-
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 5px;
-    }
-
-        .pagination button {
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            background-color: #ffffff;
-            cursor: pointer;
-        }
-
-            .pagination button.active {
-                background-color: #2d5c89;
-                color: #ffffff;
-            }
 </style>
 <div class="breadcrumb">
     <span>Home</span> <div class="arrow-right"></div>
@@ -561,12 +356,12 @@
 <div class="container">
     <div div="left-container">
         <div class="title">
-            Thiết kế câu hỏi cho thực tập sinh và giảng viên trường HUIT
+            @Model.TaskName
             &nbsp;&nbsp;
             <div class="date-container" style="float:right">
                 <div class="date-text">
-                    <p>Start: 10:20 31/10/2022</p>
-                    <p>End: 10:20 01/11/2022</p>
+                    <p>Start: @(Model.StartDate.HasValue ? Model.StartDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</p>
+                    <p>End: @(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</p>
                 </div>
                 <div class="double-arrow">
                     <i class="fas fa-angle-double-up"></i>
@@ -575,8 +370,7 @@
         </div>
 
         <div class="task-info">
-            <p>Mã dự án cho: Câu hỏi thực tập sinh</p>
-            <p>- Thiết kế câu hỏi cho thực tập sinh<br>- Thực tập sinh: Xem câu hỏi, đưa câu hỏi, xem câu trả lời, xóa câu trả lời, hiện thị danh sách câu hỏi / trả lời<br>- Admin: Đăng nhập, xem câu hỏi, thêm câu hỏi, xóa câu trả lời, xóa câu trả lời</p>
+            <p><strong>Description:</strong> @Model.Description</p>
         </div>
 
         <div class="attachment-section">
@@ -622,19 +416,27 @@
 
     <div class="right-container">
         <div class="status">
-            Status: <span>IN PROGRESS</span>
+            Status: <span>@Model.Status</span>
         </div>
-
-        <div class="assigned-users">
-            <p><strong>Người Làm</strong></p>
-            <div class="user"><img src="user1.png" alt="User"><span class="user-name">Phạm Nguyễn Vũ - Project Manager</span></div>
-            <div class="user"><img src="user2.png" alt="User"><span class="user-name">Nguyễn Nhật Quân - Developer</span></div>
-            <div class="user"><img src="user3.png" alt="User"><span class="user-name">Nguyễn Nhật Bảo - Developer</span></div>
-        </div>
+        @foreach (var member in Model.AssignedMembers)
+        {
+            <div class="assigned-users">
+                <p><strong>Người Làm</strong></p>
+                <div class="user">
+                    <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="User">
+                    <span class="user-name">@member.FullName - @member.Role</span>
+                </div>
+            </div>
+            
+        }
+        
 
         <div class="creator">
             <p><strong>Người Tạo</strong></p>
-            <div class="user"><img src="user1.png" alt="User"><span class="user-name">Phạm Nguyễn Vũ - Project Manager</span></div>
+            <div class="user">
+                <img src="@Url.Content("~/Content/images/member-img/" + Model.Creator.ImageMember)" alt="User">
+                <span class="user-name">@Model.Creator.FullName - @Model.Creator.Role</span>
+            </div>
         </div>
 
         <div class="task-controls">
@@ -647,296 +449,6 @@
             <button class="btn-delete">
                 Delete Task <img src="delete-icon.png" alt="Delete">
             </button>
-        </div>
-    </div>
-</div>
-
-<div class="overlay">
-    <div class="blind-container-1">
-        <h2>Add Members To Project</h2>
-        <div class="close-button">✕</div>
-        <div class="member-section">
-            <!-- Members List -->
-            <div class="panel">
-                <h3>Members</h3>
-                <div class="search-bar">
-                    <input type="text" placeholder="Search Name Members...">
-                    <button>🔍</button>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="toggle-members">
-                        <label for="toggle-members"></label>
-                    </div>
-                </div>
-                <ul class="member-list">
-                    <li>
-                        <div class="avatar avatar-green"></div>
-                        <div class="info">
-                            <p>Nguyễn Nhật Quân</p>
-                            <span class="role">Developer</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-orange"></div>
-                        <div class="info">
-                            <p>Huỳnh Bảo Ngọc</p>
-                            <span class="role">Developer</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-blue"></div>
-                        <div class="info">
-                            <p>Trần Phương Uyên</p>
-                            <span class="role">Tester</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-yellow"></div>
-                        <div class="info">
-                            <p>Đỗ Lan Hương</p>
-                            <span class="role">Developer</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                </ul>
-                <div class="pagination">
-                    <button>◀</button>
-                    <button class="active">1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>▶</button>
-                </div>
-            </div>
-
-            <!-- Members In Project -->
-            <div class="panel">
-                <h3>Members In Project</h3>
-                <div class="search-bar">
-                    <input type="text" placeholder="Search Name Members...">
-                    <button>🔍</button>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="toggle-project-members">
-                        <label for="toggle-project-members"></label>
-                    </div>
-                </div>
-                <ul class="member-list">
-                    <li>
-                        <div class="avatar avatar-yellow"></div>
-                        <div class="info">
-                            <p>Phạm Nguyên Vũ</p>
-                            <span class="role project-manager">Project Manager</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-orange"></div>
-                        <div class="info">
-                            <p>Trương Minh Trang</p>
-                            <span class="role">Developer</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-blue"></div>
-                        <div class="info">
-                            <p>Trần Phương Lan</p>
-                            <span class="role">Tester</span>
-                        </div>
-                    </li>
-                </ul>
-                <div class="pagination">
-                    <button>◀</button>
-                    <button class="active">1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>▶</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .overlay-2 {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 999;
-    }
-
-    .container-blind-2 {
-        width: 600px;
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        position: relative;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-        text-align: center;
-        color: #2d5c89;
-        margin-bottom: 20px;
-    }
-
-    .icon {
-        font-size: 24px;
-        vertical-align: middle;
-    }
-
-    .close-button {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 20px;
-        cursor: pointer;
-        color: #666;
-    }
-
-    .request-list {
-        list-style: none;
-        margin-bottom: 20px;
-    }
-
-        .request-list li {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-    .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-
-    .avatar-green {
-        background-color: #9bc47d;
-    }
-
-    .avatar-orange {
-        background-color: #f5a623;
-    }
-
-    .avatar-blue {
-        background-color: #4a90e2;
-    }
-
-    .avatar-yellow {
-        background-color: #ffd700;
-    }
-
-    .info {
-        flex: 1;
-    }
-
-        .info p {
-            font-weight: bold;
-            color: #333;
-        }
-
-    .role {
-        font-size: 0.9em;
-        color: #4a90e2;
-    }
-
-    .accept-button,
-    .reject-button {
-        padding: 8px 12px;
-        border: none;
-        border-radius: 5px;
-        font-size: 0.9em;
-        color: #fff;
-        cursor: pointer;
-        margin-left: 10px;
-    }
-
-    .accept-button {
-        background-color: #4CAF50; /* Màu xanh lá */
-    }
-
-    .reject-button {
-        background-color: #E57373; /* Màu đỏ nhạt */
-    }
-
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 5px;
-    }
-
-        .pagination button {
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            background-color: #ffffff;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-            .pagination button.active {
-                background-color: #2d5c89;
-                color: #ffffff;
-            }
-</style>
-
-<div class="overlay-2">
-    <div class="container-blind-2">
-        <h2>Request <span class="icon">📄</span></h2>
-        <div class="close-button">✕</div>
-        <ul class="request-list">
-            <li>
-                <div class="avatar avatar-green"></div>
-                <div class="info">
-                    <p>Nguyễn Nhật Quân</p>
-                    <span class="role">Developer</span>
-                </div>
-                <button class="accept-button">✔ Accept</button>
-                <button class="reject-button">✖ Reject</button>
-            </li>
-            <li>
-                <div class="avatar avatar-orange"></div>
-                <div class="info">
-                    <p>Huỳnh Bảo Ngọc</p>
-                    <span class="role">Developer</span>
-                </div>
-                <button class="accept-button">✔ Accept</button>
-                <button class="reject-button">✖ Reject</button>
-            </li>
-            <li>
-                <div class="avatar avatar-blue"></div>
-                <div class="info">
-                    <p>Trần Phương Uyên</p>
-                    <span class="role">Tester</span>
-                </div>
-                <button class="accept-button">✔ Accept</button>
-                <button class="reject-button">✖ Reject</button>
-            </li>
-            <li>
-                <div class="avatar avatar-yellow"></div>
-                <div class="info">
-                    <p>Đỗ Lan Hương</p>
-                    <span class="role">Developer</span>
-                </div>
-                <button class="accept-button">✔ Accept</button>
-                <button class="reject-button">✖ Reject</button>
-            </li>
-        </ul>
-        <div class="pagination">
-            <button>◀</button>
-            <button>1</button>
-            <button>2</button>
-            <button class="active">3</button>
-            <button>4</button>
-            <button>5</button>
-            <button>▶</button>
         </div>
     </div>
 </div>
