@@ -16,9 +16,12 @@
     }
 
     .breadcrumb {
-        font-size: 14px;
+        font-size: 20px;
         color: #888;
         margin: 20px 30px;
+        width:100%;
+        font-weight:bold;
+        padding-left:100px;
     }
 
     .title {
@@ -108,7 +111,7 @@
         }
 
     .user-name {
-        font-size: 14px;
+        font-size: 16px;
         color: #333;
     }
 
@@ -414,8 +417,8 @@
             </div>
         </div>
 
-        <div>1/2 Require Remaining</div>
-       
+
+
         @{
             // Initialize counters for Done and Pending tasks
             int doneCount = 0;
@@ -464,6 +467,8 @@
                 progressPercentage = (double)doneCount / totalCount * 100;
             }
         }
+        <br />
+        <div style="font-weight:bold; color:darkblue">@doneCount/@totalCount Require Remaining</div>
         <div class="progress-bar">
             <div class="progress" style="width:@progressPercentage%"></div>
         </div>
@@ -494,24 +499,26 @@
         @foreach (var member in Model.AssignedMembers)
         {
             <div class="assigned-users">
-                <p><strong>Người Làm</strong></p>
+                <h6><strong>Người Làm</strong></h6>
                 <div class="user">
                     <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="User">
-                    <span class="user-name">@member.FullName - @member.Role = @member.MemberID</span>
+                    <span class="user-name">@member.FullName <br /> <span style="color:forestgreen; font-weight:bold">@member.Role</span>  </span>
+
                 </div>
             </div>
-            
+
         }
-        
+
 
         <div class="creator">
-            <p><strong>Người Tạo</strong></p>
+            <h6><strong>Người Tạo</strong></h6>
             <div class="user">
                 <img src="@Url.Content("~/Content/images/member-img/" + Model.Creator.ImageMember)" alt="User">
-                <span class="user-name">@Model.Creator.FullName - @Model.Creator.Role</span>
+                <span class="user-name">@Model.Creator.FullName  <br /><span style="color:red; font-weight:bold">@Model.Creator.Role</span></span>
             </div>
         </div>
-
+        <br />
+        <h4><strong><center>Thao Tác</center></strong></h4>
         <div class="task-controls">
             <button class="button">
                 Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
@@ -523,7 +530,7 @@
             <button class="btn-edit">
                 Edit Task <img src="edit-icon.png" alt="Edit">
             </button>
-           
+
             <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
                 <input type="hidden" name="taskId" value="@Model.TaskID" />
                 @foreach (var member in Model.AssignedMembers)
@@ -534,7 +541,7 @@
                     Delete Task <img src="delete-icon.png" alt="Delete">
                 </button>
             </form>
-            </div>
+        </div>
     </div>
 </div>
 </body>
