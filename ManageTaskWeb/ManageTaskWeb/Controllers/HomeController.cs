@@ -819,6 +819,7 @@ namespace ManageTaskWeb.Controllers
 
                 if (task == null)
                     return HttpNotFound();  // Nếu không tìm thấy task trong CSDL, trả về lỗi Not Found
+
                 var creator = task.TaskAssignments
                         .Where(ta => ta.AssignedBy != null)
                         .Join(context.Members,
@@ -833,16 +834,32 @@ namespace ManageTaskWeb.Controllers
                               })
                         .FirstOrDefault();  // Lấy thông tin của người giao nhiệm vụ đầu tiên
 
+                // Lấy danh sách các task từ cơ sở dữ liệu (có thể là các task cùng dự án hoặc các task khác có cùng ParentID, tùy yêu cầu của bạn)
+                var listTasks = context.Tasks
+                      .AsNoTracking()
+                      .Where(t => t.ProjectID == task.ProjectID || t.ParentTaskID == task.ParentTaskID)
+                      .Select(t => new TaskViewModel
+                      {
+                          TaskID = t.TaskID,
+                          TaskName = t.TaskName,
+                          Description = t.Description,
+                          StartDate = t.StartDate,
+                          EndDate = t.EndDate,
+                          Status = t.Status,
+                          Priority = t.Priority,
+                          ParentTaskID = t.ParentTaskID ?? 0
+                      })
+                      .ToList();
+
                 var viewModel = new TaskViewModel
                 {
                     TaskID = task.TaskID,
                     TaskName = task.TaskName,
                     Description = task.Description,
-                    StartDate = task.StartDate ?? DateTime.MinValue,  
-                    EndDate = task.EndDate ?? DateTime.MinValue,      
+                    StartDate = task.StartDate ?? DateTime.MinValue,
+                    EndDate = task.EndDate ?? DateTime.MinValue,
                     Priority = task.Priority ?? 0,
                     Status = task.Status,
-                    // If you want to get the MemberID from TaskAssignments, you can map it like so
                     AssignedMembers = (from ta in task.TaskAssignments
                                        join member in context.Members on ta.MemberID equals member.MemberID
                                        select new MemberViewModel
@@ -852,14 +869,69 @@ namespace ManageTaskWeb.Controllers
                                            Role = member.Role,
                                            ImageMember = member.ImageMember
                                        }).ToList(),
-
-                    Creator = creator  // Assign the creator here
-
+                    Creator = creator,  // Assign the creator here
+                    ListTasks = listTasks  // Assign the list of tasks here
                 };
 
                 return View(viewModel);
             }
+
         }
+        [HttpPost]
+        public ActionResult DeleteTaskByMember(string memberId, int taskId)
+        {
+            using (var context = new QLCVDataContext())
+            {
+                // Kiểm tra Task có tồn tại hay không
+                var task = context.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return HttpNotFound("Task not found.");
+                }
+
+                // Kiểm tra nếu có MemberID tồn tại trong TaskAssignments hoặc TaskLogs
+                var hasAssignmentsWithMember = context.TaskAssignments
+                    .Any(ta => ta.TaskID == taskId && ta.MemberID == memberId);
+
+                var hasLogsWithMember = context.TaskLogs
+                    .Any(tl => tl.TaskID == taskId && tl.MemberID == memberId);
+
+                if (hasAssignmentsWithMember || hasLogsWithMember)
+                {
+                    return Content("Cannot delete the task because there are members assigned or logs exist for this task.");
+                }
+
+                // Xóa tất cả TaskAssignments liên quan đến TaskID
+                var taskAssignments = context.TaskAssignments
+                    .Where(ta => ta.TaskID == taskId)
+                    .ToList();
+
+                foreach (var assignment in taskAssignments)
+                {
+                    context.TaskAssignments.DeleteOnSubmit(assignment);
+                }
+
+                // Xóa tất cả TaskLogs liên quan đến TaskID
+                var taskLogs = context.TaskLogs
+                    .Where(tl => tl.TaskID == taskId)
+                    .ToList();
+
+                foreach (var log in taskLogs)
+                {
+                    context.TaskLogs.DeleteOnSubmit(log);
+                }
+
+                // Xóa Task
+                context.Tasks.DeleteOnSubmit(task);
+
+                // Lưu thay đổi
+                context.SubmitChanges();
+
+                return RedirectToAction("DSTask", new { notificationMessage = "task delete successfully!", notificationType = "success" }); // Điều hướng về danh sách Task
+            }
+        }
+
+
 
         //CHAT - START
         //Load Chat

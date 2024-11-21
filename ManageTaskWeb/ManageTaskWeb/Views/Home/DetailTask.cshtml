@@ -347,6 +347,39 @@
         color: red;
         font-size: 25px;
     }
+
+    .button .icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+        border: 2px solid black;
+        border-radius: 2px;
+        position: relative;
+    }
+
+        .button .icon::before,
+        .button .icon::after {
+            content: '';
+            position: absolute;
+            background-color: black;
+        }
+
+        .button .icon::before {
+            width: 10px;
+            height: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .button .icon::after {
+            width: 2px;
+            height: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 </style>
 <div class="breadcrumb">
     <span>Home</span> <div class="arrow-right"></div>
@@ -380,24 +413,64 @@
                 <p>2.9 MB</p>
             </div>
         </div>
+
         <div>1/2 Require Remaining</div>
+       
+        @{
+            // Initialize counters for Done and Pending tasks
+            int doneCount = 0;
+            int totalCount = 0; // Start at 0, since we only want to count tasks that match the ParentID
+
+            // Initialize the progress percentage (default to 0)
+            double progressPercentage = 0;
+
+            // Iterate over the tasks
+            foreach (var task in Model.ListTasks)
+            {
+                // Check if the task is a child of the current task
+                var isChildTask = task.ParentTaskID == Model.TaskID;
+                if (isChildTask)
+                {
+                    // Increment the total task counter
+                    totalCount++;
+
+                    // Check task status and increment the Done count if it's done
+                    if (task.Status == "Done")
+                    {
+                        doneCount++;
+                    }
+
+                    <div class="task-container">
+                        <!-- Check task status and set icon accordingly -->
+                        @if (task.Status == "Done")
+                        {
+                            <i class="fas fa-check task-icon"></i>
+                            <div class="task-details">@task.Description</div>
+                            <i class="fas fa-times delete-icon"></i>
+                        }
+                        else if (task.Status == "Pending")
+                        {
+                            <i class="fas fa-square task-icon" style="color: #b0b0b0;"></i>
+                            <div class="task-details">@task.Description</div>
+                            <i class="fas fa-times delete-icon"></i>
+                        }
+                    </div>
+                }
+            }
+
+            // Calculate the percentage of Done tasks only if there are tasks
+            if (totalCount > 0)
+            {
+                progressPercentage = (double)doneCount / totalCount * 100;
+            }
+        }
         <div class="progress-bar">
-            <div class="progress" style="width: 50%;"></div>
+            <div class="progress" style="width:@progressPercentage%"></div>
         </div>
 
 
-        <!-- Task List Section -->
-        <div class="task-container">
-            <i class="fas fa-check task-icon"></i>
-            <div class="task-details">Thiết kế câu hỏi cho thực tập sinh</div>
-            <i class="fas fa-times delete-icon"></i>
-        </div>
 
-        <div class="task-container">
-            <i class="fas fa-square task-icon" style="color: #b0b0b0;"></i>
-            <div class="task-details">Chức năng Admin: Đăng nhập, xem câu hỏi, câu trả lời, xóa câu trả lời</div>
-            <i class="fas fa-times delete-icon"></i>
-        </div>
+
 
         <!-- Input Section -->
         <div class="input-section">
@@ -424,7 +497,7 @@
                 <p><strong>Người Làm</strong></p>
                 <div class="user">
                     <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="User">
-                    <span class="user-name">@member.FullName - @member.Role</span>
+                    <span class="user-name">@member.FullName - @member.Role = @member.MemberID</span>
                 </div>
             </div>
             
@@ -440,16 +513,28 @@
         </div>
 
         <div class="task-controls">
+            <button class="button">
+                Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="icon"></span>
+            </button>
             <button class="btn-discuss">
                 Thảo Luận <img src="discuss-icon.png" alt="Discuss">
             </button>
             <button class="btn-edit">
                 Edit Task <img src="edit-icon.png" alt="Edit">
             </button>
-            <button class="btn-delete">
-                Delete Task <img src="delete-icon.png" alt="Delete">
-            </button>
-        </div>
+           
+            <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
+                <input type="hidden" name="taskId" value="@Model.TaskID" />
+                @foreach (var member in Model.AssignedMembers)
+                {
+                    <input type="hidden" name="memberId" value="@member.MemberID" />
+                }
+                <button class="btn-delete" type="submit">
+                    Delete Task <img src="delete-icon.png" alt="Delete">
+                </button>
+            </form>
+            </div>
     </div>
 </div>
 </body>
