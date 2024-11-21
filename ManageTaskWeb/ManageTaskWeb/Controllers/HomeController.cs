@@ -28,22 +28,22 @@ namespace ManageTaskWeb.Controllers
           
             return View();
         }
-        //public static string EncryptPassword(string plainText, string key)
-        //{
-        //    using (Aes aes = Aes.Create())
-        //    {
-        //        aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32).Substring(0, 32)); // Khóa 256-bit
-        //        aes.IV = new byte[16]; // Vector khởi tạo mặc định (16 byte)
+        public static string EncryptPassword(string plainText, string key)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32).Substring(0, 32)); // Khóa 256-bit
+                aes.IV = new byte[16]; // Vector khởi tạo mặc định (16 byte)
 
-        //        using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
-        //        {
-        //            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
-        //            byte[] encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
+                using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
+                {
+                    byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+                    byte[] encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
 
-        //            return Convert.ToBase64String(encryptedBytes);
-        //        }
-        //    }
-        //}
+                    return Convert.ToBase64String(encryptedBytes);
+                }
+            }
+        }
         public static string DecryptPassword(string encryptedText, string key)
         {
             using (Aes aes = Aes.Create())
@@ -733,6 +733,72 @@ namespace ManageTaskWeb.Controllers
 
         }
 
+        //Them Task
+        [HttpPost]
+        public ActionResult AddTask(string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string ProjectID, int? ParentTaskID = null)
+        {
+            try
+            {
+                // Create a new Task object
+                var task = new Task
+                {
+                    TaskName = TaskName,
+                    Description = Description,
+                    StartDate = StartDate,
+                    EndDate = EndDate,
+                    Priority = Priority,
+                    Status = Status,
+                    ProjectID = ProjectID,
+                    ParentTaskID = ParentTaskID // Set ParentTaskID, can be null
+                };
+
+                // Insert the task into the database
+                data.Tasks.InsertOnSubmit(task);
+                data.SubmitChanges();
+
+                // Redirect with success message
+                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "Task added successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                // Redirect with error message
+                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "An error occurred while adding the task!", notificationType = "error" });
+
+            }
+        }
+        //Edit task 
+        [HttpPost]
+        public ActionResult EditTask(int TaskID, string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, int? ParentTaskID = null)
+        {
+            try
+            {
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == TaskID);
+                if (task == null)
+                {
+                    return RedirectToAction("DSTask", new { notificationMessage = "Task not found!", notificationType = "error" });
+                }
+
+                // Update task details
+                task.TaskName = TaskName;
+                task.Description = Description;
+                task.StartDate = StartDate;
+                task.EndDate = EndDate;
+                task.Priority = Priority;
+                task.Status = Status;
+                task.ParentTaskID = ParentTaskID; // Update ParentTaskID, can be null
+
+                data.SubmitChanges();
+
+                return RedirectToAction("DSTask", new { projectId = task.ProjectID, notificationMessage = "Task updated successfully!", notificationType = "success" });
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("DSTask", new { notificationMessage = "An error occurred while updating the task!", notificationType = "error" });
+
+            }
+        }
+
+        //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
             if (taskId == null)
@@ -797,63 +863,63 @@ namespace ManageTaskWeb.Controllers
 
         //CHAT - START
         //Load Chat
-        //public ActionResult GroupChat(string projectId, int page = 1)
-        //{
-        //    int pageSize = 6;
-        //    // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
-        //    var interactions = data.Interactions
-        //        .Where(i => i.ProjectID == projectId)
-        //        .OrderByDescending(i => i.IsPinned) // Các tin nhắn được ghim ở trên
-        //        .ThenByDescending(i => i.InteractionDate) // Các tin nhắn không ghim sẽ sắp xếp theo ngày
-        //        .Skip((page - 1) * pageSize)
-        //        .Take(pageSize)
-        //        .ToList();
+        public ActionResult GroupChat(string projectId, int page = 1)
+        {
+            int pageSize = 6;
+            // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
+            var interactions = data.Interactions
+                .Where(i => i.ProjectID == projectId)
+                .OrderByDescending(i => i.IsPinned) // Các tin nhắn được ghim ở trên
+                .ThenByDescending(i => i.InteractionDate) // Các tin nhắn không ghim sẽ sắp xếp theo ngày
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
 
 
-        //    var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
-        //    if (project == null)
-        //    {
-        //        return HttpNotFound("Project not found.");
-        //    }
-        //    // Đếm tổng số đoạn chat để tính tổng số trang
-        //    int totalChatCount = data.Interactions.Count(i => i.ProjectID == projectId);
-        //    int totalPages = (int)Math.Ceiling((double)totalChatCount / pageSize);
+            var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+            if (project == null)
+            {
+                return HttpNotFound("Project not found.");
+            }
+            // Đếm tổng số đoạn chat để tính tổng số trang
+            int totalChatCount = data.Interactions.Count(i => i.ProjectID == projectId);
+            int totalPages = (int)Math.Ceiling((double)totalChatCount / pageSize);
 
-        //    // Lấy danh sách thành viên của project
+            // Lấy danh sách thành viên của project
 
-        //    var members = data.ProjectMembers
-        //         .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted")
+            var members = data.ProjectMembers
+                 .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted")
 
-        //         .Select(pm => pm.Member)
-        //         .Distinct()
-        //         .Select(m => new MemberViewModel
-        //         {
-        //             FullName = m.FullName,
-        //             Email = m.Email,
-        //             Phone = m.Phone,
-        //             Status = m.Status,
-        //             Role = m.Role,
-        //             ImageMember = m.ImageMember
-        //         })
-        //         .ToList();
+                 .Select(pm => pm.Member)
+                 .Distinct()
+                 .Select(m => new MemberViewModel
+                 {
+                     FullName = m.FullName,
+                     Email = m.Email,
+                     Phone = m.Phone,
+                     Status = m.Status,
+                     Role = m.Role,
+                     ImageMember = m.ImageMember
+                 })
+                 .ToList();
 
-        //    ViewBag.Members = members;
-        //    ViewBag.TotalChatCount = totalChatCount;
+            ViewBag.Members = members;
+            ViewBag.TotalChatCount = totalChatCount;
 
-        //    // Truyền các giá trị cần thiết cho view
-        //    ViewBag.ProjectID = projectId;
-        //    ViewBag.CurrentPage = page;
-        //    ViewBag.TotalPages = totalPages;
+            // Truyền các giá trị cần thiết cho view
+            ViewBag.ProjectID = projectId;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
 
-        //    var viewModel = new GroupChatViewModel
-        //    {
-        //        Interactions = interactions,
-        //        Members = members,
-        //        Project = project
-        //    };
-        //    return View(viewModel);
-        //}
+            var viewModel = new GroupChatViewModel
+            {
+                Interactions = interactions,
+                Members = members,
+                Project = project
+            };
+            return View(viewModel);
+        }
 
         //Them Chat
         [HttpPost]
@@ -1033,7 +1099,7 @@ namespace ManageTaskWeb.Controllers
             return memberIDnew;
         }
 
-
+        //Addmember
         [HttpPost]
         public ActionResult AddMember(string FullName, string Email, string Phone, string Role, string Password, string ImageMember, HttpPostedFileBase ImageFile)
         {
@@ -1071,41 +1137,8 @@ namespace ManageTaskWeb.Controllers
                 return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi thêm thành viên!", notificationType = "error" });
             }
             }
+        //Edit Member
         [HttpPost]
-        public ActionResult AddTask(string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string ProjectID, int? ParentTaskID = null)
-        {
-            try
-            {
-                // Create a new Task object
-                var task = new Task
-                {
-                    TaskName = TaskName,
-                    Description = Description,
-                    StartDate = StartDate,
-                    EndDate = EndDate,
-                    Priority = Priority,
-                    Status = Status,
-                    ProjectID = ProjectID,
-                    ParentTaskID = ParentTaskID // Set ParentTaskID, can be null
-                };
-
-                // Insert the task into the database
-                data.Tasks.InsertOnSubmit(task);
-                data.SubmitChanges();
-
-                // Redirect with success message
-                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "Task added successfully!", notificationType = "success" });
-            }
-            catch (Exception)
-            {
-                // Redirect with error message
-                return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "An error occurred while adding the task!", notificationType = "error" });
-
-            }
-        }
-
-        [HttpPost]
-
         public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, DateTime HireDate, HttpPostedFileBase ImageFile)
         {
             try
@@ -1162,34 +1195,6 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = "Có lỗi xảy ra khi xóa thành viên: " + ex.Message });
 }}
 
-        public ActionResult EditTask(int TaskID, string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, int? ParentTaskID = null)
-        {
-            try
-            {
-                var task = data.Tasks.FirstOrDefault(t => t.TaskID == TaskID);
-                if (task == null)
-                {
-                    return RedirectToAction("DSTask", new { notificationMessage = "Task not found!", notificationType = "error" });
-                }
-
-                // Update task details
-                task.TaskName = TaskName;
-                task.Description = Description;
-                task.StartDate = StartDate;
-                task.EndDate = EndDate;
-                task.Priority = Priority;
-                task.Status = Status;
-                task.ParentTaskID = ParentTaskID; // Update ParentTaskID, can be null
-
-                data.SubmitChanges();
-
-                return RedirectToAction("DSTask", new { projectId = task.ProjectID, notificationMessage = "Task updated successfully!", notificationType = "success" });
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("DSTask", new { notificationMessage = "An error occurred while updating the task!", notificationType = "error" });
-
-            }
-        }
+        
     }
 }
