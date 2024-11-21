@@ -519,64 +519,64 @@ namespace ManageTaskWeb.Controllers
 
         //CHAT - START
         //Load Chat
-        public ActionResult GroupChat(string projectId, int page = 1)
-        {
-            int pageSize = 6;
+        //public ActionResult GroupChat(string projectId, int page = 1)
+        //{
+        //    int pageSize = 6;
 
-            // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
-            var interactions = data.Interactions
-                .Where(i => i.ProjectID == projectId)
-                .OrderByDescending(i => i.IsPinned) // Các tin nhắn được ghim ở trên
-                .ThenByDescending(i => i.InteractionDate) // Các tin nhắn không ghim sẽ sắp xếp theo ngày
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+        //    // Lấy danh sách các đoạn chat của dự án dựa trên projectId và phân trang
+        //    var interactions = data.Interactions
+        //        .Where(i => i.ProjectID == projectId)
+        //        .OrderByDescending(i => i.IsPinned) // Các tin nhắn được ghim ở trên
+        //        .ThenByDescending(i => i.InteractionDate) // Các tin nhắn không ghim sẽ sắp xếp theo ngày
+        //        .Skip((page - 1) * pageSize)
+        //        .Take(pageSize)
+        //        .ToList();
 
 
 
-            var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
-            if (project == null)
-            {
-                return HttpNotFound("Project not found.");
-            }
-            // Đếm tổng số đoạn chat để tính tổng số trang
-            int totalChatCount = data.Interactions.Count(i => i.ProjectID == projectId);
-            int totalPages = (int)Math.Ceiling((double)totalChatCount / pageSize);
+        //    var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+        //    if (project == null)
+        //    {
+        //        return HttpNotFound("Project not found.");
+        //    }
+        //    // Đếm tổng số đoạn chat để tính tổng số trang
+        //    int totalChatCount = data.Interactions.Count(i => i.ProjectID == projectId);
+        //    int totalPages = (int)Math.Ceiling((double)totalChatCount / pageSize);
 
-            // Lấy danh sách thành viên của project
+        //    // Lấy danh sách thành viên của project
 
-            var members = data.ProjectMembers
-                 .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted")
+        //    var members = data.ProjectMembers
+        //         .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted")
 
-                 .Select(pm => pm.Member)
-                 .Distinct()
-                 .Select(m => new MemberViewModel
-                 {
-                     FullName = m.FullName,
-                     Email = m.Email,
-                     Phone = m.Phone,
-                     Status = m.Status,
-                     Role = m.Role,
-                     ImageMember = m.ImageMember
-                 })
-                 .ToList();
+        //         .Select(pm => pm.Member)
+        //         .Distinct()
+        //         .Select(m => new MemberViewModel
+        //         {
+        //             FullName = m.FullName,
+        //             Email = m.Email,
+        //             Phone = m.Phone,
+        //             Status = m.Status,
+        //             Role = m.Role,
+        //             ImageMember = m.ImageMember
+        //         })
+        //         .ToList();
 
-            ViewBag.Members = members;
-            ViewBag.TotalChatCount = totalChatCount;
+        //    ViewBag.Members = members;
+        //    ViewBag.TotalChatCount = totalChatCount;
 
-            // Truyền các giá trị cần thiết cho view
-            ViewBag.ProjectID = projectId;
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
+        //    // Truyền các giá trị cần thiết cho view
+        //    ViewBag.ProjectID = projectId;
+        //    ViewBag.CurrentPage = page;
+        //    ViewBag.TotalPages = totalPages;
 
-            var viewModel = new GroupChatViewModel
-            {
-                Interactions = interactions,
-                Members = members,
-                Project = project
-            };
-            return View(viewModel);
-        }
+        //    var viewModel = new GroupChatViewModel
+        //    {
+        //        Interactions = interactions,
+        //        Members = members,
+        //        Project = project
+        //    };
+        //    return View(viewModel);
+        //}
 
         //Them Chat
         [HttpPost]
@@ -635,35 +635,35 @@ namespace ManageTaskWeb.Controllers
             return RedirectToAction("GroupChat", new { projectId = projectId });
         }
         //Ghim chat
-        public ActionResult PinMessage(int messageId, string projectId)
-        {
-            if (messageId <= 0 || string.IsNullOrEmpty(projectId))
-            {
-                return HttpNotFound();
-            }
-            var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
-            if (message != null)
-            {
-                message.IsPinned = true;
-                data.SubmitChanges();
-            }
-            return RedirectToAction("GroupChat", new { projectId = projectId });
-        }
-        //Bo ghim chat
-        [HttpPost]
-        public ActionResult TogglePinMessage(int messageId, string projectId)
-        {
-            var interaction = data.Interactions.FirstOrDefault(i => i.InteractionID == messageId && i.ProjectID == projectId);
-            if (interaction != null)
-            {
-                // Đảo trạng thái ghim và cập nhật ngày tương tác
-                interaction.IsPinned = !(interaction.IsPinned ?? false);
-                interaction.InteractionDate = DateTime.Now;
-                data.SubmitChanges();
-                return Json(new { success = true });
-            }
-            return Json(new { success = false });
-        }
+        //public ActionResult PinMessage(int messageId, string projectId)
+        //{
+        //    if (messageId <= 0 || string.IsNullOrEmpty(projectId))
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
+        //    if (message != null)
+        //    {
+        //        message.IsPinned = true;
+        //        data.SubmitChanges();
+        //    }
+        //    return RedirectToAction("GroupChat", new { projectId = projectId });
+        //}
+        ////Bo ghim chat
+        //[HttpPost]
+        //public ActionResult TogglePinMessage(int messageId, string projectId)
+        //{
+        //    var interaction = data.Interactions.FirstOrDefault(i => i.InteractionID == messageId && i.ProjectID == projectId);
+        //    if (interaction != null)
+        //    {
+        //        // Đảo trạng thái ghim và cập nhật ngày tương tác
+        //        interaction.IsPinned = !(interaction.IsPinned ?? false);
+        //        interaction.InteractionDate = DateTime.Now;
+        //        data.SubmitChanges();
+        //        return Json(new { success = true });
+        //    }
+        //    return Json(new { success = false });
+        //}
         //CHAT - END
 
 
@@ -686,7 +686,10 @@ namespace ManageTaskWeb.Controllers
                                   Email = m.Email,
                                   Phone = m.Phone,
                                   Role = m.Role,
+                                  HireDate = m.HireDate,
                                   Status = m.Status,
+                                  //Password = m.Password,
+                                  //ImageMember = m.ImageMember,
                                   MemberCount = data.TaskAssignments
                                                      .Where(a => a.MemberID == m.MemberID)
                                                      .Select(a => a.TaskID)
@@ -709,7 +712,10 @@ namespace ManageTaskWeb.Controllers
                                   Email = m.Email,
                                   Phone = m.Phone,
                                   Role = m.Role,
+                                  HireDate = m.HireDate,
                                   Status = m.Status,
+                                  //Password = m.Password,
+                                  //ImageMember = m.ImageMember,
                                   MemberCount = data.TaskAssignments
                                                      .Where(a => a.MemberID == m.MemberID)
                                                      .Select(a => a.TaskID)
@@ -720,6 +726,129 @@ namespace ManageTaskWeb.Controllers
             }
 
             return View(members);
+        }
+
+        public string GenerateMemberID()
+        {
+            // Lấy thời gian hiện tại
+            DateTime now = DateTime.Now;
+
+            // Định dạng thành chuỗi: HHmmssddMMyyyy
+            string formattedTime = now.ToString("HHmmssddMMyyyy");
+
+            return formattedTime;
+        }
+
+        public string GetUniqueMemberID()
+        {
+            string memberIDnew;
+            bool isUnique;
+
+            do
+            {
+                memberIDnew = GenerateMemberID(); // Tạo ID dựa trên thời gian hiện tại
+                isUnique = !data.Members.Any(m => m.MemberID == memberIDnew); // Kiểm tra xem ID đã tồn tại chưa
+            }
+            while (!isUnique); // Nếu trùng, tiếp tục kiểm tra
+
+            return memberIDnew;
+        }
+
+
+        [HttpPost]
+        public ActionResult AddMember(string FullName, string Email, string Phone, string Role, string Password, string ImageMember, HttpPostedFileBase ImageFile)
+        {
+            try
+            {
+                string imagePath = null;
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    string path = Server.MapPath("~/Content/images/member-img/");
+                    Directory.CreateDirectory(path); // Create directory if it doesn't exist
+                    imagePath = Path.Combine(path, ImageMember);
+                    ImageFile.SaveAs(imagePath); // Save image
+                }
+
+                var member = new Member
+                {
+                    MemberID = GetUniqueMemberID(),
+                    FullName = FullName,
+                    Email = Email,
+                    Phone = Phone,
+                    Role = Role,
+                    HireDate = DateTime.Now,                  
+                    Status = "Offline",
+                    //Password = Password,
+                    //ImageMember = ImageMember,
+                    deleteTime = null
+                };
+
+                data.Members.InsertOnSubmit(member);
+                data.SubmitChanges();
+                return RedirectToAction("DSMember");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi thêm thành viên!", notificationType = "error" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, DateTime HireDate, HttpPostedFileBase ImageFile)
+        {
+            try
+            {
+                var member = data.Members.FirstOrDefault(m => m.MemberID == MemberID);
+                if (member != null)
+                {
+                    member.FullName = FullName;
+                    member.Email = Email;
+                    member.Phone = Phone;
+                    member.Role = Role;
+                    //member.HireDate = HireDate;
+                    //member.Password = Password;
+                    
+
+                    if (!string.IsNullOrEmpty(Password))
+                    {
+                        member.Password = Password; // Chỉ cập nhật nếu mật khẩu mới được nhập
+                    }
+
+                    if (ImageFile != null && ImageFile.ContentLength > 0)
+                    {
+                        string imagePath = Path.Combine(Server.MapPath("~/Content/images/member-img/"), ImageFile.FileName);
+                        ImageFile.SaveAs(imagePath);
+                        member.ImageMember = ImageFile.FileName; // Lưu tên ảnh vào database
+                    }
+
+                    data.SubmitChanges();
+                    return RedirectToAction("DSMember", new { notificationMessage = "Cập nhật thành viên thành công!", notificationType = "success" });
+                }
+                return RedirectToAction("DSMember", new { notificationMessage = "Không tìm thấy thành viên!", notificationType = "error" });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi cập nhật thông tin thành viên!", notificationType = "error" });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DeleteMember(List<string> memberIds)
+        {
+            try
+            {
+                var members = data.Members.Where(m => memberIds.Contains(m.MemberID)).ToList();
+                foreach (var member in members)
+                {
+                    data.Members.DeleteOnSubmit(member);
+                }
+                data.SubmitChanges();
+                return Json(new { success = true, message = "Thành viên đã được xóa thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra khi xóa thành viên: " + ex.Message });
+            }
         }
     }
 }

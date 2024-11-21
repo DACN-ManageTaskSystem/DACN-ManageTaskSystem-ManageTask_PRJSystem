@@ -22,7 +22,7 @@ namespace ManageTaskWeb.Models
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="QLCViec3")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="QLCViec2")]
 	public partial class QLCVDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -30,15 +30,12 @@ namespace ManageTaskWeb.Models
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertInteraction(Interaction instance);
-    partial void UpdateInteraction(Interaction instance);
-    partial void DeleteInteraction(Interaction instance);
-    partial void InsertTask(Task instance);
-    partial void UpdateTask(Task instance);
-    partial void DeleteTask(Task instance);
     partial void InsertMember(Member instance);
     partial void UpdateMember(Member instance);
     partial void DeleteMember(Member instance);
+    partial void InsertTask(Task instance);
+    partial void UpdateTask(Task instance);
+    partial void DeleteTask(Task instance);
     partial void InsertNotification(Notification instance);
     partial void UpdateNotification(Notification instance);
     partial void DeleteNotification(Notification instance);
@@ -57,15 +54,17 @@ namespace ManageTaskWeb.Models
     partial void InsertTaskLog(TaskLog instance);
     partial void UpdateTaskLog(TaskLog instance);
     partial void DeleteTaskLog(TaskLog instance);
-        #endregion
-
-        public QLCVDataContext() :
-                base("Data Source=ACERNITRO5;Initial Catalog=QLCViec3;Persist Security Info=True;Use" +
-                        "r ID=sa;Password=123;Encrypt=True;TrustServerCertificate=True", mappingSource)
-        {
-            OnCreated();
-        }
-        public QLCVDataContext(string connection) : 
+    partial void InsertInteraction(Interaction instance);
+    partial void UpdateInteraction(Interaction instance);
+    partial void DeleteInteraction(Interaction instance);
+		#endregion
+		public QLCVDataContext() :
+		  base("Data Source=HOANGTIEN;Initial Catalog=QLCViec2;Persist Security Info=True;Use" +
+				  "r ID=sa;Password=123;Encrypt=True;TrustServerCertificate=True", mappingSource)
+		{
+			OnCreated();
+		}
+		public QLCVDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -89,11 +88,11 @@ namespace ManageTaskWeb.Models
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Interaction> Interactions
+		public System.Data.Linq.Table<Member> Members
 		{
 			get
 			{
-				return this.GetTable<Interaction>();
+				return this.GetTable<Member>();
 			}
 		}
 		
@@ -102,14 +101,6 @@ namespace ManageTaskWeb.Models
 			get
 			{
 				return this.GetTable<Task>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Member> Members
-		{
-			get
-			{
-				return this.GetTable<Member>();
 			}
 		}
 		
@@ -160,100 +151,95 @@ namespace ManageTaskWeb.Models
 				return this.GetTable<TaskLog>();
 			}
 		}
+		
+		public System.Data.Linq.Table<Interaction> Interactions
+		{
+			get
+			{
+				return this.GetTable<Interaction>();
+			}
+		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Interactions")]
-	public partial class Interaction : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Members")]
+	public partial class Member : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _InteractionID;
-		
-		private string _ProjectID;
-		
 		private string _MemberID;
 		
-		private System.Nullable<System.DateTime> _InteractionDate;
+		private string _FullName;
 		
-		private string _Message;
+		private string _Email;
 		
-		private System.Nullable<bool> _IsPinned;
+		private string _Phone;
 		
-		private EntityRef<Member> _Member;
+		private string _Role;
 		
-		private EntityRef<Project> _Project;
+		private System.Nullable<System.DateTime> _HireDate;
+		
+		private string _Status;
+		
+		private string _Password;
+		
+		private System.Nullable<System.DateTime> _deleteTime;
+		
+		private string _ImageMember;
+		
+		private EntitySet<Notification> _Notifications;
+		
+		private EntitySet<ProjectMember> _ProjectMembers;
+		
+		private EntitySet<Report> _Reports;
+		
+		private EntitySet<TaskAssignment> _TaskAssignments;
+		
+		private EntitySet<TaskAssignment> _TaskAssignments1;
+		
+		private EntitySet<TaskLog> _TaskLogs;
+		
+		private EntitySet<Interaction> _Interactions;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnInteractionIDChanging(int value);
-    partial void OnInteractionIDChanged();
-    partial void OnProjectIDChanging(string value);
-    partial void OnProjectIDChanged();
     partial void OnMemberIDChanging(string value);
     partial void OnMemberIDChanged();
-    partial void OnInteractionDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnInteractionDateChanged();
-    partial void OnMessageChanging(string value);
-    partial void OnMessageChanged();
-    partial void OnIsPinnedChanging(System.Nullable<bool> value);
-    partial void OnIsPinnedChanged();
+    partial void OnFullNameChanging(string value);
+    partial void OnFullNameChanged();
+    partial void OnEmailChanging(string value);
+    partial void OnEmailChanged();
+    partial void OnPhoneChanging(string value);
+    partial void OnPhoneChanged();
+    partial void OnRoleChanging(string value);
+    partial void OnRoleChanged();
+    partial void OnHireDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnHireDateChanged();
+    partial void OnStatusChanging(string value);
+    partial void OnStatusChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OndeleteTimeChanging(System.Nullable<System.DateTime> value);
+    partial void OndeleteTimeChanged();
+    partial void OnImageMemberChanging(string value);
+    partial void OnImageMemberChanged();
     #endregion
 		
-		public Interaction()
+		public Member()
 		{
-			this._Member = default(EntityRef<Member>);
-			this._Project = default(EntityRef<Project>);
+			this._Notifications = new EntitySet<Notification>(new Action<Notification>(this.attach_Notifications), new Action<Notification>(this.detach_Notifications));
+			this._ProjectMembers = new EntitySet<ProjectMember>(new Action<ProjectMember>(this.attach_ProjectMembers), new Action<ProjectMember>(this.detach_ProjectMembers));
+			this._Reports = new EntitySet<Report>(new Action<Report>(this.attach_Reports), new Action<Report>(this.detach_Reports));
+			this._TaskAssignments = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments), new Action<TaskAssignment>(this.detach_TaskAssignments));
+			this._TaskAssignments1 = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments1), new Action<TaskAssignment>(this.detach_TaskAssignments1));
+			this._TaskLogs = new EntitySet<TaskLog>(new Action<TaskLog>(this.attach_TaskLogs), new Action<TaskLog>(this.detach_TaskLogs));
+			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InteractionID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int InteractionID
-		{
-			get
-			{
-				return this._InteractionID;
-			}
-			set
-			{
-				if ((this._InteractionID != value))
-				{
-					this.OnInteractionIDChanging(value);
-					this.SendPropertyChanging();
-					this._InteractionID = value;
-					this.SendPropertyChanged("InteractionID");
-					this.OnInteractionIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectID", DbType="NVarChar(14)")]
-		public string ProjectID
-		{
-			get
-			{
-				return this._ProjectID;
-			}
-			set
-			{
-				if ((this._ProjectID != value))
-				{
-					if (this._Project.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnProjectIDChanging(value);
-					this.SendPropertyChanging();
-					this._ProjectID = value;
-					this.SendPropertyChanged("ProjectID");
-					this.OnProjectIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
 		public string MemberID
 		{
 			get
@@ -264,10 +250,6 @@ namespace ManageTaskWeb.Models
 			{
 				if ((this._MemberID != value))
 				{
-					if (this._Member.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnMemberIDChanging(value);
 					this.SendPropertyChanging();
 					this._MemberID = value;
@@ -277,131 +259,274 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InteractionDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> InteractionDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string FullName
 		{
 			get
 			{
-				return this._InteractionDate;
+				return this._FullName;
 			}
 			set
 			{
-				if ((this._InteractionDate != value))
+				if ((this._FullName != value))
 				{
-					this.OnInteractionDateChanging(value);
+					this.OnFullNameChanging(value);
 					this.SendPropertyChanging();
-					this._InteractionDate = value;
-					this.SendPropertyChanged("InteractionDate");
-					this.OnInteractionDateChanged();
+					this._FullName = value;
+					this.SendPropertyChanged("FullName");
+					this.OnFullNameChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Message", DbType="NVarChar(MAX)")]
-		public string Message
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Email
 		{
 			get
 			{
-				return this._Message;
+				return this._Email;
 			}
 			set
 			{
-				if ((this._Message != value))
+				if ((this._Email != value))
 				{
-					this.OnMessageChanging(value);
+					this.OnEmailChanging(value);
 					this.SendPropertyChanging();
-					this._Message = value;
-					this.SendPropertyChanged("Message");
-					this.OnMessageChanged();
+					this._Email = value;
+					this.SendPropertyChanged("Email");
+					this.OnEmailChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsPinned", DbType="Bit")]
-		public System.Nullable<bool> IsPinned
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Phone", DbType="NVarChar(20)")]
+		public string Phone
 		{
 			get
 			{
-				return this._IsPinned;
+				return this._Phone;
 			}
 			set
 			{
-				if ((this._IsPinned != value))
+				if ((this._Phone != value))
 				{
-					this.OnIsPinnedChanging(value);
+					this.OnPhoneChanging(value);
 					this.SendPropertyChanging();
-					this._IsPinned = value;
-					this.SendPropertyChanged("IsPinned");
-					this.OnIsPinnedChanged();
+					this._Phone = value;
+					this.SendPropertyChanged("Phone");
+					this.OnPhoneChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Interaction", Storage="_Member", ThisKey="MemberID", OtherKey="MemberID", IsForeignKey=true)]
-		public Member Member
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Role", DbType="NVarChar(100)")]
+		public string Role
 		{
 			get
 			{
-				return this._Member.Entity;
+				return this._Role;
 			}
 			set
 			{
-				Member previousValue = this._Member.Entity;
-				if (((previousValue != value) 
-							|| (this._Member.HasLoadedOrAssignedValue == false)))
+				if ((this._Role != value))
 				{
+					this.OnRoleChanging(value);
 					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Member.Entity = null;
-						previousValue.Interactions.Remove(this);
-					}
-					this._Member.Entity = value;
-					if ((value != null))
-					{
-						value.Interactions.Add(this);
-						this._MemberID = value.MemberID;
-					}
-					else
-					{
-						this._MemberID = default(string);
-					}
-					this.SendPropertyChanged("Member");
+					this._Role = value;
+					this.SendPropertyChanged("Role");
+					this.OnRoleChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Interaction", Storage="_Project", ThisKey="ProjectID", OtherKey="ProjectID", IsForeignKey=true)]
-		public Project Project
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HireDate", DbType="Date")]
+		public System.Nullable<System.DateTime> HireDate
 		{
 			get
 			{
-				return this._Project.Entity;
+				return this._HireDate;
 			}
 			set
 			{
-				Project previousValue = this._Project.Entity;
-				if (((previousValue != value) 
-							|| (this._Project.HasLoadedOrAssignedValue == false)))
+				if ((this._HireDate != value))
 				{
+					this.OnHireDateChanging(value);
 					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Project.Entity = null;
-						previousValue.Interactions.Remove(this);
-					}
-					this._Project.Entity = value;
-					if ((value != null))
-					{
-						value.Interactions.Add(this);
-						this._ProjectID = value.ProjectID;
-					}
-					else
-					{
-						this._ProjectID = default(string);
-					}
-					this.SendPropertyChanged("Project");
+					this._HireDate = value;
+					this.SendPropertyChanged("HireDate");
+					this.OnHireDateChanged();
 				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
+		public string Status
+		{
+			get
+			{
+				return this._Status;
+			}
+			set
+			{
+				if ((this._Status != value))
+				{
+					this.OnStatusChanging(value);
+					this.SendPropertyChanging();
+					this._Status = value;
+					this.SendPropertyChanged("Status");
+					this.OnStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_deleteTime", DbType="DateTime")]
+		public System.Nullable<System.DateTime> deleteTime
+		{
+			get
+			{
+				return this._deleteTime;
+			}
+			set
+			{
+				if ((this._deleteTime != value))
+				{
+					this.OndeleteTimeChanging(value);
+					this.SendPropertyChanging();
+					this._deleteTime = value;
+					this.SendPropertyChanged("deleteTime");
+					this.OndeleteTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageMember", DbType="NVarChar(255)")]
+		public string ImageMember
+		{
+			get
+			{
+				return this._ImageMember;
+			}
+			set
+			{
+				if ((this._ImageMember != value))
+				{
+					this.OnImageMemberChanging(value);
+					this.SendPropertyChanging();
+					this._ImageMember = value;
+					this.SendPropertyChanged("ImageMember");
+					this.OnImageMemberChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Notification", Storage="_Notifications", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<Notification> Notifications
+		{
+			get
+			{
+				return this._Notifications;
+			}
+			set
+			{
+				this._Notifications.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_ProjectMember", Storage="_ProjectMembers", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<ProjectMember> ProjectMembers
+		{
+			get
+			{
+				return this._ProjectMembers;
+			}
+			set
+			{
+				this._ProjectMembers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Report", Storage="_Reports", ThisKey="MemberID", OtherKey="GeneratedBy")]
+		public EntitySet<Report> Reports
+		{
+			get
+			{
+				return this._Reports;
+			}
+			set
+			{
+				this._Reports.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment", Storage="_TaskAssignments", ThisKey="MemberID", OtherKey="AssignedBy")]
+		public EntitySet<TaskAssignment> TaskAssignments
+		{
+			get
+			{
+				return this._TaskAssignments;
+			}
+			set
+			{
+				this._TaskAssignments.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment1", Storage="_TaskAssignments1", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<TaskAssignment> TaskAssignments1
+		{
+			get
+			{
+				return this._TaskAssignments1;
+			}
+			set
+			{
+				this._TaskAssignments1.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskLog", Storage="_TaskLogs", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<TaskLog> TaskLogs
+		{
+			get
+			{
+				return this._TaskLogs;
+			}
+			set
+			{
+				this._TaskLogs.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Interaction", Storage="_Interactions", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<Interaction> Interactions
+		{
+			get
+			{
+				return this._Interactions;
+			}
+			set
+			{
+				this._Interactions.Assign(value);
 			}
 		}
 		
@@ -423,6 +548,90 @@ namespace ManageTaskWeb.Models
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_Notifications(Notification entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_Notifications(Notification entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_ProjectMembers(ProjectMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_ProjectMembers(ProjectMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_Reports(Report entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_Reports(Report entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_TaskAssignments(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_TaskAssignments(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_TaskAssignments1(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member1 = this;
+		}
+		
+		private void detach_TaskAssignments1(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member1 = null;
+		}
+		
+		private void attach_TaskLogs(TaskLog entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_TaskLogs(TaskLog entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_Interactions(Interaction entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_Interactions(Interaction entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
 		}
 	}
 	
@@ -843,480 +1052,6 @@ namespace ManageTaskWeb.Models
 		{
 			this.SendPropertyChanging();
 			entity.Task = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Members")]
-	public partial class Member : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private string _MemberID;
-		
-		private string _FullName;
-		
-		private string _Email;
-		
-		private string _Phone;
-		
-		private string _Role;
-		
-		private System.Nullable<System.DateTime> _HireDate;
-		
-		private string _Status;
-		
-		private string _Password;
-		
-		private System.Nullable<System.DateTime> _deleteTime;
-		
-		private string _ImageMember;
-		
-		private EntitySet<Interaction> _Interactions;
-		
-		private EntitySet<Notification> _Notifications;
-		
-		private EntitySet<ProjectMember> _ProjectMembers;
-		
-		private EntitySet<Report> _Reports;
-		
-		private EntitySet<TaskAssignment> _TaskAssignments;
-		
-		private EntitySet<TaskAssignment> _TaskAssignments1;
-		
-		private EntitySet<TaskLog> _TaskLogs;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnMemberIDChanging(string value);
-    partial void OnMemberIDChanged();
-    partial void OnFullNameChanging(string value);
-    partial void OnFullNameChanged();
-    partial void OnEmailChanging(string value);
-    partial void OnEmailChanged();
-    partial void OnPhoneChanging(string value);
-    partial void OnPhoneChanged();
-    partial void OnRoleChanging(string value);
-    partial void OnRoleChanged();
-    partial void OnHireDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnHireDateChanged();
-    partial void OnStatusChanging(string value);
-    partial void OnStatusChanged();
-    partial void OnPasswordChanging(string value);
-    partial void OnPasswordChanged();
-    partial void OndeleteTimeChanging(System.Nullable<System.DateTime> value);
-    partial void OndeleteTimeChanged();
-    partial void OnImageMemberChanging(string value);
-    partial void OnImageMemberChanged();
-    #endregion
-		
-		public Member()
-		{
-			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
-			this._Notifications = new EntitySet<Notification>(new Action<Notification>(this.attach_Notifications), new Action<Notification>(this.detach_Notifications));
-			this._ProjectMembers = new EntitySet<ProjectMember>(new Action<ProjectMember>(this.attach_ProjectMembers), new Action<ProjectMember>(this.detach_ProjectMembers));
-			this._Reports = new EntitySet<Report>(new Action<Report>(this.attach_Reports), new Action<Report>(this.detach_Reports));
-			this._TaskAssignments = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments), new Action<TaskAssignment>(this.detach_TaskAssignments));
-			this._TaskAssignments1 = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments1), new Action<TaskAssignment>(this.detach_TaskAssignments1));
-			this._TaskLogs = new EntitySet<TaskLog>(new Action<TaskLog>(this.attach_TaskLogs), new Action<TaskLog>(this.detach_TaskLogs));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string MemberID
-		{
-			get
-			{
-				return this._MemberID;
-			}
-			set
-			{
-				if ((this._MemberID != value))
-				{
-					this.OnMemberIDChanging(value);
-					this.SendPropertyChanging();
-					this._MemberID = value;
-					this.SendPropertyChanged("MemberID");
-					this.OnMemberIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string FullName
-		{
-			get
-			{
-				return this._FullName;
-			}
-			set
-			{
-				if ((this._FullName != value))
-				{
-					this.OnFullNameChanging(value);
-					this.SendPropertyChanging();
-					this._FullName = value;
-					this.SendPropertyChanged("FullName");
-					this.OnFullNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Email
-		{
-			get
-			{
-				return this._Email;
-			}
-			set
-			{
-				if ((this._Email != value))
-				{
-					this.OnEmailChanging(value);
-					this.SendPropertyChanging();
-					this._Email = value;
-					this.SendPropertyChanged("Email");
-					this.OnEmailChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Phone", DbType="NVarChar(20)")]
-		public string Phone
-		{
-			get
-			{
-				return this._Phone;
-			}
-			set
-			{
-				if ((this._Phone != value))
-				{
-					this.OnPhoneChanging(value);
-					this.SendPropertyChanging();
-					this._Phone = value;
-					this.SendPropertyChanged("Phone");
-					this.OnPhoneChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Role", DbType="NVarChar(100)")]
-		public string Role
-		{
-			get
-			{
-				return this._Role;
-			}
-			set
-			{
-				if ((this._Role != value))
-				{
-					this.OnRoleChanging(value);
-					this.SendPropertyChanging();
-					this._Role = value;
-					this.SendPropertyChanged("Role");
-					this.OnRoleChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HireDate", DbType="Date")]
-		public System.Nullable<System.DateTime> HireDate
-		{
-			get
-			{
-				return this._HireDate;
-			}
-			set
-			{
-				if ((this._HireDate != value))
-				{
-					this.OnHireDateChanging(value);
-					this.SendPropertyChanging();
-					this._HireDate = value;
-					this.SendPropertyChanged("HireDate");
-					this.OnHireDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
-		public string Status
-		{
-			get
-			{
-				return this._Status;
-			}
-			set
-			{
-				if ((this._Status != value))
-				{
-					this.OnStatusChanging(value);
-					this.SendPropertyChanging();
-					this._Status = value;
-					this.SendPropertyChanged("Status");
-					this.OnStatusChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Password
-		{
-			get
-			{
-				return this._Password;
-			}
-			set
-			{
-				if ((this._Password != value))
-				{
-					this.OnPasswordChanging(value);
-					this.SendPropertyChanging();
-					this._Password = value;
-					this.SendPropertyChanged("Password");
-					this.OnPasswordChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_deleteTime", DbType="DateTime")]
-		public System.Nullable<System.DateTime> deleteTime
-		{
-			get
-			{
-				return this._deleteTime;
-			}
-			set
-			{
-				if ((this._deleteTime != value))
-				{
-					this.OndeleteTimeChanging(value);
-					this.SendPropertyChanging();
-					this._deleteTime = value;
-					this.SendPropertyChanged("deleteTime");
-					this.OndeleteTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageMember", DbType="NVarChar(255)")]
-		public string ImageMember
-		{
-			get
-			{
-				return this._ImageMember;
-			}
-			set
-			{
-				if ((this._ImageMember != value))
-				{
-					this.OnImageMemberChanging(value);
-					this.SendPropertyChanging();
-					this._ImageMember = value;
-					this.SendPropertyChanged("ImageMember");
-					this.OnImageMemberChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Interaction", Storage="_Interactions", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<Interaction> Interactions
-		{
-			get
-			{
-				return this._Interactions;
-			}
-			set
-			{
-				this._Interactions.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Notification", Storage="_Notifications", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<Notification> Notifications
-		{
-			get
-			{
-				return this._Notifications;
-			}
-			set
-			{
-				this._Notifications.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_ProjectMember", Storage="_ProjectMembers", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<ProjectMember> ProjectMembers
-		{
-			get
-			{
-				return this._ProjectMembers;
-			}
-			set
-			{
-				this._ProjectMembers.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Report", Storage="_Reports", ThisKey="MemberID", OtherKey="GeneratedBy")]
-		public EntitySet<Report> Reports
-		{
-			get
-			{
-				return this._Reports;
-			}
-			set
-			{
-				this._Reports.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment", Storage="_TaskAssignments", ThisKey="MemberID", OtherKey="AssignedBy")]
-		public EntitySet<TaskAssignment> TaskAssignments
-		{
-			get
-			{
-				return this._TaskAssignments;
-			}
-			set
-			{
-				this._TaskAssignments.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment1", Storage="_TaskAssignments1", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<TaskAssignment> TaskAssignments1
-		{
-			get
-			{
-				return this._TaskAssignments1;
-			}
-			set
-			{
-				this._TaskAssignments1.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskLog", Storage="_TaskLogs", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<TaskLog> TaskLogs
-		{
-			get
-			{
-				return this._TaskLogs;
-			}
-			set
-			{
-				this._TaskLogs.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_Interactions(Interaction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_Interactions(Interaction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_Notifications(Notification entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_Notifications(Notification entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_ProjectMembers(ProjectMember entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_ProjectMembers(ProjectMember entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_Reports(Report entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_Reports(Report entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_TaskAssignments(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_TaskAssignments(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_TaskAssignments1(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member1 = this;
-		}
-		
-		private void detach_TaskAssignments1(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member1 = null;
-		}
-		
-		private void attach_TaskLogs(TaskLog entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_TaskLogs(TaskLog entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
 		}
 	}
 	
@@ -1855,13 +1590,13 @@ namespace ManageTaskWeb.Models
 		
 		private System.Nullable<int> _Priority;
 		
-		private EntitySet<Interaction> _Interactions;
-		
 		private EntitySet<Task> _Tasks;
 		
 		private EntitySet<ProjectMember> _ProjectMembers;
 		
 		private EntitySet<Report> _Reports;
+		
+		private EntitySet<Interaction> _Interactions;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1889,10 +1624,10 @@ namespace ManageTaskWeb.Models
 		
 		public Project()
 		{
-			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
 			this._Tasks = new EntitySet<Task>(new Action<Task>(this.attach_Tasks), new Action<Task>(this.detach_Tasks));
 			this._ProjectMembers = new EntitySet<ProjectMember>(new Action<ProjectMember>(this.attach_ProjectMembers), new Action<ProjectMember>(this.detach_ProjectMembers));
 			this._Reports = new EntitySet<Report>(new Action<Report>(this.attach_Reports), new Action<Report>(this.detach_Reports));
+			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
 			OnCreated();
 		}
 		
@@ -2076,19 +1811,6 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Interaction", Storage="_Interactions", ThisKey="ProjectID", OtherKey="ProjectID")]
-		public EntitySet<Interaction> Interactions
-		{
-			get
-			{
-				return this._Interactions;
-			}
-			set
-			{
-				this._Interactions.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Task", Storage="_Tasks", ThisKey="ProjectID", OtherKey="ProjectID")]
 		public EntitySet<Task> Tasks
 		{
@@ -2128,6 +1850,19 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Interaction", Storage="_Interactions", ThisKey="ProjectID", OtherKey="ProjectID")]
+		public EntitySet<Interaction> Interactions
+		{
+			get
+			{
+				return this._Interactions;
+			}
+			set
+			{
+				this._Interactions.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -2146,18 +1881,6 @@ namespace ManageTaskWeb.Models
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_Interactions(Interaction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Project = this;
-		}
-		
-		private void detach_Interactions(Interaction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Project = null;
 		}
 		
 		private void attach_Tasks(Task entity)
@@ -2191,6 +1914,18 @@ namespace ManageTaskWeb.Models
 		}
 		
 		private void detach_Reports(Report entity)
+		{
+			this.SendPropertyChanging();
+			entity.Project = null;
+		}
+		
+		private void attach_Interactions(Interaction entity)
+		{
+			this.SendPropertyChanging();
+			entity.Project = this;
+		}
+		
+		private void detach_Interactions(Interaction entity)
 		{
 			this.SendPropertyChanging();
 			entity.Project = null;
@@ -3005,6 +2740,246 @@ namespace ManageTaskWeb.Models
 						this._TaskID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Task");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Interactions")]
+	public partial class Interaction : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _InteractionID;
+		
+		private string _ProjectID;
+		
+		private string _MemberID;
+		
+		private System.Nullable<System.DateTime> _InteractionDate;
+		
+		private string _Message;
+		
+		private EntityRef<Member> _Member;
+		
+		private EntityRef<Project> _Project;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnInteractionIDChanging(int value);
+    partial void OnInteractionIDChanged();
+    partial void OnProjectIDChanging(string value);
+    partial void OnProjectIDChanged();
+    partial void OnMemberIDChanging(string value);
+    partial void OnMemberIDChanged();
+    partial void OnInteractionDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnInteractionDateChanged();
+    partial void OnMessageChanging(string value);
+    partial void OnMessageChanged();
+    #endregion
+		
+		public Interaction()
+		{
+			this._Member = default(EntityRef<Member>);
+			this._Project = default(EntityRef<Project>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InteractionID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int InteractionID
+		{
+			get
+			{
+				return this._InteractionID;
+			}
+			set
+			{
+				if ((this._InteractionID != value))
+				{
+					this.OnInteractionIDChanging(value);
+					this.SendPropertyChanging();
+					this._InteractionID = value;
+					this.SendPropertyChanged("InteractionID");
+					this.OnInteractionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectID", DbType="NVarChar(14)")]
+		public string ProjectID
+		{
+			get
+			{
+				return this._ProjectID;
+			}
+			set
+			{
+				if ((this._ProjectID != value))
+				{
+					if (this._Project.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProjectIDChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectID = value;
+					this.SendPropertyChanged("ProjectID");
+					this.OnProjectIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14)")]
+		public string MemberID
+		{
+			get
+			{
+				return this._MemberID;
+			}
+			set
+			{
+				if ((this._MemberID != value))
+				{
+					if (this._Member.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMemberIDChanging(value);
+					this.SendPropertyChanging();
+					this._MemberID = value;
+					this.SendPropertyChanged("MemberID");
+					this.OnMemberIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InteractionDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> InteractionDate
+		{
+			get
+			{
+				return this._InteractionDate;
+			}
+			set
+			{
+				if ((this._InteractionDate != value))
+				{
+					this.OnInteractionDateChanging(value);
+					this.SendPropertyChanging();
+					this._InteractionDate = value;
+					this.SendPropertyChanged("InteractionDate");
+					this.OnInteractionDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Message", DbType="NVarChar(MAX)")]
+		public string Message
+		{
+			get
+			{
+				return this._Message;
+			}
+			set
+			{
+				if ((this._Message != value))
+				{
+					this.OnMessageChanging(value);
+					this.SendPropertyChanging();
+					this._Message = value;
+					this.SendPropertyChanged("Message");
+					this.OnMessageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Interaction", Storage="_Member", ThisKey="MemberID", OtherKey="MemberID", IsForeignKey=true)]
+		public Member Member
+		{
+			get
+			{
+				return this._Member.Entity;
+			}
+			set
+			{
+				Member previousValue = this._Member.Entity;
+				if (((previousValue != value) 
+							|| (this._Member.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Member.Entity = null;
+						previousValue.Interactions.Remove(this);
+					}
+					this._Member.Entity = value;
+					if ((value != null))
+					{
+						value.Interactions.Add(this);
+						this._MemberID = value.MemberID;
+					}
+					else
+					{
+						this._MemberID = default(string);
+					}
+					this.SendPropertyChanged("Member");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Interaction", Storage="_Project", ThisKey="ProjectID", OtherKey="ProjectID", IsForeignKey=true)]
+		public Project Project
+		{
+			get
+			{
+				return this._Project.Entity;
+			}
+			set
+			{
+				Project previousValue = this._Project.Entity;
+				if (((previousValue != value) 
+							|| (this._Project.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Project.Entity = null;
+						previousValue.Interactions.Remove(this);
+					}
+					this._Project.Entity = value;
+					if ((value != null))
+					{
+						value.Interactions.Add(this);
+						this._ProjectID = value.ProjectID;
+					}
+					else
+					{
+						this._ProjectID = default(string);
+					}
+					this.SendPropertyChanged("Project");
 				}
 			}
 		}
