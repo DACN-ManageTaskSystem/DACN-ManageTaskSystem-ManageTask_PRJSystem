@@ -309,31 +309,32 @@
                     {
                         foreach (var member in Model)
                         {
-                    <tr data-id="@member.MemberID">
-                        <td>@member.MemberID</td>
-                        <td>@member.FullName</td>
-                        <td>@member.Email</td>
-                        <td>@member.Phone</td>
-                        <td>@member.Role</td>
-                        <td>@member.HireDate</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(member.ImageMember))
-                            {
-                                <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="@member.FullName" width="50" height="50" />
-                            }
-                            else
-                            {
-                                <span>Không có ảnh</span>
-                            }
-                        </td>
+                            <tr data-id="@member.MemberID">
+                                <td>@member.MemberID</td>
+                                <td>@member.FullName</td>
+                                <td>@member.Email</td>
+                                <td>@member.Phone</td>
+                                <td>@member.Role</td>
+                                <td>@member.HireDate</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(member.ImageMember))
+                                    {
+                                        <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="@member.FullName" width="80" height="80" />
+                                    }
+                                    else
+                                    {
+                                        <span>Không có ảnh</span>
+                                    }
 
-                        <td>@member.Status</td>
-                        <td class="actions">
-                            <i class="fas fa-edit edit" data-bs-toggle="modal" data-bs-target="#editMemberModal"
-                               onclick="editMember('@member.MemberID')"></i>
-                            <i class="fas fa-trash delete" onclick="deleteMember('@member.MemberID')"></i>
-                        </td>
-                    </tr>
+                                </td>
+
+                                <td>@member.Status</td>
+                                <td class="actions">
+                                    <i class="fas fa-edit edit" data-bs-toggle="modal" data-bs-target="#editMemberModal"
+                                       onclick="editMember('@member.MemberID')"></i>
+                                    <i class="fas fa-trash delete" onclick="deleteMember('@member.MemberID')"></i>
+                                </td>
+                            </tr>
                         }
                     }
                     else
@@ -345,12 +346,13 @@
                 </tbody>
             </table>
             <div class="pagination">
-                <a href="#">1</a>
-                <a href="#">2</a>
-                <a class="active" href="#">3</a>
-                <a href="#">4</a>
-                <a href="#">5</a>
+                <a href="#" class="page-link active" data-page="1">1</a>
+                <a href="#" class="page-link" data-page="2">2</a>
+                <a href="#" class="page-link" data-page="3">3</a>
+                <a href="#" class="page-link" data-page="4">4</a>
+                <a href="#" class="page-link" data-page="5">5</a>
             </div>
+
         </div>
 
         <!-- Add Member Modal -->
@@ -389,12 +391,10 @@
                             <div class="mb-3">
                                 <label for="hireDateAdd" class="form-label">Ngày vào làm *</label>
                                 <input type="date" class="form-control" id="hireDateAdd" name="HireDate" required>
-                                <div class="invalid-feedback">Vui lòng chọn ngày vào làm.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="passwordAdd" class="form-label">Mật khẩu *</label>
-                                <input type="password" class="form-control" id="passwordAdd" name="Password"
-                                       placeholder="Nhập mật khẩu cho thành viên mới">
+                                <input type="password" class="form-control" id="passwordAdd" name="Password" placeholder="Nhập mật khẩu cho thành viên mới">
                             </div>
                             <div class="mb-3">
                                 <label for="imageAdd" class="form-label">Ảnh Thành Viên</label>
@@ -409,8 +409,6 @@
                 </div>
             </div>
         </div>
-
-
 
         <!-- Edit Member Modal -->
         <div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
@@ -448,15 +446,17 @@
                             <div class="mb-3">
                                 <label for="hireDate" class="form-label">Ngày vào làm *</label>
                                 <input type="date" class="form-control" id="hireDate" name="HireDate" required>
-                                <div class="invalid-feedback">Vui lòng chọn ngày vào làm.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="passwordEdit" class="form-label">Mật khẩu *</label>
-                                <input type="password" class="form-control" id="passwordEdit" name="Password"
-                                       placeholder="Nhập mật khẩu mới nếu cần thay đổi">
+                                <input type="password" class="form-control" id="passwordEdit" name="Password" placeholder="Nhập mật khẩu mới nếu cần thay đổi">
                             </div>
                             <div class="mb-3">
-                                <label for="imageEdit" class="form-label">Ảnh Thành Viên</label>
+                                <label for="currentImage" class="form-label">Ảnh Thành Viên Hiện Tại</label>
+                                <img id="currentImage" src="" alt="Current Image" class="img-fluid" style="max-width: 200px;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="imageEdit" class="form-label">Ảnh Thành Viên Mới</label>
                                 <input type="file" class="form-control" id="imageEdit" name="ImageFile">
                             </div>
                         </div>
@@ -468,6 +468,8 @@
                 </div>
             </div>
         </div>
+
+
         <script>
             /*===============================================================*/
             //EditMember
@@ -478,14 +480,20 @@
                     console.error("Không tìm thấy hàng với ID:", memberID);
                     return;
                 }
-
                 // Lấy dữ liệu từ các cột trong hàng
                 const fullName = row.querySelector("td:nth-child(2)").innerText.trim();
                 const email = row.querySelector("td:nth-child(3)").innerText.trim();
                 const phone = row.querySelector("td:nth-child(4)").innerText.trim();
                 const role = row.querySelector("td:nth-child(5)").innerText.trim();
                 const hireDate = row.querySelector("td:nth-child(6)").innerText.trim();
-                const status = row.querySelector("td:nth-child(7)").innerText.trim();
+                const imageSrc = row.querySelector("td:nth-child(7) img") ? row.querySelector("td:nth-child(7) img").src : ''; 
+
+                // Kiểm tra nếu có ảnh, nếu không thì gán ảnh mặc định
+                if (imageSrc) {
+                    document.getElementById("currentImage").src = imageSrc;
+                } else {
+                    document.getElementById("currentImage").src = '/Content/images/default-avatar.jpg'; // Thay đổi link ảnh mặc định nếu cần
+                }
 
                 // Gán dữ liệu vào modal
                 document.getElementById("memberId").value = memberID;
@@ -493,9 +501,12 @@
                 document.getElementById("emailEdit").value = email;
                 document.getElementById("phoneEdit").value = phone;
                 document.getElementById("roleEdit").value = role;
-                document.getElementById("hireDate").value = hireDate;
-            }
 
+                // Kiểm tra và chuyển đổi hireDate nếu cần (dưới đây giả sử nó ở định dạng 'MM/DD/YYYY')
+                const hireDateFormatted = new Date(hireDate);
+                const formattedDate = hireDateFormatted.toISOString().split('T')[0];  // Chuyển đổi sang định dạng YYYY-MM-DD
+                document.getElementById("hireDate").value = formattedDate;
+            }
             /*===============================================================*/
             /*===============================================================*/
             //Xóa Member
@@ -541,7 +552,7 @@
                     }
                 });
             });
-           
+
             let currentRoleFilter = "";
             let currentStatusFilter = "";
 
@@ -604,6 +615,48 @@
                     }
                 }
             }
+            /*===============================================================*/
+            /*===============================================================*/
+                    $(document).ready(function () {
+            // Bắt sự kiện khi người dùng click vào phân trang
+            $(".pagination .page-link").click(function (e) {
+                e.preventDefault(); // Ngừng hành động mặc định của liên kết
+
+                // Lấy số trang từ thuộc tính data-page
+                var pageNumber = $(this).data('page');
+
+                // Xóa lớp "active" khỏi tất cả các liên kết
+                $(".pagination .page-link").removeClass('active');
+
+                // Thêm lớp "active" cho liên kết được chọn
+                $(this).addClass('active');
+
+                // Gửi yêu cầu AJAX tới server để lấy dữ liệu cho trang đã chọn
+                $.ajax({
+                    url: '@Url.Action("DSMember", "ControllerName")', // Thay "ControllerName" bằng tên controller thực tế
+                    type: 'GET',
+                    data: {
+                        page: pageNumber,
+                        searchQuery: $("#searchQuery").val(), // Lọc theo tên/email
+                        role: $("#roleSelect").val(), // Lọc theo vai trò
+                        status: $("#statusSelect").val() // Lọc theo trạng thái
+                    },
+                    success: function (data) {
+                        // Cập nhật danh sách thành viên trên trang
+                        // Kiểm tra nếu không có dữ liệu
+                        if (data.trim() === "") {
+                            $("#membersTableBody").html('<tr><td colspan="8" style="text-align: center;">Không có nhân viên nào</td></tr>');
+                        } else {
+                            $("#membersTableBody").html(data);
+                        }
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi tải dữ liệu');
+                    }
+                });
+            });
+        });
+
 
 
         </script>

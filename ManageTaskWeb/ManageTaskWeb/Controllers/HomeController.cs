@@ -1095,6 +1095,16 @@ namespace ManageTaskWeb.Controllers
 
 
 
+        public string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            }
+        }
+
+        // Hàm tạo ID thành viên duy nhất
         public string GenerateMemberID()
         {
             // Lấy thời gian hiện tại
@@ -1121,34 +1131,49 @@ namespace ManageTaskWeb.Controllers
             return memberIDnew;
         }
 
-        //Addmember
+        // Action AddMember
         [HttpPost]
-        public ActionResult AddMember(string FullName, string Email, string Phone, string Role, string Password, string ImageMember, HttpPostedFileBase ImageFile)
+        public ActionResult AddMember(string FullName, string Email, string Phone, string Role, string Password, string ImageMember, string HireDate, HttpPostedFileBase ImageFile)
         {
             try
             {
-
                 string imagePath = null;
+
+                // Xử lý ảnh nếu người dùng tải lên
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
+                    // Tạo tên ảnh duy nhất
+                    string fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
+                    string extension = Path.GetExtension(ImageFile.FileName);
+                    string uniqueFileName = fileName + "_" + Guid.NewGuid() + extension; // Tạo tên ảnh duy nhất
+
                     // Lưu ảnh vào thư mục
                     string path = Server.MapPath("~/Content/images/member-img/");
                     Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
-                    imagePath = Path.Combine(path, ImageMember);
+                    imagePath = Path.Combine(path, uniqueFileName);
                     ImageFile.SaveAs(imagePath);
+
+                    // Lưu tên ảnh duy nhất
+                    ImageMember = uniqueFileName;
                 }
+
+                // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+                string hashedPassword = HashPassword(Password);
+
+                // Chuyển đổi HireDate từ string sang DateTime
+                DateTime hireDate = DateTime.Parse(HireDate); // Nếu HireDate là kiểu date thì có thể trực tiếp nhận giá trị DateTime
 
                 // Tạo đối tượng Member mới và lưu thông tin
                 var member = new Member
                 {
-                    MemberID = GetUniqueMemberID(), // Tạo ID duy nhất (có thể dùng hàm tự tạo như MemberID định dạng HHmmssddMMyy)
+                    MemberID = GetUniqueMemberID(), // Tạo ID duy nhất
                     FullName = FullName,
                     Email = Email,
                     Phone = Phone,
                     Role = Role,
-                    HireDate = System.DateTime.Now,
+                    HireDate = hireDate, // Lưu HireDate
                     Status = "Offline",
-                    Password = Password, // Lưu mật khẩu
+                    Password = hashedPassword, // Lưu mật khẩu đã mã hóa
                     ImageMember = ImageMember, // Lưu tên file ảnh
                     deleteTime = null
                 };
@@ -1156,6 +1181,8 @@ namespace ManageTaskWeb.Controllers
                 // Thêm member vào database
                 data.Members.InsertOnSubmit(member);
                 data.SubmitChanges();
+
+                // Chuyển hướng về trang DSMember sau khi thêm thành viên
                 return RedirectToAction("DSMember", "Home");
             }
             catch (Exception ex)
@@ -1165,17 +1192,36 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
-       
+
+
         [HttpPost]
-        public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, string ImageMember, HttpPostedFileBase ImageFile)
+        public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, string ImageMember, string HireDate, HttpPostedFileBase ImageFile)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("DSMember", new { notificationMessage = "Dữ liệu không hợp lệ", notificationType = "error" });
+            }
             try
             {
-                // Tìm thành viên trong cơ sở dữ liệu theo MemberID
+                // Tìm thành viên cần chỉnh sửa theo MemberID
                 var member = data.Members.FirstOrDefault(m => m.MemberID == MemberID);
                 if (member == null)
                 {
-                    throw new Exception("Không tìm thấy thành viên với ID được cung cấp.");
+                    throw new Exception("Không tìm thấy thành viên với ID này.");
+                }
+
+                // Xử lý ảnh nếu người dùng tải lên ảnh mới
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
+                    string extension = Path.GetExtension(ImageFile.FileName);
+                    string uniqueFileName = fileName + "_" + Guid.NewGuid() + extension;
+                    string path = Server.MapPath("~/Content/images/member-img/");
+                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
+                    string imagePath = Path.Combine(path, uniqueFileName);
+                    ImageFile.SaveAs(imagePath);
+
+                    member.ImageMember = uniqueFileName;
                 }
 
                 // Cập nhật thông tin thành viên
@@ -1183,40 +1229,23 @@ namespace ManageTaskWeb.Controllers
                 member.Email = Email;
                 member.Phone = Phone;
                 member.Role = Role;
-                member.HireDate = System.DateTime.Now;
-                member.Password = Password;
-                member.ImageMember = ImageMember;
 
-
-                // Cập nhật mật khẩu nếu có thay đổi
+                // Nếu có thay đổi mật khẩu, mã hóa và lưu mật khẩu mới
                 if (!string.IsNullOrEmpty(Password))
                 {
-                    member.Password = Password; // Có thể áp dụng mã hóa mật khẩu tại đây
+                    member.Password = HashPassword(Password);
                 }
+                // Chuyển đổi HireDate từ string sang DateTime
+                member.HireDate = DateTime.Parse(HireDate);
 
-                // Xử lý ảnh mới nếu có
-                if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    // Đường dẫn lưu ảnh
-                    string path = Server.MapPath("~/Content/images/member-img/");
-                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa tồn tại
-                    string imagePath = Path.Combine(path, Path.GetFileName(ImageFile.FileName));
-
-                    // Lưu file ảnh mới
-                    ImageFile.SaveAs(imagePath);
-
-                    // Cập nhật tên file ảnh vào cơ sở dữ liệu
-                    member.ImageMember = Path.GetFileName(ImageFile.FileName);
-                }
-
-                // Lưu thay đổi vào cơ sở dữ liệu
+                // Lưu thay đổi
                 data.SubmitChanges();
 
-                return RedirectToAction("DSMember", "Home");
+                return RedirectToAction("DSMember", "Home", new { notificationMessage = "Cập nhật thành viên thành công!", notificationType = "success" });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi sửa thành viên: {ex.Message}");
+                Console.WriteLine(ex.Message);
                 return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi sửa thành viên!", notificationType = "error" });
             }
         }
