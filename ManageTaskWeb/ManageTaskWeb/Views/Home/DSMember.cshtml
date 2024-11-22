@@ -68,7 +68,7 @@
                 margin-right: 10px;
                 border: 1px solid #ddd;
                 border-radius: 4px;
-                width: 30%;
+                width: 70%;
             }
             .search-bar button {
                 background: none;
@@ -125,7 +125,7 @@
                     background-color: #007bff;
                     color: white;
                 }
-        .form-group {
+       /* .form-group {
             margin-bottom: 15px;
         }
 
@@ -248,7 +248,117 @@
             font-size: 20px;
             color: #ccc;
             cursor: pointer;
+        }*/
+        .modal-content {
+            border-radius: 15px;
+            padding: 30px;
+            border: none;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            width:600px;
         }
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: #4a4a8c;
+            font-weight: 600;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f4f4f4;
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+            input[type="text"]:focus,
+            input[type="date"]:focus,
+            textarea:focus,
+            select:focus {
+                border-color: #6c63ff;
+                outline: none;
+            }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url('data:image/svg+xml,%3Csvg width="16" height="16" fill="%234a4a8c" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M7.293 10.707a1 1 0 0 0 1.414 0l3-3a1 1 0 0 0-1.414-1.414L8 8.586 5.707 6.293a1 1 0 0 0-1.414 1.414l3 3z"/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+            padding-right: 2.5em;
+        }
+
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            background-color: #ffdd57;
+            border: none;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-upload:hover {
+                background-color: #e6c751;
+            }
+
+        .modal-footer {
+            border-top: none;
+            padding-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
     </style>
     <body>
         <div class="container">
@@ -357,117 +467,146 @@
 
         <!-- Add Member Modal -->
         <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addMemberModalLabel">Thêm Thành Viên</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                     </div>
+
                     <form action="/Home/AddMember" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
-                            <!-- Hidden field for MemberID -->
-                            <input type="hidden" id="memberId" name="MemberID">
+                            <!-- Left Column -->
+                            <div class="column">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" class="form-control" name="FullName" id="fullName" placeholder="Enter full name..." required>
 
-                            <div class="mb-3">
-                                <label for="fullNameAdd" class="form-label">Họ và Tên *</label>
-                                <input type="text" class="form-control" id="fullNameAdd" name="FullName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="emailAdd" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="emailAdd" name="Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phoneAdd" class="form-label">Điện Thoại *</label>
-                                <input type="text" class="form-control" id="phoneAdd" name="Phone" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="roleAdd" class="form-label">Vai Trò *</label>
-                                <select class="form-control" id="roleAdd" name="Role" required>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Developer">Developer</option>
-                                    <option value="Tester">Tester</option>
+                                <label for="email">Email *</label>
+                                <input type="email" class="form-control" name="Email" id="email" placeholder="Enter email..." required>
+
+                                <label for="password">Password *</label>
+                                <input type="password" class="form-control" name="Password" id="password" placeholder="Enter Password..." required>
+
+                                <label for="phone">Phone Number *</label>
+                                <input type="text" class="form-control" name="Phone" id="phone" placeholder="Enter phone number..." required>
+
+                                <label for="role">Role *</label>
+                                <select class="form-select" name="Role" id="role">
+                                    <option>Manager</option>
+                                    <option>Developer</option>
+                                    <option>Tester</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label for="hireDateAdd" class="form-label">Ngày vào làm *</label>
-                                <input type="date" class="form-control" id="hireDateAdd" name="HireDate" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="passwordAdd" class="form-label">Mật khẩu *</label>
-                                <input type="password" class="form-control" id="passwordAdd" name="Password" placeholder="Nhập mật khẩu cho thành viên mới">
-                            </div>
-                            <div class="mb-3">
-                                <label for="imageAdd" class="form-label">Ảnh Thành Viên</label>
-                                <input type="file" class="form-control" id="imageAdd" name="ImageFile">
+
+                            <!-- Right Column -->
+                            <div class="column">
+                                <label for="hireDate">Hire Date *</label>
+                                <input type="date" class="form-control" name="HireDate" id="hireDate" required>
+
+                                <label for="imageFile">Profile Image</label>
+                                <p id="fileName" style="margin: 5px 0; font-size: 0.9em; color: #555;"></p>
+                                <button type="button" class="btn-upload" id="uploadBtnAdd" onclick="document.getElementById('imageInputAdd').click();">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                                <input type="file" name="ImageFile" id="imageInputAdd" style="display: none;" onchange="handleFileUpload()" />
+                                <img id="previewImage" src="" alt="Preview" style="display: none; margin-top: 10px; width: 100px; height: 100px; border: 1px solid #ddd; object-fit: cover;">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Thêm Thành Viên</button>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
+
+
 
         <!-- Edit Member Modal -->
         <div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editMemberModalLabel">Chỉnh Sửa Thành Viên</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="editMemberModalLabel">Edit New Member</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                     </div>
                     <form action="/Home/EditMember" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
-                            <!-- Hidden field for MemberID -->
-                            <input type="hidden" id="memberId" name="MemberID">
+                            <!-- Left Column -->
+                            <div class="row">
+                                <!-- Hidden Field for Member ID -->
+                                <input type="hidden" id="memberId" name="MemberID">
 
-                            <div class="mb-3">
-                                <label for="fullNameEdit" class="form-label">Họ và Tên *</label>
-                                <input type="text" class="form-control" id="fullNameEdit" name="FullName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="emailEdit" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="emailEdit" name="Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phoneEdit" class="form-label">Điện Thoại *</label>
-                                <input type="text" class="form-control" id="phoneEdit" name="Phone" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="roleEdit" class="form-label">Vai Trò *</label>
-                                <select class="form-control" id="roleEdit" name="Role" required>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Developer">Developer</option>
-                                    <option value="Tester">Tester</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="hireDate" class="form-label">Ngày vào làm *</label>
-                                <input type="date" class="form-control" id="hireDate" name="HireDate" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="passwordEdit" class="form-label">Mật khẩu *</label>
-                                <input type="password" class="form-control" id="passwordEdit" name="Password" placeholder="Nhập mật khẩu mới nếu cần thay đổi">
-                            </div>
-                            <div class="mb-3">
-                                <label for="currentImage" class="form-label">Ảnh Thành Viên Hiện Tại</label>
-                                <img id="currentImage" src="" alt="Current Image" class="img-fluid" style="max-width: 200px;">
-                            </div>
-                            <div class="mb-3">
-                                <label for="imageEdit" class="form-label">Ảnh Thành Viên Mới</label>
-                                <input type="file" class="form-control" id="imageEdit" name="ImageFile">
+                                <div class="col-md-6">
+                                    <!-- Full Name -->
+                                    <div class="mb-3">
+                                        <label for="fullNameEdit" class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" id="fullNameEdit" name="FullName" placeholder="Enter your full name..." required>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="mb-3">
+                                        <label for="emailEdit" class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="emailEdit" name="Email" placeholder="Enter your email..." required>
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="mb-3">
+                                        <label for="passwordEdit" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="passwordEdit" name="Password" placeholder="Enter Password...">
+                                    </div>
+
+                                    <!-- Phone -->
+                                    <div class="mb-3">
+                                        <label for="phoneEdit" class="form-label">Phone *</label>
+                                        <input type="text" class="form-control" id="phoneEdit" name="Phone" placeholder="Enter your phone..." required>
+                                    </div>
+
+                                    <!-- Role -->
+                                    <div class="mb-3">
+                                        <label for="roleEdit" class="form-label">Role *</label>
+                                        <select class="form-select" id="roleEdit" name="Role" required>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Developer">Developer</option>
+                                            <option value="Tester">Tester</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <!-- Hire Date -->
+                                    <div class="mb-3">
+                                        <label for="hireDateEdit" class="form-label">Hire Date *</label>
+                                        <input type="date" class="form-control" id="hireDateEdit" name="HireDate" required>
+                                    </div>
+
+                                    <!-- Current Image -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Member Photo</label>
+                                        <img id="currentImage" src="" alt="currentmemberphoto" class="img-fluid rounded" style="max-width: 100px; margin-top: 10px; border: 1px solid #ddd;">
+                                    </div>
+
+                                    <!-- New Image -->
+                                    <div class="mb-3">
+                                        <label for="imageEdit" class="form-label">Profile Image</label>
+                                        <input type="file" class="form-control" id="imageEdit" name="ImageFile" accept="image/*">
+                                        <img id="previewImageEdit" src="" alt="Preview" style="display: none; margin-top: 10px; width: 100px; height: 100px; border: 1px solid #ddd; object-fit: cover;">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Confirm</button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+
+
 
 
         <script>
@@ -486,7 +625,7 @@
                 const phone = row.querySelector("td:nth-child(4)").innerText.trim();
                 const role = row.querySelector("td:nth-child(5)").innerText.trim();
                 const hireDate = row.querySelector("td:nth-child(6)").innerText.trim();
-                const imageSrc = row.querySelector("td:nth-child(7) img") ? row.querySelector("td:nth-child(7) img").src : ''; 
+                const imageSrc = row.querySelector("td:nth-child(7) img") ? row.querySelector("td:nth-child(7) img").src : '';
 
                 // Kiểm tra nếu có ảnh, nếu không thì gán ảnh mặc định
                 if (imageSrc) {

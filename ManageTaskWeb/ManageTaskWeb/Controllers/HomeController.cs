@@ -1142,26 +1142,21 @@ namespace ManageTaskWeb.Controllers
                 // Xử lý ảnh nếu người dùng tải lên
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    // Tạo tên ảnh duy nhất
                     string fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
                     string extension = Path.GetExtension(ImageFile.FileName);
                     string uniqueFileName = fileName + "_" + Guid.NewGuid() + extension; // Tạo tên ảnh duy nhất
-
-                    // Lưu ảnh vào thư mục
                     string path = Server.MapPath("~/Content/images/member-img/");
                     Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
                     imagePath = Path.Combine(path, uniqueFileName);
                     ImageFile.SaveAs(imagePath);
-
-                    // Lưu tên ảnh duy nhất
                     ImageMember = uniqueFileName;
                 }
 
                 // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
-                string hashedPassword = HashPassword(Password);
+                string encryptedPassword = EncryptPassword(Password, "your-secret-key");
 
                 // Chuyển đổi HireDate từ string sang DateTime
-                DateTime hireDate = DateTime.Parse(HireDate); // Nếu HireDate là kiểu date thì có thể trực tiếp nhận giá trị DateTime
+                DateTime hireDate = DateTime.Parse(HireDate);
 
                 // Tạo đối tượng Member mới và lưu thông tin
                 var member = new Member
@@ -1173,7 +1168,7 @@ namespace ManageTaskWeb.Controllers
                     Role = Role,
                     HireDate = hireDate, // Lưu HireDate
                     Status = "Offline",
-                    Password = hashedPassword, // Lưu mật khẩu đã mã hóa
+                    Password = encryptedPassword, // Lưu mật khẩu đã mã hóa
                     ImageMember = ImageMember, // Lưu tên file ảnh
                     deleteTime = null
                 };
@@ -1233,8 +1228,9 @@ namespace ManageTaskWeb.Controllers
                 // Nếu có thay đổi mật khẩu, mã hóa và lưu mật khẩu mới
                 if (!string.IsNullOrEmpty(Password))
                 {
-                    member.Password = HashPassword(Password);
+                    member.Password = EncryptPassword(Password, "your-secret-key"); // Mã hóa mật khẩu
                 }
+
                 // Chuyển đổi HireDate từ string sang DateTime
                 member.HireDate = DateTime.Parse(HireDate);
 
