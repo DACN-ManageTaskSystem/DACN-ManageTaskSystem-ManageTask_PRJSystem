@@ -79,7 +79,7 @@
 
         .status span {
             font-weight: bold;
-            background-color: #f5d47d;
+           
             padding: 5px 10px;
             border-radius: 5px;
             color: #333;
@@ -383,6 +383,220 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
+
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5); /* Màu nền bán trong suốt */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999; /* Đảm bảo lớp phủ nằm trên tất cả các phần tử khác */
+        visibility: hidden;
+    }
+
+    .blind-container-1 {
+        width: 70%;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000; /* Đảm bảo hộp container nằm trên overlay */
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+        padding: 10px 50px 10px 50px;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .member-section {
+        display: flex;
+        gap: 20px;
+    }
+
+    .panel {
+        flex: 1;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        background: #fafafa;
+    }
+
+        .panel h3 {
+            color: #2d5c89;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+
+        .search-bar input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-bar button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+        }
+
+    .toggle-switch {
+        position: relative;
+        width: 40px;
+        height: 20px;
+    }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-switch label {
+            width: 100%;
+            height: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            display: block;
+            cursor: pointer;
+            position: relative;
+        }
+
+            .toggle-switch label::after {
+                content: "";
+                width: 18px;
+                height: 18px;
+                background-color: #ffffff;
+                border-radius: 50%;
+                position: absolute;
+                top: 1px;
+                left: 1px;
+                transition: 0.3s;
+            }
+
+        .toggle-switch input:checked + label::after {
+            left: 20px;
+        }
+
+    .member-list {
+        list-style: none;
+        margin-bottom: 10px;
+    }
+
+        .member-list li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .avatar-green {
+        background-color: #9bc47d;
+    }
+
+    .avatar-orange {
+        background-color: #f5a623;
+    }
+
+    .avatar-blue {
+        background-color: #4a90e2;
+    }
+
+    .avatar-yellow {
+        background-color: #ffd700;
+    }
+
+    .info {
+        flex: 1;
+    }
+
+        .info p {
+            font-weight: bold;
+            color: #333;
+        }
+
+    .role {
+        font-size: 0.9em;
+        color: #4a90e2;
+    }
+
+        .role.project-manager {
+            color: #e74c3c;
+        }
+
+    .add-button {
+        font-size: 18px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #2d5c89;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+        .pagination button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
+            .pagination button.active {
+                background-color: #2d5c89;
+                color: #ffffff;
+            }
+    .completed {
+        background-color: green; /* Màu xanh lá */
+    }
+
+    .in-progress {
+        background-color: gold; /* Màu xanh dương */
+    }
+
+    .pending {
+        background-color: orange; /* Màu cam */
+    }
+
+    .default {
+        background-color: gray; /* Màu mặc định nếu không có trạng thái */
+    }
+
 </style>
 <div class="breadcrumb">
     <span>Home</span> <div class="arrow-right"></div>
@@ -417,8 +631,6 @@
             </div>
         </div>
 
-
-
         @{
             // Initialize counters for Done and Pending tasks
             int doneCount = 0;
@@ -442,7 +654,6 @@
                     {
                         doneCount++;
                     }
-
                     <div class="task-container">
                         @if (task.Status == "Done")
                         {
@@ -463,12 +674,8 @@
                             <i class="fas fa-times delete-icon"></i>
                         }
                     </div>
-
-
-
                 }
             }
-
             // Calculate the percentage of Done tasks only if there are tasks
             if (totalCount > 0)
             {
@@ -480,10 +687,6 @@
         <div class="progress-bar">
             <div class="progress" style="width:@progressPercentage%"></div>
         </div>
-
-
-
-
 
         <!-- Input Section -->
         <div class="input-section">
@@ -501,9 +704,50 @@
     </div>
 
     <div class="right-container">
-        <div class="status">
-            Status: <span>@Model.Status</span>
+        @{
+            // Kiểm tra trạng thái và gán giá trị cho Model.Status
+            if (doneCount > 0)
+            {
+                if (doneCount == totalCount)
+                {
+                    Model.Status = "Completed";  // Đổi trạng thái thành Completed
+                }
+                else
+                {
+                    Model.Status = "InProgress";  // Đổi trạng thái thành InProgress
+                }
+            }
+            else
+            {
+                Model.Status = "Pending";  // Nếu doneCount == 0, trạng thái là Pending
+            }
+
+            // Gán lớp CSS cho trạng thái
+            var statusClass = "";
+            switch (Model.Status)
+            {
+                case "Completed":
+                    statusClass = "completed";  // Màu xanh lá
+                    break;
+                case "InProgress":
+                    statusClass = "in-progress";  // Màu xanh dương
+                    break;
+                case "Pending":
+                    statusClass = "pending";  // Màu vàng
+                    break;
+                default:
+                    statusClass = "default";  // Màu mặc định
+                    break;
+            }
+        }
+
+        <div class="status ">
+            Status: <span class="@statusClass">@Model.Status</span>
         </div>
+
+
+   
+
         @foreach (var member in Model.AssignedMembers)
         {
             <div class="assigned-users">
@@ -528,7 +772,7 @@
         <br />
         <h4><strong><center>Thao Tác</center></strong></h4>
         <div class="task-controls">
-            <button class="button">
+            <button class="button" id="button-member">
                 Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="icon"></span>
             </button>
@@ -552,7 +796,114 @@
         </div>
     </div>
 </div>
+
+<div class="overlay" id="overlay">
+    <div class="blind-container-1">
+        <h2>Add Members To Task</h2>
+        <div class="close-button">✕</div>
+        <div class="member-section">
+            <!-- Members List -->
+            <div class="panel">
+                <h3>Members in Project</h3>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search Name Members...">
+                    <button>🔍</button>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="toggle-members">
+                        <label for="toggle-members"></label>
+                    </div>
+                </div>
+                <ul class="member-list">
+                    <li>
+                        <div class="avatar avatar-green"></div>
+                        <div class="info">
+                            <p>Nguyễn Nhật Quân</p>
+                            <span class="role">Developer</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-orange"></div>
+                        <div class="info">
+                            <p>Huỳnh Bảo Ngọc</p>
+                            <span class="role">Developer</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-blue"></div>
+                        <div class="info">
+                            <p>Trần Phương Uyên</p>
+                            <span class="role">Tester</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-yellow"></div>
+                        <div class="info">
+                            <p>Đỗ Lan Hương</p>
+                            <span class="role">Developer</span>
+                        </div>
+                        <button class="add-button">➕</button>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button>◀</button>
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>▶</button>
+                </div>
+            </div>
+
+            <!-- Members In Project -->
+            <div class="panel">
+                <h3>Members In Task</h3>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search Name Members...">
+                    <button>🔍</button>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="toggle-project-members">
+                        <label for="toggle-project-members"></label>
+                    </div>
+                </div>
+                <ul class="member-list">
+                    <li>
+                        <div class="avatar avatar-yellow"></div>
+                        <div class="info">
+                            <p>Phạm Nguyên Vũ</p>
+                            <span class="role project-manager">Project Manager</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-orange"></div>
+                        <div class="info">
+                            <p>Trương Minh Trang</p>
+                            <span class="role">Developer</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="avatar avatar-blue"></div>
+                        <div class="info">
+                            <p>Trần Phương Lan</p>
+                            <span class="role">Tester</span>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button>◀</button>
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>▶</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
+
+
 <!-- Thêm jQuery từ CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -597,7 +948,14 @@
         });
     }
 
+    document.getElementById('button-member').addEventListener('click', function () {
+        var overlay = document.getElementById('overlay');
+        overlay.style.visibility = 'visible'; // Hiển thị overlay
+    });
 
-  
+    document.querySelector('.close-button').addEventListener('click', function () {
+        var overlay = document.getElementById('overlay');
+        overlay.style.visibility = 'hidden'; // Hiển thị overlay
+    });
 
 </script>
