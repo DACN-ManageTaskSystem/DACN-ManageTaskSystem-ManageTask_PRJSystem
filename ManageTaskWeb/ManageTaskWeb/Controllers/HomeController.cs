@@ -1011,66 +1011,88 @@ namespace ManageTaskWeb.Controllers
         //CHAT - END
 
 
-        public ActionResult DSMember()
+        public ActionResult DSMember(string searchQuery, string role, string status)
         {
-            var role = Session["Role"]?.ToString();
+            var roleSession = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
             List<Members> members;
 
-            // Kiểm tra quyền truy cập
-            if (role == "Manager" || role == "Admin")
+            // Lọc ban đầu
+            var query = data.Members.Where(m => m.deleteTime == null);
+
+            // Tìm kiếm theo tên hoặc email
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                // Quản lý hoặc Admin có thể thấy toàn bộ danh sách members
-                members = data.Members
-                              .Where(m => m.deleteTime == null) // Lọc bỏ những người đã xóa
-                              .Select(m => new Members
-                              {
-                                  MemberID = m.MemberID,
-                                  FullName = m.FullName,
-                                  Email = m.Email,
-                                  Phone = m.Phone,
-                                  Role = m.Role,
-                                  HireDate = m.HireDate,
-                                  Status = m.Status,
-                                  //Password = m.Password,
-                                  //ImageMember = m.ImageMember,
-                                  MemberCount = data.TaskAssignments
-                                                     .Where(a => a.MemberID == m.MemberID)
-                                                     .Select(a => a.TaskID)
-                                                     .Distinct()
-                                                     .Count()
-                              })
-                              .ToList();
+                query = query.Where(m => m.FullName.Contains(searchQuery) || m.Email.Contains(searchQuery));
+            }
+
+            // Lọc theo vai trò
+            if (!string.IsNullOrEmpty(role))
+            {
+                query = query.Where(m => m.Role == role);
+            }
+
+            // Lọc theo trạng thái
+            if (!string.IsNullOrEmpty(status))
+            {
+                bool isActive = status == "true";
+                query = query.Where(m => m.Status == (isActive ? "Active" : "Offline"));
+            }
+
+            // Kiểm tra quyền truy cập
+            if (roleSession == "Manager" || roleSession == "Admin")
+            {
+                members = query
+                    .Select(m => new Members
+                    {
+                        MemberID = m.MemberID,
+                        FullName = m.FullName,
+                        Email = m.Email,
+                        Phone = m.Phone,
+                        Role = m.Role,
+                        HireDate = m.HireDate,
+                        ImageMember = m.ImageMember,
+                        Status = m.Status,
+                        MemberCount = data.TaskAssignments
+                            .Where(a => a.MemberID == m.MemberID)
+                            .Select(a => a.TaskID)
+                            .Distinct()
+                            .Count()
+                    })
+                    .ToList();
             }
             else
             {
-                // Thành viên chỉ thấy các thành viên cùng tham gia dự án với họ
                 members = data.TaskAssignments
-                              .Where(a => a.AssignedBy == memberId && a.Member.deleteTime == null)
-                              .Select(a => a.Member)
-                              .Distinct()
-                              .Select(m => new Members
-                              {
-                                  MemberID = m.MemberID,
-                                  FullName = m.FullName,
-                                  Email = m.Email,
-                                  Phone = m.Phone,
-                                  Role = m.Role,
-                                  HireDate = m.HireDate,
-                                  Status = m.Status,
-                                  //Password = m.Password,
-                                  //ImageMember = m.ImageMember,
-                                  MemberCount = data.TaskAssignments
-                                                     .Where(a => a.MemberID == m.MemberID)
-                                                     .Select(a => a.TaskID)
-                                                     .Distinct()
-                                                     .Count()
-                              })
-                              .ToList();
+                    .Where(a => a.AssignedBy == memberId && a.Member.deleteTime == null)
+                    .Select(a => a.Member)
+                    .Distinct()
+                    .Select(m => new Members
+                    {
+                        MemberID = m.MemberID,
+                        FullName = m.FullName,
+                        Email = m.Email,
+                        Phone = m.Phone,
+                        Role = m.Role,
+                        HireDate = m.HireDate,
+                        ImageMember = m.ImageMember,
+                        Status = m.Status,
+                        MemberCount = data.TaskAssignments
+                            .Where(a => a.MemberID == m.MemberID)
+                            .Select(a => a.TaskID)
+                            .Distinct()
+                            .Count()
+                    })
+                    .ToList();
             }
+
+            ViewBag.SearchQuery = searchQuery;
+            ViewBag.Role = role;
+            ViewBag.Status = status;
 
             return View(members);
         }
+
 
 
         public string GenerateMemberID()
@@ -1105,77 +1127,100 @@ namespace ManageTaskWeb.Controllers
         {
             try
             {
+
                 string imagePath = null;
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
+                    // Lưu ảnh vào thư mục
                     string path = Server.MapPath("~/Content/images/member-img/");
-                    Directory.CreateDirectory(path); // Create directory if it doesn't exist
+                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
                     imagePath = Path.Combine(path, ImageMember);
-                    ImageFile.SaveAs(imagePath); // Save image
+                    ImageFile.SaveAs(imagePath);
                 }
 
+                // Tạo đối tượng Member mới và lưu thông tin
                 var member = new Member
                 {
-                    MemberID = GetUniqueMemberID(),
+                    MemberID = GetUniqueMemberID(), // Tạo ID duy nhất (có thể dùng hàm tự tạo như MemberID định dạng HHmmssddMMyy)
                     FullName = FullName,
                     Email = Email,
                     Phone = Phone,
                     Role = Role,
-                    HireDate = DateTime.Now,                  
+                    HireDate = System.DateTime.Now,
                     Status = "Offline",
-                    //Password = Password,
-                    //ImageMember = ImageMember,
+                    Password = Password, // Lưu mật khẩu
+                    ImageMember = ImageMember, // Lưu tên file ảnh
                     deleteTime = null
                 };
 
+                // Thêm member vào database
                 data.Members.InsertOnSubmit(member);
                 data.SubmitChanges();
-                return RedirectToAction("DSMember");
+                return RedirectToAction("DSMember", "Home");
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi thêm thành viên!", notificationType = "error" });
             }
-            }
-        //Edit Member
+        }
+
+       
         [HttpPost]
-        public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, DateTime HireDate, HttpPostedFileBase ImageFile)
+        public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, string ImageMember, HttpPostedFileBase ImageFile)
         {
             try
             {
+                // Tìm thành viên trong cơ sở dữ liệu theo MemberID
                 var member = data.Members.FirstOrDefault(m => m.MemberID == MemberID);
-                if (member != null)
+                if (member == null)
                 {
-                    member.FullName = FullName;
-                    member.Email = Email;
-                    member.Phone = Phone;
-                    member.Role = Role;
-                    //member.HireDate = HireDate;
-                    //member.Password = Password;
-                    
-
-                    if (!string.IsNullOrEmpty(Password))
-                    {
-                        member.Password = Password; // Chỉ cập nhật nếu mật khẩu mới được nhập
-                    }
-
-                    if (ImageFile != null && ImageFile.ContentLength > 0)
-                    {
-                        string imagePath = Path.Combine(Server.MapPath("~/Content/images/member-img/"), ImageFile.FileName);
-                        ImageFile.SaveAs(imagePath);
-                        member.ImageMember = ImageFile.FileName; // Lưu tên ảnh vào database
-                    }
-
-                    data.SubmitChanges();
-                    return RedirectToAction("DSMember", new { notificationMessage = "Cập nhật thành viên thành công!", notificationType = "success" });
+                    throw new Exception("Không tìm thấy thành viên với ID được cung cấp.");
                 }
-                return RedirectToAction("DSMember", new { notificationMessage = "Không tìm thấy thành viên!", notificationType = "error" });
+
+                // Cập nhật thông tin thành viên
+                member.FullName = FullName;
+                member.Email = Email;
+                member.Phone = Phone;
+                member.Role = Role;
+                member.HireDate = System.DateTime.Now;
+                member.Password = Password;
+                member.ImageMember = ImageMember;
+
+
+                // Cập nhật mật khẩu nếu có thay đổi
+                if (!string.IsNullOrEmpty(Password))
+                {
+                    member.Password = Password; // Có thể áp dụng mã hóa mật khẩu tại đây
+                }
+
+                // Xử lý ảnh mới nếu có
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    // Đường dẫn lưu ảnh
+                    string path = Server.MapPath("~/Content/images/member-img/");
+                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa tồn tại
+                    string imagePath = Path.Combine(path, Path.GetFileName(ImageFile.FileName));
+
+                    // Lưu file ảnh mới
+                    ImageFile.SaveAs(imagePath);
+
+                    // Cập nhật tên file ảnh vào cơ sở dữ liệu
+                    member.ImageMember = Path.GetFileName(ImageFile.FileName);
+                }
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                data.SubmitChanges();
+
+                return RedirectToAction("DSMember", "Home");
             }
             catch (Exception ex)
             {
-                return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi cập nhật thông tin thành viên!", notificationType = "error" });
+                Console.WriteLine($"Lỗi sửa thành viên: {ex.Message}");
+                return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi sửa thành viên!", notificationType = "error" });
             }
         }
+
 
         [HttpPost]
         public JsonResult DeleteMember(List<string> memberIds)

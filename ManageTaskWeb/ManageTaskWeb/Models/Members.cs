@@ -18,5 +18,7 @@ namespace ManageTaskWeb.Models
         public string ImageMember { get; set; }
         public DateTime? deleteTime { get; set; }
         public int MemberCount { get; set; }
+
+        
     }
 }
