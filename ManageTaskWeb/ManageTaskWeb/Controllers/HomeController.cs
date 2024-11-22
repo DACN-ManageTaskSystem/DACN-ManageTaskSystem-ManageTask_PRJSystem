@@ -797,6 +797,34 @@ namespace ManageTaskWeb.Controllers
 
             }
         }
+        [HttpPost]
+        public ActionResult ToggleStatus(int taskId, string status)
+        {
+            try
+            {
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found." });
+                }
+
+                // Kiểm tra và thay đổi trạng thái
+                string newStatus = status == "Done" ? "Pending" : "Done"; // Chuyển trạng thái
+                task.Status = newStatus;
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                data.SubmitChanges();
+
+                // Trả về kết quả cùng với trạng thái mới
+                return Json(new { success = true, newStatus = newStatus });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
 
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
@@ -875,8 +903,8 @@ namespace ManageTaskWeb.Controllers
 
                 return View(viewModel);
             }
-
         }
+
         [HttpPost]
         public ActionResult DeleteTaskByMember(string memberId, int taskId)
         {

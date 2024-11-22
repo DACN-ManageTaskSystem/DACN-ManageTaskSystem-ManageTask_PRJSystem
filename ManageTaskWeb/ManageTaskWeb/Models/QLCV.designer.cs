@@ -25,46 +25,46 @@ namespace ManageTaskWeb.Models
 	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="QLCViec3")]
 	public partial class QLCVDataContext : System.Data.Linq.DataContext
 	{
-		
-		private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
-		
-    #region Extensibility Method Definitions
-    partial void OnCreated();
-    partial void InsertInteraction(Interaction instance);
-    partial void UpdateInteraction(Interaction instance);
-    partial void DeleteInteraction(Interaction instance);
-    partial void InsertNotification(Notification instance);
-    partial void UpdateNotification(Notification instance);
-    partial void DeleteNotification(Notification instance);
-    partial void InsertMember(Member instance);
-    partial void UpdateMember(Member instance);
-    partial void DeleteMember(Member instance);
-    partial void InsertProjectMember(ProjectMember instance);
-    partial void UpdateProjectMember(ProjectMember instance);
-    partial void DeleteProjectMember(ProjectMember instance);
-    partial void InsertProject(Project instance);
-    partial void UpdateProject(Project instance);
-    partial void DeleteProject(Project instance);
-    partial void InsertReport(Report instance);
-    partial void UpdateReport(Report instance);
-    partial void DeleteReport(Report instance);
-    partial void InsertTaskAssignment(TaskAssignment instance);
-    partial void UpdateTaskAssignment(TaskAssignment instance);
-    partial void DeleteTaskAssignment(TaskAssignment instance);
-    partial void InsertTaskLog(TaskLog instance);
-    partial void UpdateTaskLog(TaskLog instance);
-    partial void DeleteTaskLog(TaskLog instance);
-    partial void InsertTask(Task instance);
-    partial void UpdateTask(Task instance);
-    partial void DeleteTask(Task instance);
-        #endregion
         public QLCVDataContext() :
           base("Data Source=MSI;Initial Catalog=QLCViec3;Persist Security Info=True;Use" +
                   "r ID=sa;Password=123;Encrypt=True;TrustServerCertificate=True", mappingSource)
         {
             OnCreated();
         }
-        public QLCVDataContext(string connection) : 
+        private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
+		
+    #region Extensibility Method Definitions
+    partial void OnCreated();
+    partial void InsertInteraction(Interaction instance);
+    partial void UpdateInteraction(Interaction instance);
+    partial void DeleteInteraction(Interaction instance);
+    partial void InsertMember(Member instance);
+    partial void UpdateMember(Member instance);
+    partial void DeleteMember(Member instance);
+    partial void InsertNotification(Notification instance);
+    partial void UpdateNotification(Notification instance);
+    partial void DeleteNotification(Notification instance);
+    partial void InsertProjectMember(ProjectMember instance);
+    partial void UpdateProjectMember(ProjectMember instance);
+    partial void DeleteProjectMember(ProjectMember instance);
+    partial void InsertTaskAssignment(TaskAssignment instance);
+    partial void UpdateTaskAssignment(TaskAssignment instance);
+    partial void DeleteTaskAssignment(TaskAssignment instance);
+    partial void InsertReport(Report instance);
+    partial void UpdateReport(Report instance);
+    partial void DeleteReport(Report instance);
+    partial void InsertProject(Project instance);
+    partial void UpdateProject(Project instance);
+    partial void DeleteProject(Project instance);
+    partial void InsertTaskLog(TaskLog instance);
+    partial void UpdateTaskLog(TaskLog instance);
+    partial void DeleteTaskLog(TaskLog instance);
+    partial void InsertTask(Task instance);
+    partial void UpdateTask(Task instance);
+    partial void DeleteTask(Task instance);
+    #endregion
+		
+		public QLCVDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -96,19 +96,19 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<Notification> Notifications
-		{
-			get
-			{
-				return this.GetTable<Notification>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Member> Members
 		{
 			get
 			{
 				return this.GetTable<Member>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Notification> Notifications
+		{
+			get
+			{
+				return this.GetTable<Notification>();
 			}
 		}
 		
@@ -120,11 +120,11 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<Project> Projects
+		public System.Data.Linq.Table<TaskAssignment> TaskAssignments
 		{
 			get
 			{
-				return this.GetTable<Project>();
+				return this.GetTable<TaskAssignment>();
 			}
 		}
 		
@@ -136,11 +136,11 @@ namespace ManageTaskWeb.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<TaskAssignment> TaskAssignments
+		public System.Data.Linq.Table<Project> Projects
 		{
 			get
 			{
-				return this.GetTable<TaskAssignment>();
+				return this.GetTable<Project>();
 			}
 		}
 		
@@ -425,6 +425,480 @@ namespace ManageTaskWeb.Models
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Members")]
+	public partial class Member : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _MemberID;
+		
+		private string _FullName;
+		
+		private string _Email;
+		
+		private string _Phone;
+		
+		private string _Role;
+		
+		private System.Nullable<System.DateTime> _HireDate;
+		
+		private string _Status;
+		
+		private string _Password;
+		
+		private System.Nullable<System.DateTime> _deleteTime;
+		
+		private string _ImageMember;
+		
+		private EntitySet<Interaction> _Interactions;
+		
+		private EntitySet<Notification> _Notifications;
+		
+		private EntitySet<ProjectMember> _ProjectMembers;
+		
+		private EntitySet<TaskAssignment> _TaskAssignments;
+		
+		private EntitySet<TaskAssignment> _TaskAssignments1;
+		
+		private EntitySet<Report> _Reports;
+		
+		private EntitySet<TaskLog> _TaskLogs;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnMemberIDChanging(string value);
+    partial void OnMemberIDChanged();
+    partial void OnFullNameChanging(string value);
+    partial void OnFullNameChanged();
+    partial void OnEmailChanging(string value);
+    partial void OnEmailChanged();
+    partial void OnPhoneChanging(string value);
+    partial void OnPhoneChanged();
+    partial void OnRoleChanging(string value);
+    partial void OnRoleChanged();
+    partial void OnHireDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnHireDateChanged();
+    partial void OnStatusChanging(string value);
+    partial void OnStatusChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OndeleteTimeChanging(System.Nullable<System.DateTime> value);
+    partial void OndeleteTimeChanged();
+    partial void OnImageMemberChanging(string value);
+    partial void OnImageMemberChanged();
+    #endregion
+		
+		public Member()
+		{
+			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
+			this._Notifications = new EntitySet<Notification>(new Action<Notification>(this.attach_Notifications), new Action<Notification>(this.detach_Notifications));
+			this._ProjectMembers = new EntitySet<ProjectMember>(new Action<ProjectMember>(this.attach_ProjectMembers), new Action<ProjectMember>(this.detach_ProjectMembers));
+			this._TaskAssignments = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments), new Action<TaskAssignment>(this.detach_TaskAssignments));
+			this._TaskAssignments1 = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments1), new Action<TaskAssignment>(this.detach_TaskAssignments1));
+			this._Reports = new EntitySet<Report>(new Action<Report>(this.attach_Reports), new Action<Report>(this.detach_Reports));
+			this._TaskLogs = new EntitySet<TaskLog>(new Action<TaskLog>(this.attach_TaskLogs), new Action<TaskLog>(this.detach_TaskLogs));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string MemberID
+		{
+			get
+			{
+				return this._MemberID;
+			}
+			set
+			{
+				if ((this._MemberID != value))
+				{
+					this.OnMemberIDChanging(value);
+					this.SendPropertyChanging();
+					this._MemberID = value;
+					this.SendPropertyChanged("MemberID");
+					this.OnMemberIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string FullName
+		{
+			get
+			{
+				return this._FullName;
+			}
+			set
+			{
+				if ((this._FullName != value))
+				{
+					this.OnFullNameChanging(value);
+					this.SendPropertyChanging();
+					this._FullName = value;
+					this.SendPropertyChanged("FullName");
+					this.OnFullNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Email
+		{
+			get
+			{
+				return this._Email;
+			}
+			set
+			{
+				if ((this._Email != value))
+				{
+					this.OnEmailChanging(value);
+					this.SendPropertyChanging();
+					this._Email = value;
+					this.SendPropertyChanged("Email");
+					this.OnEmailChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Phone", DbType="NVarChar(20)")]
+		public string Phone
+		{
+			get
+			{
+				return this._Phone;
+			}
+			set
+			{
+				if ((this._Phone != value))
+				{
+					this.OnPhoneChanging(value);
+					this.SendPropertyChanging();
+					this._Phone = value;
+					this.SendPropertyChanged("Phone");
+					this.OnPhoneChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Role", DbType="NVarChar(100)")]
+		public string Role
+		{
+			get
+			{
+				return this._Role;
+			}
+			set
+			{
+				if ((this._Role != value))
+				{
+					this.OnRoleChanging(value);
+					this.SendPropertyChanging();
+					this._Role = value;
+					this.SendPropertyChanged("Role");
+					this.OnRoleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HireDate", DbType="Date")]
+		public System.Nullable<System.DateTime> HireDate
+		{
+			get
+			{
+				return this._HireDate;
+			}
+			set
+			{
+				if ((this._HireDate != value))
+				{
+					this.OnHireDateChanging(value);
+					this.SendPropertyChanging();
+					this._HireDate = value;
+					this.SendPropertyChanged("HireDate");
+					this.OnHireDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
+		public string Status
+		{
+			get
+			{
+				return this._Status;
+			}
+			set
+			{
+				if ((this._Status != value))
+				{
+					this.OnStatusChanging(value);
+					this.SendPropertyChanging();
+					this._Status = value;
+					this.SendPropertyChanged("Status");
+					this.OnStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_deleteTime", DbType="DateTime")]
+		public System.Nullable<System.DateTime> deleteTime
+		{
+			get
+			{
+				return this._deleteTime;
+			}
+			set
+			{
+				if ((this._deleteTime != value))
+				{
+					this.OndeleteTimeChanging(value);
+					this.SendPropertyChanging();
+					this._deleteTime = value;
+					this.SendPropertyChanged("deleteTime");
+					this.OndeleteTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageMember", DbType="NVarChar(255)")]
+		public string ImageMember
+		{
+			get
+			{
+				return this._ImageMember;
+			}
+			set
+			{
+				if ((this._ImageMember != value))
+				{
+					this.OnImageMemberChanging(value);
+					this.SendPropertyChanging();
+					this._ImageMember = value;
+					this.SendPropertyChanged("ImageMember");
+					this.OnImageMemberChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Interaction", Storage="_Interactions", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<Interaction> Interactions
+		{
+			get
+			{
+				return this._Interactions;
+			}
+			set
+			{
+				this._Interactions.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Notification", Storage="_Notifications", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<Notification> Notifications
+		{
+			get
+			{
+				return this._Notifications;
+			}
+			set
+			{
+				this._Notifications.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_ProjectMember", Storage="_ProjectMembers", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<ProjectMember> ProjectMembers
+		{
+			get
+			{
+				return this._ProjectMembers;
+			}
+			set
+			{
+				this._ProjectMembers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment", Storage="_TaskAssignments", ThisKey="MemberID", OtherKey="AssignedBy")]
+		public EntitySet<TaskAssignment> TaskAssignments
+		{
+			get
+			{
+				return this._TaskAssignments;
+			}
+			set
+			{
+				this._TaskAssignments.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment1", Storage="_TaskAssignments1", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<TaskAssignment> TaskAssignments1
+		{
+			get
+			{
+				return this._TaskAssignments1;
+			}
+			set
+			{
+				this._TaskAssignments1.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Report", Storage="_Reports", ThisKey="MemberID", OtherKey="GeneratedBy")]
+		public EntitySet<Report> Reports
+		{
+			get
+			{
+				return this._Reports;
+			}
+			set
+			{
+				this._Reports.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskLog", Storage="_TaskLogs", ThisKey="MemberID", OtherKey="MemberID")]
+		public EntitySet<TaskLog> TaskLogs
+		{
+			get
+			{
+				return this._TaskLogs;
+			}
+			set
+			{
+				this._TaskLogs.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Interactions(Interaction entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_Interactions(Interaction entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_Notifications(Notification entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_Notifications(Notification entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_ProjectMembers(ProjectMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_ProjectMembers(ProjectMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_TaskAssignments(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_TaskAssignments(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_TaskAssignments1(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member1 = this;
+		}
+		
+		private void detach_TaskAssignments1(TaskAssignment entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member1 = null;
+		}
+		
+		private void attach_Reports(Report entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_Reports(Report entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+		
+		private void attach_TaskLogs(TaskLog entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = this;
+		}
+		
+		private void detach_TaskLogs(TaskLog entity)
+		{
+			this.SendPropertyChanging();
+			entity.Member = null;
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Notifications")]
 	public partial class Notification : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -672,480 +1146,6 @@ namespace ManageTaskWeb.Models
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Members")]
-	public partial class Member : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private string _MemberID;
-		
-		private string _FullName;
-		
-		private string _Email;
-		
-		private string _Phone;
-		
-		private string _Role;
-		
-		private System.Nullable<System.DateTime> _HireDate;
-		
-		private string _Status;
-		
-		private string _Password;
-		
-		private System.Nullable<System.DateTime> _deleteTime;
-		
-		private string _ImageMember;
-		
-		private EntitySet<Interaction> _Interactions;
-		
-		private EntitySet<Notification> _Notifications;
-		
-		private EntitySet<ProjectMember> _ProjectMembers;
-		
-		private EntitySet<Report> _Reports;
-		
-		private EntitySet<TaskAssignment> _TaskAssignments;
-		
-		private EntitySet<TaskAssignment> _TaskAssignments1;
-		
-		private EntitySet<TaskLog> _TaskLogs;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnMemberIDChanging(string value);
-    partial void OnMemberIDChanged();
-    partial void OnFullNameChanging(string value);
-    partial void OnFullNameChanged();
-    partial void OnEmailChanging(string value);
-    partial void OnEmailChanged();
-    partial void OnPhoneChanging(string value);
-    partial void OnPhoneChanged();
-    partial void OnRoleChanging(string value);
-    partial void OnRoleChanged();
-    partial void OnHireDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnHireDateChanged();
-    partial void OnStatusChanging(string value);
-    partial void OnStatusChanged();
-    partial void OnPasswordChanging(string value);
-    partial void OnPasswordChanged();
-    partial void OndeleteTimeChanging(System.Nullable<System.DateTime> value);
-    partial void OndeleteTimeChanged();
-    partial void OnImageMemberChanging(string value);
-    partial void OnImageMemberChanged();
-    #endregion
-		
-		public Member()
-		{
-			this._Interactions = new EntitySet<Interaction>(new Action<Interaction>(this.attach_Interactions), new Action<Interaction>(this.detach_Interactions));
-			this._Notifications = new EntitySet<Notification>(new Action<Notification>(this.attach_Notifications), new Action<Notification>(this.detach_Notifications));
-			this._ProjectMembers = new EntitySet<ProjectMember>(new Action<ProjectMember>(this.attach_ProjectMembers), new Action<ProjectMember>(this.detach_ProjectMembers));
-			this._Reports = new EntitySet<Report>(new Action<Report>(this.attach_Reports), new Action<Report>(this.detach_Reports));
-			this._TaskAssignments = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments), new Action<TaskAssignment>(this.detach_TaskAssignments));
-			this._TaskAssignments1 = new EntitySet<TaskAssignment>(new Action<TaskAssignment>(this.attach_TaskAssignments1), new Action<TaskAssignment>(this.detach_TaskAssignments1));
-			this._TaskLogs = new EntitySet<TaskLog>(new Action<TaskLog>(this.attach_TaskLogs), new Action<TaskLog>(this.detach_TaskLogs));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string MemberID
-		{
-			get
-			{
-				return this._MemberID;
-			}
-			set
-			{
-				if ((this._MemberID != value))
-				{
-					this.OnMemberIDChanging(value);
-					this.SendPropertyChanging();
-					this._MemberID = value;
-					this.SendPropertyChanged("MemberID");
-					this.OnMemberIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string FullName
-		{
-			get
-			{
-				return this._FullName;
-			}
-			set
-			{
-				if ((this._FullName != value))
-				{
-					this.OnFullNameChanging(value);
-					this.SendPropertyChanging();
-					this._FullName = value;
-					this.SendPropertyChanged("FullName");
-					this.OnFullNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Email
-		{
-			get
-			{
-				return this._Email;
-			}
-			set
-			{
-				if ((this._Email != value))
-				{
-					this.OnEmailChanging(value);
-					this.SendPropertyChanging();
-					this._Email = value;
-					this.SendPropertyChanged("Email");
-					this.OnEmailChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Phone", DbType="NVarChar(20)")]
-		public string Phone
-		{
-			get
-			{
-				return this._Phone;
-			}
-			set
-			{
-				if ((this._Phone != value))
-				{
-					this.OnPhoneChanging(value);
-					this.SendPropertyChanging();
-					this._Phone = value;
-					this.SendPropertyChanged("Phone");
-					this.OnPhoneChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Role", DbType="NVarChar(100)")]
-		public string Role
-		{
-			get
-			{
-				return this._Role;
-			}
-			set
-			{
-				if ((this._Role != value))
-				{
-					this.OnRoleChanging(value);
-					this.SendPropertyChanging();
-					this._Role = value;
-					this.SendPropertyChanged("Role");
-					this.OnRoleChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HireDate", DbType="Date")]
-		public System.Nullable<System.DateTime> HireDate
-		{
-			get
-			{
-				return this._HireDate;
-			}
-			set
-			{
-				if ((this._HireDate != value))
-				{
-					this.OnHireDateChanging(value);
-					this.SendPropertyChanging();
-					this._HireDate = value;
-					this.SendPropertyChanged("HireDate");
-					this.OnHireDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
-		public string Status
-		{
-			get
-			{
-				return this._Status;
-			}
-			set
-			{
-				if ((this._Status != value))
-				{
-					this.OnStatusChanging(value);
-					this.SendPropertyChanging();
-					this._Status = value;
-					this.SendPropertyChanged("Status");
-					this.OnStatusChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Password
-		{
-			get
-			{
-				return this._Password;
-			}
-			set
-			{
-				if ((this._Password != value))
-				{
-					this.OnPasswordChanging(value);
-					this.SendPropertyChanging();
-					this._Password = value;
-					this.SendPropertyChanged("Password");
-					this.OnPasswordChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_deleteTime", DbType="DateTime")]
-		public System.Nullable<System.DateTime> deleteTime
-		{
-			get
-			{
-				return this._deleteTime;
-			}
-			set
-			{
-				if ((this._deleteTime != value))
-				{
-					this.OndeleteTimeChanging(value);
-					this.SendPropertyChanging();
-					this._deleteTime = value;
-					this.SendPropertyChanged("deleteTime");
-					this.OndeleteTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageMember", DbType="NVarChar(255)")]
-		public string ImageMember
-		{
-			get
-			{
-				return this._ImageMember;
-			}
-			set
-			{
-				if ((this._ImageMember != value))
-				{
-					this.OnImageMemberChanging(value);
-					this.SendPropertyChanging();
-					this._ImageMember = value;
-					this.SendPropertyChanged("ImageMember");
-					this.OnImageMemberChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Interaction", Storage="_Interactions", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<Interaction> Interactions
-		{
-			get
-			{
-				return this._Interactions;
-			}
-			set
-			{
-				this._Interactions.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Notification", Storage="_Notifications", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<Notification> Notifications
-		{
-			get
-			{
-				return this._Notifications;
-			}
-			set
-			{
-				this._Notifications.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_ProjectMember", Storage="_ProjectMembers", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<ProjectMember> ProjectMembers
-		{
-			get
-			{
-				return this._ProjectMembers;
-			}
-			set
-			{
-				this._ProjectMembers.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Report", Storage="_Reports", ThisKey="MemberID", OtherKey="GeneratedBy")]
-		public EntitySet<Report> Reports
-		{
-			get
-			{
-				return this._Reports;
-			}
-			set
-			{
-				this._Reports.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment", Storage="_TaskAssignments", ThisKey="MemberID", OtherKey="AssignedBy")]
-		public EntitySet<TaskAssignment> TaskAssignments
-		{
-			get
-			{
-				return this._TaskAssignments;
-			}
-			set
-			{
-				this._TaskAssignments.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment1", Storage="_TaskAssignments1", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<TaskAssignment> TaskAssignments1
-		{
-			get
-			{
-				return this._TaskAssignments1;
-			}
-			set
-			{
-				this._TaskAssignments1.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskLog", Storage="_TaskLogs", ThisKey="MemberID", OtherKey="MemberID")]
-		public EntitySet<TaskLog> TaskLogs
-		{
-			get
-			{
-				return this._TaskLogs;
-			}
-			set
-			{
-				this._TaskLogs.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_Interactions(Interaction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_Interactions(Interaction entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_Notifications(Notification entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_Notifications(Notification entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_ProjectMembers(ProjectMember entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_ProjectMembers(ProjectMember entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_Reports(Report entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_Reports(Report entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_TaskAssignments(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_TaskAssignments(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-		
-		private void attach_TaskAssignments1(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member1 = this;
-		}
-		
-		private void detach_TaskAssignments1(TaskAssignment entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member1 = null;
-		}
-		
-		private void attach_TaskLogs(TaskLog entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = this;
-		}
-		
-		private void detach_TaskLogs(TaskLog entity)
-		{
-			this.SendPropertyChanging();
-			entity.Member = null;
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ProjectMembers")]
 	public partial class ProjectMember : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1378,6 +1378,575 @@ namespace ManageTaskWeb.Models
 					if ((value != null))
 					{
 						value.ProjectMembers.Add(this);
+						this._ProjectID = value.ProjectID;
+					}
+					else
+					{
+						this._ProjectID = default(string);
+					}
+					this.SendPropertyChanged("Project");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TaskAssignments")]
+	public partial class TaskAssignment : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _TaskAssignmentID;
+		
+		private int _TaskID;
+		
+		private string _MemberID;
+		
+		private string _AssignedBy;
+		
+		private System.Nullable<System.DateTime> _AssignedDate;
+		
+		private string _Status;
+		
+		private string _Note;
+		
+		private EntityRef<Member> _Member;
+		
+		private EntityRef<Member> _Member1;
+		
+		private EntityRef<Task> _Task;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnTaskAssignmentIDChanging(int value);
+    partial void OnTaskAssignmentIDChanged();
+    partial void OnTaskIDChanging(int value);
+    partial void OnTaskIDChanged();
+    partial void OnMemberIDChanging(string value);
+    partial void OnMemberIDChanged();
+    partial void OnAssignedByChanging(string value);
+    partial void OnAssignedByChanged();
+    partial void OnAssignedDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnAssignedDateChanged();
+    partial void OnStatusChanging(string value);
+    partial void OnStatusChanged();
+    partial void OnNoteChanging(string value);
+    partial void OnNoteChanged();
+    #endregion
+		
+		public TaskAssignment()
+		{
+			this._Member = default(EntityRef<Member>);
+			this._Member1 = default(EntityRef<Member>);
+			this._Task = default(EntityRef<Task>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskAssignmentID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int TaskAssignmentID
+		{
+			get
+			{
+				return this._TaskAssignmentID;
+			}
+			set
+			{
+				if ((this._TaskAssignmentID != value))
+				{
+					this.OnTaskAssignmentIDChanging(value);
+					this.SendPropertyChanging();
+					this._TaskAssignmentID = value;
+					this.SendPropertyChanged("TaskAssignmentID");
+					this.OnTaskAssignmentIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskID", DbType="Int NOT NULL")]
+		public int TaskID
+		{
+			get
+			{
+				return this._TaskID;
+			}
+			set
+			{
+				if ((this._TaskID != value))
+				{
+					if (this._Task.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTaskIDChanging(value);
+					this.SendPropertyChanging();
+					this._TaskID = value;
+					this.SendPropertyChanged("TaskID");
+					this.OnTaskIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14) NOT NULL", CanBeNull=false)]
+		public string MemberID
+		{
+			get
+			{
+				return this._MemberID;
+			}
+			set
+			{
+				if ((this._MemberID != value))
+				{
+					if (this._Member1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMemberIDChanging(value);
+					this.SendPropertyChanging();
+					this._MemberID = value;
+					this.SendPropertyChanged("MemberID");
+					this.OnMemberIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedBy", DbType="NVarChar(14)")]
+		public string AssignedBy
+		{
+			get
+			{
+				return this._AssignedBy;
+			}
+			set
+			{
+				if ((this._AssignedBy != value))
+				{
+					if (this._Member.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAssignedByChanging(value);
+					this.SendPropertyChanging();
+					this._AssignedBy = value;
+					this.SendPropertyChanged("AssignedBy");
+					this.OnAssignedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> AssignedDate
+		{
+			get
+			{
+				return this._AssignedDate;
+			}
+			set
+			{
+				if ((this._AssignedDate != value))
+				{
+					this.OnAssignedDateChanging(value);
+					this.SendPropertyChanging();
+					this._AssignedDate = value;
+					this.SendPropertyChanged("AssignedDate");
+					this.OnAssignedDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
+		public string Status
+		{
+			get
+			{
+				return this._Status;
+			}
+			set
+			{
+				if ((this._Status != value))
+				{
+					this.OnStatusChanging(value);
+					this.SendPropertyChanging();
+					this._Status = value;
+					this.SendPropertyChanged("Status");
+					this.OnStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Note", DbType="NVarChar(MAX)")]
+		public string Note
+		{
+			get
+			{
+				return this._Note;
+			}
+			set
+			{
+				if ((this._Note != value))
+				{
+					this.OnNoteChanging(value);
+					this.SendPropertyChanging();
+					this._Note = value;
+					this.SendPropertyChanged("Note");
+					this.OnNoteChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment", Storage="_Member", ThisKey="AssignedBy", OtherKey="MemberID", IsForeignKey=true)]
+		public Member Member
+		{
+			get
+			{
+				return this._Member.Entity;
+			}
+			set
+			{
+				Member previousValue = this._Member.Entity;
+				if (((previousValue != value) 
+							|| (this._Member.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Member.Entity = null;
+						previousValue.TaskAssignments.Remove(this);
+					}
+					this._Member.Entity = value;
+					if ((value != null))
+					{
+						value.TaskAssignments.Add(this);
+						this._AssignedBy = value.MemberID;
+					}
+					else
+					{
+						this._AssignedBy = default(string);
+					}
+					this.SendPropertyChanged("Member");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment1", Storage="_Member1", ThisKey="MemberID", OtherKey="MemberID", IsForeignKey=true)]
+		public Member Member1
+		{
+			get
+			{
+				return this._Member1.Entity;
+			}
+			set
+			{
+				Member previousValue = this._Member1.Entity;
+				if (((previousValue != value) 
+							|| (this._Member1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Member1.Entity = null;
+						previousValue.TaskAssignments1.Remove(this);
+					}
+					this._Member1.Entity = value;
+					if ((value != null))
+					{
+						value.TaskAssignments1.Add(this);
+						this._MemberID = value.MemberID;
+					}
+					else
+					{
+						this._MemberID = default(string);
+					}
+					this.SendPropertyChanged("Member1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_TaskAssignment", Storage="_Task", ThisKey="TaskID", OtherKey="TaskID", IsForeignKey=true)]
+		public Task Task
+		{
+			get
+			{
+				return this._Task.Entity;
+			}
+			set
+			{
+				Task previousValue = this._Task.Entity;
+				if (((previousValue != value) 
+							|| (this._Task.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Task.Entity = null;
+						previousValue.TaskAssignments.Remove(this);
+					}
+					this._Task.Entity = value;
+					if ((value != null))
+					{
+						value.TaskAssignments.Add(this);
+						this._TaskID = value.TaskID;
+					}
+					else
+					{
+						this._TaskID = default(int);
+					}
+					this.SendPropertyChanged("Task");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Reports")]
+	public partial class Report : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ReportID;
+		
+		private string _ProjectID;
+		
+		private string _GeneratedBy;
+		
+		private System.Nullable<System.DateTime> _ReportDate;
+		
+		private string _Summary;
+		
+		private EntityRef<Member> _Member;
+		
+		private EntityRef<Project> _Project;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnReportIDChanging(int value);
+    partial void OnReportIDChanged();
+    partial void OnProjectIDChanging(string value);
+    partial void OnProjectIDChanged();
+    partial void OnGeneratedByChanging(string value);
+    partial void OnGeneratedByChanged();
+    partial void OnReportDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnReportDateChanged();
+    partial void OnSummaryChanging(string value);
+    partial void OnSummaryChanged();
+    #endregion
+		
+		public Report()
+		{
+			this._Member = default(EntityRef<Member>);
+			this._Project = default(EntityRef<Project>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReportID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ReportID
+		{
+			get
+			{
+				return this._ReportID;
+			}
+			set
+			{
+				if ((this._ReportID != value))
+				{
+					this.OnReportIDChanging(value);
+					this.SendPropertyChanging();
+					this._ReportID = value;
+					this.SendPropertyChanged("ReportID");
+					this.OnReportIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectID", DbType="NVarChar(14)")]
+		public string ProjectID
+		{
+			get
+			{
+				return this._ProjectID;
+			}
+			set
+			{
+				if ((this._ProjectID != value))
+				{
+					if (this._Project.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProjectIDChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectID = value;
+					this.SendPropertyChanged("ProjectID");
+					this.OnProjectIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GeneratedBy", DbType="NVarChar(14)")]
+		public string GeneratedBy
+		{
+			get
+			{
+				return this._GeneratedBy;
+			}
+			set
+			{
+				if ((this._GeneratedBy != value))
+				{
+					if (this._Member.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnGeneratedByChanging(value);
+					this.SendPropertyChanging();
+					this._GeneratedBy = value;
+					this.SendPropertyChanged("GeneratedBy");
+					this.OnGeneratedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReportDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> ReportDate
+		{
+			get
+			{
+				return this._ReportDate;
+			}
+			set
+			{
+				if ((this._ReportDate != value))
+				{
+					this.OnReportDateChanging(value);
+					this.SendPropertyChanging();
+					this._ReportDate = value;
+					this.SendPropertyChanged("ReportDate");
+					this.OnReportDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Summary", DbType="NVarChar(MAX)")]
+		public string Summary
+		{
+			get
+			{
+				return this._Summary;
+			}
+			set
+			{
+				if ((this._Summary != value))
+				{
+					this.OnSummaryChanging(value);
+					this.SendPropertyChanging();
+					this._Summary = value;
+					this.SendPropertyChanged("Summary");
+					this.OnSummaryChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Report", Storage="_Member", ThisKey="GeneratedBy", OtherKey="MemberID", IsForeignKey=true)]
+		public Member Member
+		{
+			get
+			{
+				return this._Member.Entity;
+			}
+			set
+			{
+				Member previousValue = this._Member.Entity;
+				if (((previousValue != value) 
+							|| (this._Member.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Member.Entity = null;
+						previousValue.Reports.Remove(this);
+					}
+					this._Member.Entity = value;
+					if ((value != null))
+					{
+						value.Reports.Add(this);
+						this._GeneratedBy = value.MemberID;
+					}
+					else
+					{
+						this._GeneratedBy = default(string);
+					}
+					this.SendPropertyChanged("Member");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Report", Storage="_Project", ThisKey="ProjectID", OtherKey="ProjectID", IsForeignKey=true)]
+		public Project Project
+		{
+			get
+			{
+				return this._Project.Entity;
+			}
+			set
+			{
+				Project previousValue = this._Project.Entity;
+				if (((previousValue != value) 
+							|| (this._Project.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Project.Entity = null;
+						previousValue.Reports.Remove(this);
+					}
+					this._Project.Entity = value;
+					if ((value != null))
+					{
+						value.Reports.Add(this);
 						this._ProjectID = value.ProjectID;
 					}
 					else
@@ -1773,575 +2342,6 @@ namespace ManageTaskWeb.Models
 		{
 			this.SendPropertyChanging();
 			entity.Project = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Reports")]
-	public partial class Report : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ReportID;
-		
-		private string _ProjectID;
-		
-		private string _GeneratedBy;
-		
-		private System.Nullable<System.DateTime> _ReportDate;
-		
-		private string _Summary;
-		
-		private EntityRef<Member> _Member;
-		
-		private EntityRef<Project> _Project;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnReportIDChanging(int value);
-    partial void OnReportIDChanged();
-    partial void OnProjectIDChanging(string value);
-    partial void OnProjectIDChanged();
-    partial void OnGeneratedByChanging(string value);
-    partial void OnGeneratedByChanged();
-    partial void OnReportDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnReportDateChanged();
-    partial void OnSummaryChanging(string value);
-    partial void OnSummaryChanged();
-    #endregion
-		
-		public Report()
-		{
-			this._Member = default(EntityRef<Member>);
-			this._Project = default(EntityRef<Project>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReportID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ReportID
-		{
-			get
-			{
-				return this._ReportID;
-			}
-			set
-			{
-				if ((this._ReportID != value))
-				{
-					this.OnReportIDChanging(value);
-					this.SendPropertyChanging();
-					this._ReportID = value;
-					this.SendPropertyChanged("ReportID");
-					this.OnReportIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectID", DbType="NVarChar(14)")]
-		public string ProjectID
-		{
-			get
-			{
-				return this._ProjectID;
-			}
-			set
-			{
-				if ((this._ProjectID != value))
-				{
-					if (this._Project.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnProjectIDChanging(value);
-					this.SendPropertyChanging();
-					this._ProjectID = value;
-					this.SendPropertyChanged("ProjectID");
-					this.OnProjectIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GeneratedBy", DbType="NVarChar(14)")]
-		public string GeneratedBy
-		{
-			get
-			{
-				return this._GeneratedBy;
-			}
-			set
-			{
-				if ((this._GeneratedBy != value))
-				{
-					if (this._Member.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnGeneratedByChanging(value);
-					this.SendPropertyChanging();
-					this._GeneratedBy = value;
-					this.SendPropertyChanged("GeneratedBy");
-					this.OnGeneratedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReportDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> ReportDate
-		{
-			get
-			{
-				return this._ReportDate;
-			}
-			set
-			{
-				if ((this._ReportDate != value))
-				{
-					this.OnReportDateChanging(value);
-					this.SendPropertyChanging();
-					this._ReportDate = value;
-					this.SendPropertyChanged("ReportDate");
-					this.OnReportDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Summary", DbType="NVarChar(MAX)")]
-		public string Summary
-		{
-			get
-			{
-				return this._Summary;
-			}
-			set
-			{
-				if ((this._Summary != value))
-				{
-					this.OnSummaryChanging(value);
-					this.SendPropertyChanging();
-					this._Summary = value;
-					this.SendPropertyChanged("Summary");
-					this.OnSummaryChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_Report", Storage="_Member", ThisKey="GeneratedBy", OtherKey="MemberID", IsForeignKey=true)]
-		public Member Member
-		{
-			get
-			{
-				return this._Member.Entity;
-			}
-			set
-			{
-				Member previousValue = this._Member.Entity;
-				if (((previousValue != value) 
-							|| (this._Member.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Member.Entity = null;
-						previousValue.Reports.Remove(this);
-					}
-					this._Member.Entity = value;
-					if ((value != null))
-					{
-						value.Reports.Add(this);
-						this._GeneratedBy = value.MemberID;
-					}
-					else
-					{
-						this._GeneratedBy = default(string);
-					}
-					this.SendPropertyChanged("Member");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_Report", Storage="_Project", ThisKey="ProjectID", OtherKey="ProjectID", IsForeignKey=true)]
-		public Project Project
-		{
-			get
-			{
-				return this._Project.Entity;
-			}
-			set
-			{
-				Project previousValue = this._Project.Entity;
-				if (((previousValue != value) 
-							|| (this._Project.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Project.Entity = null;
-						previousValue.Reports.Remove(this);
-					}
-					this._Project.Entity = value;
-					if ((value != null))
-					{
-						value.Reports.Add(this);
-						this._ProjectID = value.ProjectID;
-					}
-					else
-					{
-						this._ProjectID = default(string);
-					}
-					this.SendPropertyChanged("Project");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TaskAssignments")]
-	public partial class TaskAssignment : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _TaskAssignmentID;
-		
-		private int _TaskID;
-		
-		private string _MemberID;
-		
-		private string _AssignedBy;
-		
-		private System.Nullable<System.DateTime> _AssignedDate;
-		
-		private string _Status;
-		
-		private string _Note;
-		
-		private EntityRef<Member> _Member;
-		
-		private EntityRef<Member> _Member1;
-		
-		private EntityRef<Task> _Task;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnTaskAssignmentIDChanging(int value);
-    partial void OnTaskAssignmentIDChanged();
-    partial void OnTaskIDChanging(int value);
-    partial void OnTaskIDChanged();
-    partial void OnMemberIDChanging(string value);
-    partial void OnMemberIDChanged();
-    partial void OnAssignedByChanging(string value);
-    partial void OnAssignedByChanged();
-    partial void OnAssignedDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnAssignedDateChanged();
-    partial void OnStatusChanging(string value);
-    partial void OnStatusChanged();
-    partial void OnNoteChanging(string value);
-    partial void OnNoteChanged();
-    #endregion
-		
-		public TaskAssignment()
-		{
-			this._Member = default(EntityRef<Member>);
-			this._Member1 = default(EntityRef<Member>);
-			this._Task = default(EntityRef<Task>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskAssignmentID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int TaskAssignmentID
-		{
-			get
-			{
-				return this._TaskAssignmentID;
-			}
-			set
-			{
-				if ((this._TaskAssignmentID != value))
-				{
-					this.OnTaskAssignmentIDChanging(value);
-					this.SendPropertyChanging();
-					this._TaskAssignmentID = value;
-					this.SendPropertyChanged("TaskAssignmentID");
-					this.OnTaskAssignmentIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaskID", DbType="Int NOT NULL")]
-		public int TaskID
-		{
-			get
-			{
-				return this._TaskID;
-			}
-			set
-			{
-				if ((this._TaskID != value))
-				{
-					if (this._Task.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnTaskIDChanging(value);
-					this.SendPropertyChanging();
-					this._TaskID = value;
-					this.SendPropertyChanged("TaskID");
-					this.OnTaskIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="NVarChar(14) NOT NULL", CanBeNull=false)]
-		public string MemberID
-		{
-			get
-			{
-				return this._MemberID;
-			}
-			set
-			{
-				if ((this._MemberID != value))
-				{
-					if (this._Member1.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnMemberIDChanging(value);
-					this.SendPropertyChanging();
-					this._MemberID = value;
-					this.SendPropertyChanged("MemberID");
-					this.OnMemberIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedBy", DbType="NVarChar(14)")]
-		public string AssignedBy
-		{
-			get
-			{
-				return this._AssignedBy;
-			}
-			set
-			{
-				if ((this._AssignedBy != value))
-				{
-					if (this._Member.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnAssignedByChanging(value);
-					this.SendPropertyChanging();
-					this._AssignedBy = value;
-					this.SendPropertyChanged("AssignedBy");
-					this.OnAssignedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> AssignedDate
-		{
-			get
-			{
-				return this._AssignedDate;
-			}
-			set
-			{
-				if ((this._AssignedDate != value))
-				{
-					this.OnAssignedDateChanging(value);
-					this.SendPropertyChanging();
-					this._AssignedDate = value;
-					this.SendPropertyChanged("AssignedDate");
-					this.OnAssignedDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="NVarChar(50)")]
-		public string Status
-		{
-			get
-			{
-				return this._Status;
-			}
-			set
-			{
-				if ((this._Status != value))
-				{
-					this.OnStatusChanging(value);
-					this.SendPropertyChanging();
-					this._Status = value;
-					this.SendPropertyChanged("Status");
-					this.OnStatusChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Note", DbType="NVarChar(MAX)")]
-		public string Note
-		{
-			get
-			{
-				return this._Note;
-			}
-			set
-			{
-				if ((this._Note != value))
-				{
-					this.OnNoteChanging(value);
-					this.SendPropertyChanging();
-					this._Note = value;
-					this.SendPropertyChanged("Note");
-					this.OnNoteChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment", Storage="_Member", ThisKey="AssignedBy", OtherKey="MemberID", IsForeignKey=true)]
-		public Member Member
-		{
-			get
-			{
-				return this._Member.Entity;
-			}
-			set
-			{
-				Member previousValue = this._Member.Entity;
-				if (((previousValue != value) 
-							|| (this._Member.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Member.Entity = null;
-						previousValue.TaskAssignments.Remove(this);
-					}
-					this._Member.Entity = value;
-					if ((value != null))
-					{
-						value.TaskAssignments.Add(this);
-						this._AssignedBy = value.MemberID;
-					}
-					else
-					{
-						this._AssignedBy = default(string);
-					}
-					this.SendPropertyChanged("Member");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Member_TaskAssignment1", Storage="_Member1", ThisKey="MemberID", OtherKey="MemberID", IsForeignKey=true)]
-		public Member Member1
-		{
-			get
-			{
-				return this._Member1.Entity;
-			}
-			set
-			{
-				Member previousValue = this._Member1.Entity;
-				if (((previousValue != value) 
-							|| (this._Member1.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Member1.Entity = null;
-						previousValue.TaskAssignments1.Remove(this);
-					}
-					this._Member1.Entity = value;
-					if ((value != null))
-					{
-						value.TaskAssignments1.Add(this);
-						this._MemberID = value.MemberID;
-					}
-					else
-					{
-						this._MemberID = default(string);
-					}
-					this.SendPropertyChanged("Member1");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Task_TaskAssignment", Storage="_Task", ThisKey="TaskID", OtherKey="TaskID", IsForeignKey=true)]
-		public Task Task
-		{
-			get
-			{
-				return this._Task.Entity;
-			}
-			set
-			{
-				Task previousValue = this._Task.Entity;
-				if (((previousValue != value) 
-							|| (this._Task.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Task.Entity = null;
-						previousValue.TaskAssignments.Remove(this);
-					}
-					this._Task.Entity = value;
-					if ((value != null))
-					{
-						value.TaskAssignments.Add(this);
-						this._TaskID = value.TaskID;
-					}
-					else
-					{
-						this._TaskID = default(int);
-					}
-					this.SendPropertyChanged("Task");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 	

@@ -19,9 +19,9 @@
         font-size: 20px;
         color: #888;
         margin: 20px 30px;
-        width:100%;
-        font-weight:bold;
-        padding-left:100px;
+        width: 100%;
+        font-weight: bold;
+        padding-left: 100px;
     }
 
     .title {
@@ -444,20 +444,28 @@
                     }
 
                     <div class="task-container">
-                        <!-- Check task status and set icon accordingly -->
                         @if (task.Status == "Done")
                         {
-                            <i class="fas fa-check task-icon"></i>
+                            <i class="fas fa-check task-icon"
+                               data-id="@task.TaskID"
+                               data-status="Done"
+                               onclick="toggleTaskStatus(this)"></i>
                             <div class="task-details">@task.Description</div>
                             <i class="fas fa-times delete-icon"></i>
                         }
                         else if (task.Status == "Pending")
                         {
-                            <i class="fas fa-square task-icon" style="color: #b0b0b0;"></i>
+                            <i class="fas fa-square task-icon"
+                               data-id="@task.TaskID"
+                               data-status="Pending"
+                               onclick="toggleTaskStatus(this)"></i>
                             <div class="task-details">@task.Description</div>
                             <i class="fas fa-times delete-icon"></i>
                         }
                     </div>
+
+
+
                 }
             }
 
@@ -545,3 +553,51 @@
     </div>
 </div>
 </body>
+<!-- Thêm jQuery từ CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    function toggleTaskStatus(element) {
+        var taskId = element.dataset.id;
+        var taskStatus = element.dataset.status;
+
+        console.log("Task ID: " + taskId);
+        console.log("Task Status: " + taskStatus);
+
+        $.ajax({
+            url: '/Home/ToggleStatus',  // URL tới Action method trong Controller
+            type: 'POST',
+            data: {
+                taskId: taskId,          // Tham số TaskID
+                status: taskStatus       // Tham số Status
+            },
+            success: function (response) {
+                console.log(response);  // In response ra console để kiểm tra dữ liệu
+
+                if (response.success) {
+                    alert('Task status updated successfully!');
+                    location.reload(); // Tải lại trang hiện tại
+                    // Cập nhật trạng thái của task trên giao diện mà không tải lại trang
+                    // Nếu bạn muốn thay đổi giao diện sau khi cập nhật
+                    var taskElement = document.querySelector('[data-id="' + taskId + '"]');
+                    if (taskElement) {
+                        taskElement.dataset.status = response.newStatus;
+                        // Cập nhật giao diện (ví dụ thay đổi icon trạng thái task)
+                        taskElement.classList.toggle('fa-check', response.newStatus === 'Done');
+                        taskElement.classList.toggle('fa-square', response.newStatus === 'Pending');
+                    }
+                } else {
+                    alert('Error: ' + response.message);  // Hiển thị lỗi nếu có
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred: ' + error);  // Nếu có lỗi trong AJAX
+            }
+        });
+    }
+
+
+  
+
+</script>
