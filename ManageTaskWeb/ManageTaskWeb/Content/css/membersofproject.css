@@ -88,7 +88,7 @@
 
     .memberofproject-header .logo {
         width: 40px;
-        height: 40px;
+        memberofproject-member-details height: 40px;
         background-color: #2196F3;
         border-radius: 8px;
     }
@@ -373,6 +373,8 @@
 
 .memberofproject-detail-label {
     color: #666;
+    font-weight:bold;
+    color:darkblue
 }
 
 .memberofproject-action-buttons {
