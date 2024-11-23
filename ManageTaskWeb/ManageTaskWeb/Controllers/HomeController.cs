@@ -907,6 +907,7 @@ namespace ManageTaskWeb.Controllers
                 return View(viewModel);
             }
         }
+        
 
         [HttpPost]
         public ActionResult DeleteTaskByMember(string memberId, int taskId)
@@ -978,7 +979,6 @@ namespace ManageTaskWeb.Controllers
                     // Tạo Task mới
                     var newTask = new Task
                     {
-                        TaskID = subTask.TaskID,
                         TaskName = subTask.TaskName,
                         Status = subTask.Status,
                         Description = subTask.Description,
@@ -1003,8 +1003,30 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        // xóa  SubTask
+        [HttpPost]
+        public ActionResult DeleteSubTask(int taskId)
+        {
+            try
+            {
+                // Tìm Task trong cơ sở dữ liệu
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found." });
+                }
 
+                // Xóa Task khỏi cơ sở dữ liệu
+                data.Tasks.DeleteOnSubmit(task);
+                data.SubmitChanges();
 
+                return Json(new { success = true, message = "Task deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
         //CHAT - START
         //Load Chat

@@ -7,7 +7,6 @@ namespace ManageTaskWeb.Models
 {
     public class SubTask
     {
-        public int TaskID { get; set; }
         public string TaskName { get; set; }
         public string Status { get; set; } = "Pending"; // Mặc định là Pending
         public string Description { get; set; }

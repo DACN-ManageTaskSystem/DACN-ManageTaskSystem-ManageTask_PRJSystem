@@ -654,26 +654,28 @@
                     {
                         doneCount++;
                     }
-                    <div class="task-container">
-                        @if (task.Status == "Done")
-                        {
-                            <i class="fas fa-check task-icon"
-                               data-id="@task.TaskID"
-                               data-status="Done"
-                               onclick="toggleTaskStatus(this)"></i>
-                            <div class="task-details">@task.Description</div>
-                            <i class="fas fa-times delete-icon"></i>
-                        }
-                        else if (task.Status == "Pending")
-                        {
-                            <i class="fas fa-square task-icon"
-                               data-id="@task.TaskID"
-                               data-status="Pending"
-                               onclick="toggleTaskStatus(this)"></i>
-                            <div class="task-details">@task.Description</div>
-                            <i class="fas fa-times delete-icon"></i>
-                        }
-                    </div>
+                <div class="task-container">
+                    @if (task.Status == "Done")
+                    {
+                        <i class="fas fa-check task-icon"
+                           data-id="@task.TaskID"
+                           data-status="Done"
+                           onclick="toggleTaskStatus(this)"></i>
+                        <div class="task-details">@task.Description</div>
+                        <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+
+                    }
+                    else if (task.Status == "Pending")
+                    {
+                        <i class="fas fa-square task-icon"
+                           data-id="@task.TaskID"
+                           data-status="Pending"
+                           onclick="toggleTaskStatus(this)"></i>
+                        <div class="task-details">@task.Description</div>
+                        <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+
+                    }
+                </div>
                 }
             }
             // Calculate the percentage of Done tasks only if there are tasks
@@ -959,7 +961,6 @@
     function createSubTask() {
         // Thu thập dữ liệu từ các trường
         var subTask = {
-            TaskID: parseInt(document.getElementById('taskID').value), // Chuyển thành số nguyên
             TaskName: document.getElementById('taskName').value,
             Description: document.getElementById('taskDescription').value,
             ProjectID: document.getElementById('projectId').value,
@@ -995,6 +996,27 @@
             }
         });
 
+    }
+    function deleteSubTask(taskId) {
+        if (confirm("Are you sure you want to delete this task?")) {
+            $.ajax({
+                url: '/Home/DeleteSubTask', // URL của Action Method
+                type: 'POST',
+                data: { taskId: taskId },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        // Reload lại danh sách task hoặc ẩn task đã xóa
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred: ' + error);
+                }
+            });
+        }
     }
 
 
