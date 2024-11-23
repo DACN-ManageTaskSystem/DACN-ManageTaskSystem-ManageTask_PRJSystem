@@ -1090,6 +1090,33 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
+        // delete member in task
+        [HttpPost]
+        public ActionResult DeleteTaskAssignment(int taskId, string memberId)
+        {
+            try
+            {
+                // Check if the task assignment exists
+                var taskAssignment = data.TaskAssignments
+                    .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == memberId);
+
+                if (taskAssignment == null)
+                {
+                    return Json(new { success = false, message = "Task assignment not found." });
+                }
+
+                // Remove the task assignment
+                data.TaskAssignments.DeleteOnSubmit(taskAssignment);
+                data.SubmitChanges();
+
+                // Return success response
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
         //CHAT - START
         //Load Chat

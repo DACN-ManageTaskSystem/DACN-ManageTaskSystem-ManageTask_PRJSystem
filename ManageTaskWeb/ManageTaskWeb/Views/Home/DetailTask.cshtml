@@ -833,7 +833,8 @@
                                     data-memberid="@member.MemberID"
                                     data-taskid="@Model.TaskID" 
                                     data-assignedbyid="@Model.Creator.MemberID"
-                                    onclick="assignEmployee(this)">➕</button>
+                                    onclick="assignEmployee(this)">➕
+                            </button>
                         </li>
                      </ul>
                   }
@@ -871,7 +872,7 @@
                                 <p>@member.FullName</p>
                                 <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
                             </div>
-                            <button class="add-button">➕</button>
+                            <i class="fas fa-times delete-icon" onclick="deleteTaskAssignment('@Model.TaskID', '@member.MemberID')"></i>
                         </li>
                     }
                 </ul>
@@ -1021,7 +1022,27 @@
             }
         });
     }
-
+    function deleteTaskAssignment(taskId, memberId) {
+        if (confirm("Are you sure you want to remove this assignment?")) {
+            $.ajax({
+                url: '/Home/DeleteTaskAssignment', // URL for the delete action
+                type: 'POST',
+                data: JSON.stringify({ taskId: taskId, memberId: memberId }),
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    if (response.success) {
+                        alert("Task assignment deleted successfully!");
+                        location.reload(); // Reload the page to refresh the list
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred: " + error);
+                }
+            });
+        }
+    }
     document.getElementById('button-member').addEventListener('click', function () {
         var overlay = document.getElementById('overlay');
         overlay.style.visibility = 'visible'; // Hiển thị overlay
