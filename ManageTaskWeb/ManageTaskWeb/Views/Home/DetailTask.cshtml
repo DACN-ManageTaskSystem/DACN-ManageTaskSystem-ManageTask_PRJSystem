@@ -750,55 +750,55 @@
         </div>
 
 
-   
 
-        @foreach (var member in Model.AssignedMembers)
-        {
-            <div class="assigned-users">
-                <h6><strong>Người Làm</strong></h6>
+        <div class="assigned-users">
+            <h6><strong>Người Làm</strong></h6>
+            @foreach (var member in Model.AssignedMembers)
+            {
                 <div class="user">
                     <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="User">
                     <span class="user-name">@member.FullName <br /> <span style="color:forestgreen; font-weight:bold">@member.Role</span>  </span>
 
                 </div>
+            }
             </div>
 
-        }
+        
 
 
-        <div class="creator">
-            <h6><strong>Người Tạo</strong></h6>
-            <div class="user">
-                <img src="@Url.Content("~/Content/images/member-img/" + Model.Creator.ImageMember)" alt="User">
-                <span class="user-name">@Model.Creator.FullName  <br /><span style="color:red; font-weight:bold">@Model.Creator.Role</span></span>
+            <div class="creator">
+                <h6><strong>Người Tạo</strong></h6>
+                <div class="user">
+                    <img src="@Url.Content("~/Content/images/member-img/" + Model.Creator.ImageMember)" alt="User">
+                    <span class="user-name">@Model.Creator.FullName  <br /><span style="color:red; font-weight:bold">@Model.Creator.Role</span></span>
+                </div>
             </div>
-        </div>
-        <br />
-        <h4><strong><center>Thao Tác</center></strong></h4>
-        <div class="task-controls">
-            <button class="button" id="button-member">
-                Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
-                <span class="icon"></span>
-            </button>
-            <button class="btn-discuss">
-                Thảo Luận <img src="discuss-icon.png" alt="Discuss">
-            </button>
-            <button class="btn-edit">
-                Edit Task <img src="edit-icon.png" alt="Edit">
-            </button>
-
-            <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
-                <input type="hidden" name="taskId" value="@Model.TaskID" />
-                @foreach (var member in Model.AssignedMembers)
-                {
-                    <input type="hidden" name="memberId" value="@member.MemberID" />
-                }
-                <button class="btn-delete" type="submit">
-                    Delete Task <img src="delete-icon.png" alt="Delete">
+            <br />
+            <h4><strong><center>Thao Tác</center></strong></h4>
+            <div class="task-controls">
+                <button class="button" id="button-member">
+                    Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="icon"></span>
                 </button>
-            </form>
+                <button class="btn-discuss">
+                    Thảo Luận <img src="discuss-icon.png" alt="Discuss">
+                </button>
+                <button class="btn-edit">
+                    Edit Task <img src="edit-icon.png" alt="Edit">
+                </button>
+
+                <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
+                    <input type="hidden" name="taskId" value="@Model.TaskID" />
+                    @foreach (var member in Model.AssignedMembers)
+                    {
+                        <input type="hidden" name="memberId" value="@member.MemberID" />
+                    }
+                    <button class="btn-delete" type="submit">
+                        Delete Task <img src="delete-icon.png" alt="Delete">
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
 </div>
 
 <div class="overlay" id="overlay">
@@ -829,7 +829,11 @@
                                 <p>@member.FullName</p>
                                 <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
                             </div>
-                            <button class="add-button">➕</button>
+                            <button class="add-button"
+                                    data-memberid="@member.MemberID"
+                                    data-taskid="@Model.TaskID" 
+                                    data-assignedbyid="@Model.Creator.MemberID"
+                                    onclick="assignEmployee(this)">➕</button>
                         </li>
                      </ul>
                   }
@@ -854,9 +858,10 @@
                         <label for="toggle-project-members"></label>
                     </div>
                 </div>
-                @foreach (var member in Model.AssignedMembers)
-                {
-                    <ul class="member-list">
+                <ul class="member-list">
+                   
+                    @foreach (var member in Model.AssignedMembers)
+                    {
                         <li>
                             <div class="avatar">
                                 <!-- Display the member's image if available -->
@@ -868,16 +873,16 @@
                             </div>
                             <button class="add-button">➕</button>
                         </li>
-                    </ul>
-                }
-                <div class="pagination">
-                    <button>◀</button>
-                    <button class="active">1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>▶</button>
+                    }
+                </ul>
+                    <div class="pagination">
+                        <button>◀</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>▶</button>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>
@@ -987,6 +992,34 @@
                 }
             });
         }
+    }
+
+    function assignEmployee(button) {
+        var memberId = $(button).data('memberid');
+        var taskId = $(button).data('taskid');
+        var assignedByID = $(button).data('assignedbyid');
+      
+        // AJAX request to assign the employee to the task
+        $.ajax({
+            url: '/Home/AssignEmployee',  // The backend action URL
+            type: 'POST',
+            data: {
+                memberId: memberId,
+                taskId: taskId,
+                assignedByID: assignedByID
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Employee assigned successfully!');
+                    location.reload();  // Reload the page to see the updated task assignment
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
     }
 
     document.getElementById('button-member').addEventListener('click', function () {

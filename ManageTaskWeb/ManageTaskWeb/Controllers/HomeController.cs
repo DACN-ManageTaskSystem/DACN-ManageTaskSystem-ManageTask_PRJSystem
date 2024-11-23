@@ -1040,6 +1040,57 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
+        // Addmember to task
+        public ActionResult AssignEmployee(string memberId, int taskId, string assignedByID)
+        {
+            try
+            {
+                // Check if the task exists
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found." });
+                }
+
+                // Check if the member exists
+                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
+                if (member == null)
+                {
+                    return Json(new { success = false, message = "Member not found." });
+                }
+                // Check if the assignment already exists in TaskAssignments table
+                var existingAssignment = data.TaskAssignments
+                    .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == memberId);
+
+                if (existingAssignment != null)
+                {
+                    // If assignment already exists, return a message indicating so
+                    return Json(new { success = false, message = "This member is already assigned to the task." });
+                }
+                // Add new Task Assignment entry
+                var taskAssignment = new TaskAssignment
+                {   
+                    TaskID = taskId,
+                    MemberID = memberId,
+                    AssignedBy = assignedByID,  // Assuming the current user assigns
+                    AssignedDate = DateTime.Now,
+                    Status = "Assigned"  // You can customize the status
+                };
+
+                // Insert new Task Assignment record into the database
+                data.TaskAssignments.InsertOnSubmit(taskAssignment);
+                data.SubmitChanges();
+
+                // Return success response
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
         //CHAT - START
         //Load Chat
         public ActionResult GroupChat(string projectId, int page = 1)
