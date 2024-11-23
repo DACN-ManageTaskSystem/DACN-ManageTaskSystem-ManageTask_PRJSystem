@@ -714,24 +714,27 @@ namespace ManageTaskWeb.Controllers
             var role = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
 
-            //    // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
+            // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
             if (role == "Manager" || role == "Admin")
             {
-                // Nếu là Manager hoặc Admin, lấy tất cả task của dự án
-                var tasks = data.Tasks.Where(t => t.ProjectID == projectId).ToList();
+                // Lấy tất cả task của dự án nhưng loại bỏ task có Priority == null
+                var tasks = data.Tasks
+                                .Where(t => t.ProjectID == projectId && t.Priority != null)
+                                .ToList();
                 return View(tasks);
             }
             else
             {
-                // Nếu là các role khác, chỉ lấy task mà người dùng tham gia
+                // Chỉ lấy task mà người dùng tham gia, và loại bỏ task có Priority == null
                 var tasks = data.Tasks
-                               .Where(t => t.ProjectID == projectId && data.TaskAssignments
-                                                                     .Any(ta => ta.TaskID == t.TaskID && ta.MemberID == memberId))
-                               .ToList();
+                                .Where(t => t.ProjectID == projectId
+                                            && t.Priority != null
+                                            && data.TaskAssignments.Any(ta => ta.TaskID == t.TaskID && ta.MemberID == memberId))
+                                .ToList();
                 return View(tasks);
             }
-
         }
+
 
         //Them Task
         [HttpPost]
