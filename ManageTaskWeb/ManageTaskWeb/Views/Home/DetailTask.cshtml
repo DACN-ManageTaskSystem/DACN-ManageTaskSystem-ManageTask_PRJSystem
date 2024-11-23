@@ -691,8 +691,16 @@
         <!-- Input Section -->
         <div class="input-section">
             <i class="fas fa-clipboard-list"></i>
-            <input type="text" class="input-field" placeholder="Create Requirement .....">
-            <i class="fas fa-paper-plane send-icon"></i>
+
+            <!-- Set taskName and projectId from Model -->
+            <input type="text" id="taskDescription" class="input-field" placeholder="Enter Task Description">
+
+            <!-- Hidden taskID (Generated as current timestamp) -->
+            <input type="hidden" id="taskName" value="@Model.TaskName">
+            <input type="hidden" id="projectId" value="@Model.ProjectID">
+            <input type="hidden" id="taskID" value="@(int.Parse(DateTime.Now.ToString("MMddHHmmss")))" />
+            <input type="hidden" id="parentTaskId" value="@Model.TaskID">
+            <i class="fas fa-paper-plane send-icon" onclick="createSubTask()"></i>
         </div>
 
         <!-- Footer Section -->
@@ -947,6 +955,49 @@
             }
         });
     }
+
+    function createSubTask() {
+        // Thu thập dữ liệu từ các trường
+        var subTask = {
+            TaskID: parseInt(document.getElementById('taskID').value), // Chuyển thành số nguyên
+            TaskName: document.getElementById('taskName').value,
+            Description: document.getElementById('taskDescription').value,
+            ProjectID: document.getElementById('projectId').value,
+            ParentTaskID: parseInt(document.getElementById('parentTaskId').value) 
+        };
+        console.log(subTask.TaskID)
+        console.log(subTask.TaskName)
+        console.log(subTask.Description)
+        console.log(subTask.ProjectID)
+        console.log(subTask.ParentTaskID)
+        // Kiểm tra dữ liệu đầu vào trước khi gửi
+        if (!subTask.TaskName || !subTask.ProjectID) {
+            alert("Task Name and Project ID are required.");
+            return;
+        }
+
+        // Gửi yêu cầu AJAX
+        $.ajax({
+            url: '/Home/CreateSubTask',
+            type: 'POST',
+            data: JSON.stringify(subTask),
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response.success) {
+                    alert('SubTask created successfully!');
+                    location.reload(); // Reload lại trang sau khi tạo thành công
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+
+    }
+
+
 
     document.getElementById('button-member').addEventListener('click', function () {
         var overlay = document.getElementById('overlay');

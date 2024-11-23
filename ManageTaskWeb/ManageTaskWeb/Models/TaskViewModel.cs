@@ -10,6 +10,7 @@ namespace ManageTaskWeb.Models
         public int TaskID { get; set; }
         public int? ParentTaskID { get; set; }
         public string TaskName { get; set; }
+        public string ProjectID { get; set; }
         public string Description { get; set; }
         public DateTime? StartDate { get; set; } // Nullable DateTime
         public DateTime? EndDate { get; set; }   // Nullable DateTime

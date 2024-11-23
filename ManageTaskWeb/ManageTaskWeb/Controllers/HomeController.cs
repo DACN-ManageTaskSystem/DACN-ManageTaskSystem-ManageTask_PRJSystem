@@ -868,6 +868,7 @@ namespace ManageTaskWeb.Controllers
                       .Where(t => t.ProjectID == task.ProjectID || t.ParentTaskID == task.ParentTaskID)
                       .Select(t => new TaskViewModel
                       {
+                          ProjectID = t.ProjectID,
                           TaskID = t.TaskID,
                           TaskName = t.TaskName,
                           Description = t.Description,
@@ -875,12 +876,14 @@ namespace ManageTaskWeb.Controllers
                           EndDate = t.EndDate,
                           Status = t.Status,
                           Priority = t.Priority,
-                          ParentTaskID = t.ParentTaskID ?? 0
+                          ParentTaskID = t.ParentTaskID
                       })
                       .ToList();
 
                 var viewModel = new TaskViewModel
                 {
+                    ParentTaskID = task.ParentTaskID,
+                    ProjectID = task.ProjectID,
                     TaskID = task.TaskID,
                     TaskName = task.TaskName,
                     Description = task.Description,
@@ -956,6 +959,48 @@ namespace ManageTaskWeb.Controllers
                 context.SubmitChanges();
 
                 return RedirectToAction("DSTask", new { notificationMessage = "task delete successfully!", notificationType = "success" }); // Điều hướng về danh sách Task
+            }
+        }
+
+
+        // Thêm  SubTask
+        
+        [HttpPost]
+        public ActionResult CreateSubTask(SubTask subTask)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Đảm bảo trạng thái mặc định
+                    subTask.Status = subTask.Status ?? "Pending";
+
+                    // Tạo Task mới
+                    var newTask = new Task
+                    {
+                        TaskID = subTask.TaskID,
+                        TaskName = subTask.TaskName,
+                        Status = subTask.Status,
+                        Description = subTask.Description,
+                        ProjectID = subTask.ProjectID,
+                        ParentTaskID = subTask.ParentTaskID, // Gán ID Task cha (nếu có)
+                        StartDate = DateTime.Now
+                    };
+
+                    // Lưu vào cơ sở dữ liệu
+                    data.Tasks.InsertOnSubmit(newTask);
+                    data.SubmitChanges();
+
+                    return Json(new { success = true, taskId = newTask.TaskID });
+                }
+
+                // Nếu dữ liệu không hợp lệ
+                return Json(new { success = false, message = "Invalid data provided." });
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ
+                return Json(new { success = false, message = ex.Message });
             }
         }
 
