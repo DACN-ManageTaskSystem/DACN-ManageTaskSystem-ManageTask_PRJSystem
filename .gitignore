@@ -139,8 +139,9 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 # =========================
-# Windows detritus
+# Windows detrituss
 # =========================
+
 
 # Windows image file caches
 Thumbs.db
