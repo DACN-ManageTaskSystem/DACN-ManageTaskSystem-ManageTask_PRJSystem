@@ -144,6 +144,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>QLCV.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\SubTask.cs" />
     <Compile Include="Models\TaskViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -263,6 +264,7 @@
     <Content Include="Views\Home\GroupChat.cshtml" />
     <Content Include="Views\Home\DetailTask.cshtml" />
     <Content Include="Views\Home\DSMember.cshtml" />
+    <Content Include="Views\Home\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

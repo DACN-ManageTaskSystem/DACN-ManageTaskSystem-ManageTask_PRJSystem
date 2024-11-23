@@ -95,6 +95,7 @@ namespace ManageTaskWeb.Controllers
             data.SubmitChanges();
 
             // Nếu đăng nhập thành công, lưu thông tin vào session
+            Session["Password"] = decryptedPassword;
             Session["MemberID"] = member.MemberID;
             Session["FullName"] = member.FullName;
             Session["Role"] = member.Role;
@@ -104,6 +105,36 @@ namespace ManageTaskWeb.Controllers
 
             // Chuyển hướng về trang chủ sau khi đăng nhập thành công
             return RedirectToAction("TrangChu");
+        }
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult ChangePassword(string oldPassword, string newPassword)
+        {
+            var sessionPassword = Session["Password"]?.ToString();
+            if (sessionPassword == null)
+            {
+                ViewBag.ErrorMessage = "Session expired. Please log in again.";
+                return RedirectToAction("Login", "Home");
+            }
+
+            // So sánh mật khẩu cũ
+            if (oldPassword != sessionPassword)
+            {
+                ViewBag.ErrorMessage = "Old password is incorrect.";
+                return View();
+            }
+
+            var MemberID_Session = Session["MemberID"].ToString();
+            var currentMember = data.Members.SingleOrDefault(m => m.MemberID == MemberID_Session);
+
+         
+            currentMember.Password = EncryptPassword(newPassword, "mysecretkey");
+            data.SubmitChanges();
+
+            return View("TrangChu");
         }
 
         //Load Thong bao 
@@ -779,24 +810,27 @@ namespace ManageTaskWeb.Controllers
             var role = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
 
-            //    // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
+            // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
             if (role == "Manager" || role == "Admin")
             {
-                // Nếu là Manager hoặc Admin, lấy tất cả task của dự án
-                var tasks = data.Tasks.Where(t => t.ProjectID == projectId).ToList();
+                // Lấy tất cả task của dự án nhưng loại bỏ task có Priority == null
+                var tasks = data.Tasks
+                                .Where(t => t.ProjectID == projectId && t.Priority != null)
+                                .ToList();
                 return View(tasks);
             }
             else
             {
-                // Nếu là các role khác, chỉ lấy task mà người dùng tham gia
+                // Chỉ lấy task mà người dùng tham gia, và loại bỏ task có Priority == null
                 var tasks = data.Tasks
-                               .Where(t => t.ProjectID == projectId && data.TaskAssignments
-                                                                     .Any(ta => ta.TaskID == t.TaskID && ta.MemberID == memberId))
-                               .ToList();
+                                .Where(t => t.ProjectID == projectId
+                                            && t.Priority != null
+                                            && data.TaskAssignments.Any(ta => ta.TaskID == t.TaskID && ta.MemberID == memberId))
+                                .ToList();
                 return View(tasks);
             }
-
         }
+
 
         //Them Task
         [HttpPost]
@@ -862,10 +896,39 @@ namespace ManageTaskWeb.Controllers
 
             }
         }
+        [HttpPost]
+        public ActionResult ToggleStatus(int taskId, string status)
+        {
+            try
+            {
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found." });
+                }
+
+                // Kiểm tra và thay đổi trạng thái
+                string newStatus = status == "Done" ? "Pending" : "Done"; // Chuyển trạng thái
+                task.Status = newStatus;
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                data.SubmitChanges();
+
+                // Trả về kết quả cùng với trạng thái mới
+                return Json(new { success = true, newStatus = newStatus });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
 
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
+            
             if (taskId == null)
                 return HttpNotFound();  // Nếu không có taskId, trả về lỗi Not Found
 
@@ -884,6 +947,7 @@ namespace ManageTaskWeb.Controllers
 
                 if (task == null)
                     return HttpNotFound();  // Nếu không tìm thấy task trong CSDL, trả về lỗi Not Found
+
                 var creator = task.TaskAssignments
                         .Where(ta => ta.AssignedBy != null)
                         .Join(context.Members,
@@ -898,8 +962,28 @@ namespace ManageTaskWeb.Controllers
                               })
                         .FirstOrDefault();  // Lấy thông tin của người giao nhiệm vụ đầu tiên
 
+                // Lấy danh sách các task từ cơ sở dữ liệu (có thể là các task cùng dự án hoặc các task khác có cùng ParentID, tùy yêu cầu của bạn)
+                var listTasks = context.Tasks
+                      .AsNoTracking()
+                      .Where(t => t.ProjectID == task.ProjectID || t.ParentTaskID == task.ParentTaskID)
+                      .Select(t => new TaskViewModel
+                      {
+                          ProjectID = t.ProjectID,
+                          TaskID = t.TaskID,
+                          TaskName = t.TaskName,
+                          Description = t.Description,
+                          StartDate = t.StartDate,
+                          EndDate = t.EndDate,
+                          Status = t.Status,
+                          Priority = t.Priority,
+                          ParentTaskID = t.ParentTaskID
+                      })
+                      .ToList();
+
                 var viewModel = new TaskViewModel
                 {
+                    ParentTaskID = task.ParentTaskID,
+                    ProjectID = task.ProjectID,
                     TaskID = task.TaskID,
                     TaskName = task.TaskName,
                     Description = task.Description,
@@ -907,7 +991,6 @@ namespace ManageTaskWeb.Controllers
                     EndDate = task.EndDate ?? DateTime.MinValue,
                     Priority = task.Priority ?? 0,
                     Status = task.Status,
-                    // If you want to get the MemberID from TaskAssignments, you can map it like so
                     AssignedMembers = (from ta in task.TaskAssignments
                                        join member in context.Members on ta.MemberID equals member.MemberID
                                        select new MemberViewModel
@@ -917,12 +1000,220 @@ namespace ManageTaskWeb.Controllers
                                            Role = member.Role,
                                            ImageMember = member.ImageMember
                                        }).ToList(),
-
-                    Creator = creator  // Assign the creator here
-
+                    ProjectMembers = (from pm in data.ProjectMembers
+                                      join m in data.Members on pm.MemberID equals m.MemberID
+                                      where pm.ProjectID == task.ProjectID && pm.Status == "Accepted"
+                                      select new MemberViewModel
+                                      {
+                                          MemberID = m.MemberID,        // Correct reference to 'm'
+                                          FullName = m.FullName,        // Correct reference to 'm'
+                                          Role = m.Role,                // Correct reference to 'm'
+                                          ImageMember = m.ImageMember  // Correct reference to 'm'
+                                      }).ToList(),
+                    Creator = creator,  // Assign the creator here
+                    ListTasks = listTasks  // Assign the list of tasks here
                 };
+                
 
                 return View(viewModel);
+            }
+        }
+        
+
+        [HttpPost]
+        public ActionResult DeleteTaskByMember(string memberId, int taskId)
+        {
+            using (var context = new QLCVDataContext())
+            {
+                // Kiểm tra Task có tồn tại hay không
+                var task = context.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return HttpNotFound("Task not found.");
+                }
+
+                // Kiểm tra nếu có MemberID tồn tại trong TaskAssignments hoặc TaskLogs
+                var hasAssignmentsWithMember = context.TaskAssignments
+                    .Any(ta => ta.TaskID == taskId && ta.MemberID == memberId);
+
+                var hasLogsWithMember = context.TaskLogs
+                    .Any(tl => tl.TaskID == taskId && tl.MemberID == memberId);
+
+                if (hasAssignmentsWithMember || hasLogsWithMember)
+                {
+                    return Content("Cannot delete the task because there are members assigned or logs exist for this task.");
+                }
+
+                // Xóa tất cả TaskAssignments liên quan đến TaskID
+                var taskAssignments = context.TaskAssignments
+                    .Where(ta => ta.TaskID == taskId)
+                    .ToList();
+
+                foreach (var assignment in taskAssignments)
+                {
+                    context.TaskAssignments.DeleteOnSubmit(assignment);
+                }
+
+                // Xóa tất cả TaskLogs liên quan đến TaskID
+                var taskLogs = context.TaskLogs
+                    .Where(tl => tl.TaskID == taskId)
+                    .ToList();
+
+                foreach (var log in taskLogs)
+                {
+                    context.TaskLogs.DeleteOnSubmit(log);
+                }
+
+                // Xóa Task
+                context.Tasks.DeleteOnSubmit(task);
+
+                // Lưu thay đổi
+                context.SubmitChanges();
+
+                return RedirectToAction("DSTask", new { notificationMessage = "task delete successfully!", notificationType = "success" }); // Điều hướng về danh sách Task
+            }
+        }
+
+
+        // Thêm  SubTask
+        
+        [HttpPost]
+        public ActionResult CreateSubTask(SubTask subTask)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Đảm bảo trạng thái mặc định
+                    subTask.Status = subTask.Status ?? "Pending";
+
+                    // Tạo Task mới
+                    var newTask = new Task
+                    {
+                        TaskName = subTask.TaskName,
+                        Status = subTask.Status,
+                        Description = subTask.Description,
+                        ProjectID = subTask.ProjectID,
+                        ParentTaskID = subTask.ParentTaskID, // Gán ID Task cha (nếu có)
+                        StartDate = DateTime.Now
+                    };
+
+                    // Lưu vào cơ sở dữ liệu
+                    data.Tasks.InsertOnSubmit(newTask);
+                    data.SubmitChanges();
+
+                    return Json(new { success = true, taskId = newTask.TaskID });
+                }
+
+                // Nếu dữ liệu không hợp lệ
+                return Json(new { success = false, message = "Invalid data provided." });
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        // xóa  SubTask
+        [HttpPost]
+        public ActionResult DeleteSubTask(int taskId)
+        {
+            try
+            {
+                // Tìm Task trong cơ sở dữ liệu
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found." });
+                }
+
+                // Xóa Task khỏi cơ sở dữ liệu
+                data.Tasks.DeleteOnSubmit(task);
+                data.SubmitChanges();
+
+                return Json(new { success = true, message = "Task deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // Addmember to task
+        public ActionResult AssignEmployee(string memberId, int taskId, string assignedByID)
+        {
+            try
+            {
+                // Check if the task exists
+                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found." });
+                }
+
+                // Check if the member exists
+                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
+                if (member == null)
+                {
+                    return Json(new { success = false, message = "Member not found." });
+                }
+                // Check if the assignment already exists in TaskAssignments table
+                var existingAssignment = data.TaskAssignments
+                    .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == memberId);
+
+                if (existingAssignment != null)
+                {
+                    // If assignment already exists, return a message indicating so
+                    return Json(new { success = false, message = "This member is already assigned to the task." });
+                }
+                // Add new Task Assignment entry
+                var taskAssignment = new TaskAssignment
+                {   
+                    TaskID = taskId,
+                    MemberID = memberId,
+                    AssignedBy = assignedByID,  // Assuming the current user assigns
+                    AssignedDate = DateTime.Now,
+                    Status = "Assigned"  // You can customize the status
+                };
+
+                // Insert new Task Assignment record into the database
+                data.TaskAssignments.InsertOnSubmit(taskAssignment);
+                data.SubmitChanges();
+
+                // Return success response
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // delete member in task
+        [HttpPost]
+        public ActionResult DeleteTaskAssignment(int taskId, string memberId)
+        {
+            try
+            {
+                // Check if the task assignment exists
+                var taskAssignment = data.TaskAssignments
+                    .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == memberId);
+
+                if (taskAssignment == null)
+                {
+                    return Json(new { success = false, message = "Task assignment not found." });
+                }
+
+                // Remove the task assignment
+                data.TaskAssignments.DeleteOnSubmit(taskAssignment);
+                data.SubmitChanges();
+
+                // Return success response
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
             }
         }
 
