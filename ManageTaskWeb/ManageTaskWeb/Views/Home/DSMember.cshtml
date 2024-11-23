@@ -54,7 +54,13 @@
 
         .search-bar {
             display: flex;
-            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
             .search-bar input, .search-bar select {
@@ -62,9 +68,20 @@
                 margin-right: 10px;
                 border: 1px solid #ddd;
                 border-radius: 4px;
-                width: 30%;
+                width: 70%;
+            }
+            .search-bar button {
+                background: none;
+                border: none;
+                font-size: 1.2rem;
+                color: #6c63ff;
+                cursor: pointer;
+                transition: color 0.3s ease;
             }
 
+                .search-bar button:hover {
+                    color: #4a4a8c;
+                }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -108,260 +125,679 @@
                     background-color: #007bff;
                     color: white;
                 }
-    </style>
-
-    <div class="container">
-        <div class="header">
-            <h1>Danh Sách Thành Viên</h1>
-            <button type="button" data-bs-toggle="modal" data-bs-target="#addMemberModal">+ Thêm Thành Viên</button>
-
-        </div>
-
-        <!-- Thông báo thành công hoặc lỗi -->
-        @if (TempData["notificationMessage"] != null)
-        {
-            <div class="alert alert-@TempData["notificationType"]" role="alert">
-                @TempData["notificationMessage"]
-            </div>
+       /* .form-group {
+            margin-bottom: 15px;
         }
 
-        <div class="search-bar">
-            <input type="text" placeholder="Tìm kiếm theo tên hoặc email" />
-            <select>
-                <option value="">Tất cả vai trò</option>
-                <option value="Manager">Manager</option>
-                <option value="Developer">Developer</option>
-                <option value="Tester">Tester</option>
-            </select>
-            <select>
-                <option value="">Tất cả trạng thái</option>
-                <option value="true">Active</option>
-                <option value="false">Offline</option>
-            </select>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Họ và Tên</th>
-                    <th>Email</th>
-                    <th>Điện Thoại</th>
-                    <th>Vai Trò</th>
-                    <th>Ngày vào làm</th>
-                    @*<th>Mật khẩu</th>*@
-                    @*<th>Ảnh</th>*@
-                    <th>Trạng Thái</th>
-                    <th>Thao Tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var member in Model)
+            .form-group label {
+                display: block;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .form-group input[type="text"],
+            .form-group input[type="email"],
+            .form-group input[type="password"],
+            .form-group input[type="date"],
+            .form-group select {
+                width: calc(100% - 20px);
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                box-sizing: border-box;
+                background-color: #f0f0f0;
+            }
+
+            .form-group input[type="checkbox"] {
+                margin-right: 10px;
+            }
+
+            .form-group .upload-btn-wrapper {
+                position: relative;
+                overflow: hidden;
+                display: inline-block;
+            }
+
+            .form-group .btn {
+                border: 2px solid #f39c12;
+                color: #f39c12;
+                background-color: #fff;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            .form-group .upload-btn-wrapper input[type="file"] {
+                font-size: 100px;
+                position: absolute;
+                left: 0;
+                top: 0;
+                opacity: 0;
+            }
+
+            .form-group .required {
+                color: red;
+            }
+
+            .form-group .date-icon {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #ccc;
+            }
+
+            .form-group .date-input-wrapper {
+                position: relative;
+            }
+
+                .form-group .date-input-wrapper input {
+                    width: calc(100% - 30px);
+                }
+
+                .form-group .date-input-wrapper .date-icon {
+                    right: 10px;
+                }
+
+            .form-group .role-select-wrapper {
+                position: relative;
+            }
+
+                .form-group .role-select-wrapper select {
+                    width: calc(100% - 30px);
+                }
+
+                .form-group .role-select-wrapper .select-icon {
+                    position: absolute;
+                    right: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #ccc;
+                }
+
+            .form-group .confirm-checkbox-wrapper {
+                display: flex;
+                align-items: center;
+            }
+
+                .form-group .confirm-checkbox-wrapper input {
+                    margin-right: 10px;
+                }
+
+                .form-group .confirm-checkbox-wrapper label {
+                    margin: 0;
+                }
+
+            .form-group .confirm-btn {
+                width: 100%;
+                padding: 10px;
+                background-color: #385C8E;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            color: #ccc;
+            cursor: pointer;
+        }*/
+        .modal-content {
+            border-radius: 15px;
+            padding: 30px;
+            border: none;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            width:600px;
+        }
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: #4a4a8c;
+            font-weight: 600;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f4f4f4;
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+            input[type="text"]:focus,
+            input[type="date"]:focus,
+            textarea:focus,
+            select:focus {
+                border-color: #6c63ff;
+                outline: none;
+            }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url('data:image/svg+xml,%3Csvg width="16" height="16" fill="%234a4a8c" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M7.293 10.707a1 1 0 0 0 1.414 0l3-3a1 1 0 0 0-1.414-1.414L8 8.586 5.707 6.293a1 1 0 0 0-1.414 1.414l3 3z"/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+            padding-right: 2.5em;
+        }
+
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            background-color: #ffdd57;
+            border: none;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-upload:hover {
+                background-color: #e6c751;
+            }
+
+        .modal-footer {
+            border-top: none;
+            padding-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+    </style>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Danh Sách Thành Viên</h1>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#addMemberModal">+ Thêm Thành Viên</button>
+
+            </div>
+
+            <!-- Thông báo thành công hoặc lỗi -->
+            @if (TempData["notificationMessage"] != null)
+            {
+                <div class="alert alert-@TempData["notificationType"]" role="alert">
+                    @TempData["notificationMessage"]
+                </div>
+            }
+
+            <form method="get" action="@Url.Action("DSMember")">
+                <div class="search-bar">
+                    <!-- Tìm kiếm theo tên hoặc email -->
+                    <input type="text" name="searchQuery" placeholder="Tìm kiếm theo tên hoặc email" value="@ViewBag.SearchQuery" />
+
+                    <!-- Nút tìm kiếm -->
+                    <button type="submit" id="searchBtn"><i class="fas fa-search"></i></button>
+
+                    <!-- Lọc theo vai trò -->
+                    <select name="role" id="roleSelect">
+                        <option value="">Tất cả vai trò</option>
+                        <option value="Manager" @(ViewBag.Role == "Manager" ? "selected" : "")>Manager</option>
+                        <option value="Developer" @(ViewBag.Role == "Developer" ? "selected" : "")>Developer</option>
+                        <option value="Tester" @(ViewBag.Role == "Tester" ? "selected" : "")>Tester</option>
+                    </select>
+
+                    <!-- Lọc theo trạng thái -->
+                    <select name="status" id="statusSelect">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="true" @(ViewBag.Status == "true" ? "selected" : "")>Active</option>
+                        <option value="false" @(ViewBag.Status == "false" ? "selected" : "")>Offline</option>
+                    </select>
+                </div>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Họ và Tên</th>
+                        <th>Email</th>
+                        <th>Điện Thoại</th>
+                        <th>Vai Trò</th>
+                        <th>Ngày Vào Làm</th>
+                        <th>Thành Viên</th>
+                        <th>Trạng Thái</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
                     {
-                <tr data-id="@member.MemberID">
-                    <td>@member.MemberID</td>
-                    <td>@member.FullName</td>
-                    <td>@member.Email</td>
-                    <td>@member.Phone</td>
-                    <td>@member.Role</td>
-                    <td>@member.HireDate</td>
-                    @*<td>@member.Password</td>*@
-                    @*<td>@member.ImageMember</td>*@
-                    <td>@member.Status</td>
-                    <td class="actions">
-                        <i class="fas fa-edit edit" data-bs-toggle="modal" data-bs-target="#editMemberModal"
-                           onclick="editMember('@member.MemberID')"></i>
-                        <i class="fas fa-trash delete" onclick="deleteMember('@member.MemberID')"></i>
-                    </td>
-                </tr>
+                        foreach (var member in Model)
+                        {
+                            <tr data-id="@member.MemberID">
+                                <td>@member.MemberID</td>
+                                <td>@member.FullName</td>
+                                <td>@member.Email</td>
+                                <td>@member.Phone</td>
+                                <td>@member.Role</td>
+                                <td>@member.HireDate</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(member.ImageMember))
+                                    {
+                                        <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="@member.FullName" width="80" height="80" />
+                                    }
+                                    else
+                                    {
+                                        <span>Không có ảnh</span>
+                                    }
+
+                                </td>
+
+                                <td>@member.Status</td>
+                                <td class="actions">
+                                    <i class="fas fa-edit edit" data-bs-toggle="modal" data-bs-target="#editMemberModal"
+                                       onclick="editMember('@member.MemberID')"></i>
+                                    <i class="fas fa-trash delete" onclick="deleteMember('@member.MemberID')"></i>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" style="text-align: center;">Không có thành viên nào</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="pagination">
+                <a href="#" class="page-link active" data-page="1">1</a>
+                <a href="#" class="page-link" data-page="2">2</a>
+                <a href="#" class="page-link" data-page="3">3</a>
+                <a href="#" class="page-link" data-page="4">4</a>
+                <a href="#" class="page-link" data-page="5">5</a>
+            </div>
+
+        </div>
+
+        <!-- Add Member Modal -->
+        <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+
+                    <form action="/Home/AddMember" method="post" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <!-- Left Column -->
+                            <div class="column">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" class="form-control" name="FullName" id="fullName" placeholder="Enter full name..." required>
+
+                                <label for="email">Email *</label>
+                                <input type="email" class="form-control" name="Email" id="email" placeholder="Enter email..." required>
+
+                                <label for="password">Password *</label>
+                                <input type="password" class="form-control" name="Password" id="password" placeholder="Enter Password..." required>
+
+                                <label for="phone">Phone Number *</label>
+                                <input type="text" class="form-control" name="Phone" id="phone" placeholder="Enter phone number..." required>
+
+                                <label for="role">Role *</label>
+                                <select class="form-select" name="Role" id="role">
+                                    <option>Manager</option>
+                                    <option>Developer</option>
+                                    <option>Tester</option>
+                                </select>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="column">
+                                <label for="hireDate">Hire Date *</label>
+                                <input type="date" class="form-control" name="HireDate" id="hireDate" required>
+
+                                <label for="imageFile">Profile Image</label>
+                                <p id="fileName" style="margin: 5px 0; font-size: 0.9em; color: #555;"></p>
+                                <button type="button" class="btn-upload" id="uploadBtnAdd" onclick="document.getElementById('imageInputAdd').click();">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                                <input type="file" name="ImageFile" id="imageInputAdd" style="display: none;" onchange="handleFileUpload()" />
+                                <img id="previewImage" src="" alt="Preview" style="display: none; margin-top: 10px; width: 100px; height: 100px; border: 1px solid #ddd; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Edit Member Modal -->
+        <div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editMemberModalLabel">Edit New Member</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    <form action="/Home/EditMember" method="post" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <!-- Left Column -->
+                            <div class="row">
+                                <!-- Hidden Field for Member ID -->
+                                <input type="hidden" id="memberId" name="MemberID">
+
+                                <div class="col-md-6">
+                                    <!-- Full Name -->
+                                    <div class="mb-3">
+                                        <label for="fullNameEdit" class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" id="fullNameEdit" name="FullName" placeholder="Enter your full name..." required>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="mb-3">
+                                        <label for="emailEdit" class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="emailEdit" name="Email" placeholder="Enter your email..." required>
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="mb-3">
+                                        <label for="passwordEdit" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="passwordEdit" name="Password" placeholder="Enter Password...">
+                                    </div>
+
+                                    <!-- Phone -->
+                                    <div class="mb-3">
+                                        <label for="phoneEdit" class="form-label">Phone *</label>
+                                        <input type="text" class="form-control" id="phoneEdit" name="Phone" placeholder="Enter your phone..." required>
+                                    </div>
+
+                                    <!-- Role -->
+                                    <div class="mb-3">
+                                        <label for="roleEdit" class="form-label">Role *</label>
+                                        <select class="form-select" id="roleEdit" name="Role" required>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Developer">Developer</option>
+                                            <option value="Tester">Tester</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <!-- Hire Date -->
+                                    <div class="mb-3">
+                                        <label for="hireDateEdit" class="form-label">Hire Date *</label>
+                                        <input type="date" class="form-control" id="hireDateEdit" name="HireDate" required>
+                                    </div>
+
+                                    <!-- Current Image -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Current Member Photo</label>
+                                        <img id="currentImage" src="" alt="currentmemberphoto" class="img-fluid rounded" style="max-width: 100px; margin-top: 10px; border: 1px solid #ddd;">
+                                    </div>
+
+                                    <!-- New Image -->
+                                    <div class="mb-3">
+                                        <label for="imageEdit" class="form-label">Profile Image</label>
+                                        <input type="file" class="form-control" id="imageEdit" name="ImageFile" accept="image/*">
+                                        <img id="previewImageEdit" src="" alt="Preview" style="display: none; margin-top: 10px; width: 100px; height: 100px; border: 1px solid #ddd; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Confirm</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script>
+            /*===============================================================*/
+            //EditMember
+            function editMember(memberID) {
+                // Tìm hàng tương ứng với MemberID
+                const row = document.querySelector(`tr[data-id="${memberID}"]`);
+                if (!row) {
+                    console.error("Không tìm thấy hàng với ID:", memberID);
+                    return;
+                }
+                // Lấy dữ liệu từ các cột trong hàng
+                const fullName = row.querySelector("td:nth-child(2)").innerText.trim();
+                const email = row.querySelector("td:nth-child(3)").innerText.trim();
+                const phone = row.querySelector("td:nth-child(4)").innerText.trim();
+                const role = row.querySelector("td:nth-child(5)").innerText.trim();
+                const hireDate = row.querySelector("td:nth-child(6)").innerText.trim();
+                const imageSrc = row.querySelector("td:nth-child(7) img") ? row.querySelector("td:nth-child(7) img").src : '';
+
+                // Kiểm tra nếu có ảnh, nếu không thì gán ảnh mặc định
+                if (imageSrc) {
+                    document.getElementById("currentImage").src = imageSrc;
+                } else {
+                    document.getElementById("currentImage").src = '/Content/images/default-avatar.jpg'; // Thay đổi link ảnh mặc định nếu cần
+                }
+
+                // Gán dữ liệu vào modal
+                document.getElementById("memberId").value = memberID;
+                document.getElementById("fullNameEdit").value = fullName;
+                document.getElementById("emailEdit").value = email;
+                document.getElementById("phoneEdit").value = phone;
+                document.getElementById("roleEdit").value = role;
+
+                // Kiểm tra và chuyển đổi hireDate nếu cần (dưới đây giả sử nó ở định dạng 'MM/DD/YYYY')
+                const hireDateFormatted = new Date(hireDate);
+                const formattedDate = hireDateFormatted.toISOString().split('T')[0];  // Chuyển đổi sang định dạng YYYY-MM-DD
+                document.getElementById("hireDate").value = formattedDate;
+            }
+            /*===============================================================*/
+            /*===============================================================*/
+            //Xóa Member
+            function deleteMember(id) {
+                if (confirm("Bạn có chắc chắn muốn xóa thành viên này?")) {
+                    $.ajax({
+                        url: '/Home/DeleteMember',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({ memberIds: [id] }), // Gửi danh sách memberIds
+                        success: function (response) {
+                            if (response.success) {
+                                alert(response.message);  // Hiển thị thông báo thành công
+                                const row = document.querySelector(`tr[data-id="${id}"]`);
+                                if (row) {
+                                    row.remove();  // Xóa dòng ngay lập tức
+                                }
+                            } else {
+                                alert(response.message); // Hiển thị thông báo lỗi
+                            }
+                        },
+                        error: function () {
+                            alert("Có lỗi xảy ra khi xóa thành viên.");
+                        }
+                    });
+                }
+            }
+            /*===============================================================*/
+            /*===============================================================*/
+            //Tìm kiếm theo tên hoặc email, trạng thái, vai trò
+            document.getElementById("searchBtn").addEventListener("click", function () {
+                var input = document.getElementById("searchInput").value.toLowerCase(); // Thay đổi ID của input tìm kiếm
+                var rows = document.querySelectorAll(".member-row"); // Thay đổi class của các hàng thành viên
+
+                rows.forEach(function (row) {
+                    var fullName = row.querySelector("td:nth-child(2)").textContent.toLowerCase(); // Tìm kiếm theo tên hoặc email (cột thứ 2 là "Họ và tên")
+                    var email = row.querySelector("td:nth-child(3)").textContent.toLowerCase(); // Cột thứ 3 là "Email"
+
+                    if (fullName.includes(input) || email.includes(input)) { // Tìm kiếm cả tên và email
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+
+            let currentRoleFilter = "";
+            let currentStatusFilter = "";
+
+            // Lắng nghe sự kiện thay đổi vai trò
+            document.getElementById("roleSelect").addEventListener("change", function () {
+                currentRoleFilter = this.value; // Lưu giá trị đã chọn
+                updateFilters();
+            });
+
+            // Lắng nghe sự kiện thay đổi trạng thái
+            document.getElementById("statusSelect").addEventListener("change", function () {
+                currentStatusFilter = this.value; // Lưu giá trị đã chọn
+                updateFilters();
+            });
+
+            // Cập nhật các bộ lọc
+            function updateFilters() {
+                // Lấy giá trị tìm kiếm
+                let searchQuery = document.querySelector("[name='searchQuery']").value;
+
+                // Cập nhật giá trị trong form (role và status)
+                document.querySelector("[name='role']").value = currentRoleFilter;
+                document.querySelector("[name='status']").value = currentStatusFilter;
+
+                // Gửi lại form với các giá trị lọc đã chọn
+                document.querySelector("form").submit();
+            }
+            /*===============================================================*/
+
+            //Upload file
+            function handleFileUpload() {
+                const fileInput = document.getElementById('imageInputAdd');
+                const file = fileInput.files[0];
+                const fileNameDisplay = document.getElementById('fileName');
+                const previewImage = document.getElementById('previewImage');
+
+                if (file) {
+                    const validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                    // Validate the file type
+                    if (!validExtensions.includes(fileExtension)) {
+                        fileNameDisplay.textContent = "Hãy chọn file hình ảnh (.jpg, .jpeg, .png, .gif)";
+                        fileNameDisplay.style.color = "red";
+                        fileInput.value = ""; // Reset input if invalid file
+                        document.getElementById('imageProject').value = ""; // Clear hidden input value
+                        previewImage.style.display = "none"; // Hide preview if error
+                    } else {
+                        // Display file name and show preview
+                        document.getElementById('imageProject').value = file.name;
+                        fileNameDisplay.textContent = "Selected file: " + file.name;
+                        fileNameDisplay.style.color = "#555";
+                        previewImage.src = URL.createObjectURL(file);
+                        previewImage.style.display = "block"; // Show preview
+
+                        // Optional: Clean up object URL to avoid memory leak
+                        previewImage.onload = () => {
+                            URL.revokeObjectURL(previewImage.src);
+                        };
                     }
                 }
-                else
-                {
-                    <tr>
-                        <td colspan="7" style="text-align: center;">Không có thành viên nào</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="pagination">
-            <a href="#">1</a>
-            <a href="#">2</a>
-            <a class="active" href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-        </div>
-    </div>
+            }
+            /*===============================================================*/
+            /*===============================================================*/
+                    $(document).ready(function () {
+            // Bắt sự kiện khi người dùng click vào phân trang
+            $(".pagination .page-link").click(function (e) {
+                e.preventDefault(); // Ngừng hành động mặc định của liên kết
 
-    <!-- Add Member Modal -->
-    <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addMemberModalLabel">Thêm Thành Viên</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="/Home/AddMember" method="post" enctype="multipart/form-data" onsubmit="return validateAddMemberForm()">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="fullName" class="form-label">Họ và Tên *</label>
-                            <input type="text" class="form-control" id="fullName" name="FullName" required>
-                            <div class="invalid-feedback">Vui lòng nhập họ và tên.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="Email" required>
-                            <div class="invalid-feedback">Vui lòng nhập địa chỉ email hợp lệ.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Điện Thoại *</label>
-                            <input type="text" class="form-control" id="phone" name="Phone" required pattern="^(\+?\d{1,4}[\s-]?)?\d{10,15}$">
-                            <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Vai Trò *</label>
-                            <select class="form-control" id="role" name="Role" required>
-                                <option value="">Chọn vai trò</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Developer">Developer</option>
-                                <option value="Tester">Tester</option>
-                            </select>
-                            <div class="invalid-feedback">Vui lòng chọn vai trò.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="hireDate" class="form-label">Ngày vào làm *</label>
-                            <input type="date" class="form-control" id="hireDate" name="HireDate" required>
-                            <div class="invalid-feedback">Vui lòng chọn ngày vào làm.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Mật khẩu *</label>
-                            <input type="password" class="form-control" id="password" name="Password" required>
-                            <div class="invalid-feedback">Vui lòng nhập mật khẩu.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Ảnh Thành Viên</label>
-                            <input type="file" class="form-control" id="image" name="ImageFile" accept="image/*">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary">Thêm</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+                // Lấy số trang từ thuộc tính data-page
+                var pageNumber = $(this).data('page');
 
-    <!-- Edit Member Modal -->
-    <div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editMemberModalLabel">Chỉnh Sửa Thành Viên</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="/Home/EditMember" method="post" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <!-- Hidden field for MemberID -->
-                        <input type="hidden" id="memberId" name="MemberID">
+                // Xóa lớp "active" khỏi tất cả các liên kết
+                $(".pagination .page-link").removeClass('active');
 
-                        <div class="mb-3">
-                            <label for="fullNameEdit" class="form-label">Họ và Tên *</label>
-                            <input type="text" class="form-control" id="fullNameEdit" name="FullName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="emailEdit" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="emailEdit" name="Email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phoneEdit" class="form-label">Điện Thoại *</label>
-                            <input type="text" class="form-control" id="phoneEdit" name="Phone" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="roleEdit" class="form-label">Vai Trò *</label>
-                            <select class="form-control" id="roleEdit" name="Role" required>
-                                <option value="Manager">Manager</option>
-                                <option value="Developer">Developer</option>
-                                <option value="Tester">Tester</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="hireDate" class="form-label">Ngày vào làm *</label>
-                            <input type="date" class="form-control" id="hireDate" name="HireDate" required>
-                            <div class="invalid-feedback">Vui lòng chọn ngày vào làm.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="passwordEdit" class="form-label">Mật khẩu *</label>
-                            <input type="password" class="form-control" id="passwordEdit" name="Password"
-                                   placeholder="Nhập mật khẩu mới nếu cần thay đổi">
-                        </div>
-                        <div class="mb-3">
-                            <label for="imageEdit" class="form-label">Ảnh Thành Viên</label>
-                            <input type="file" class="form-control" id="imageEdit" name="ImageFile">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <script>
-        function editMember(id) {
-    const row = document.querySelector(`tr[data-id="${id}"]`);
-    if (!row) {
-        console.error("Không tìm thấy hàng với id:", id);
-        return;
-    }
+                // Thêm lớp "active" cho liên kết được chọn
+                $(this).addClass('active');
 
-    const fullName = row.querySelector(".fullName")?.innerText || "";
-    const email = row.querySelector(".email")?.innerText || "";
-    const phone = row.querySelector(".phone")?.innerText || "";
-    const role = row.querySelector(".role")?.innerText || "";
-    const hireDate = row.querySelector(".hireDate")?.innerText || ""; // Ngày vào làm
-    const imageMember = row.querySelector(".imageMember img")?.src || "";
-
-    // Log để kiểm tra giá trị
-    console.log({ fullName, email, phone, role, hireDate, imageMember });
-
-    // Gán giá trị vào modal
-    document.getElementById("memberId").value = id;
-    document.getElementById("fullNameEdit").value = fullName;
-    document.getElementById("emailEdit").value = email;
-    document.getElementById("phoneEdit").value = phone;
-    document.getElementById("roleEdit").value = role;
-    document.getElementById("hireDate").value = hireDate; // Định dạng YYYY-MM-DD
-    document.getElementById("imageEditPreview").src = imageMember; // Preview ảnh
-}
-
-
-
-        function deleteMember(id) {
-            if (confirm("Bạn có chắc chắn muốn xóa thành viên này?")) {
+                // Gửi yêu cầu AJAX tới server để lấy dữ liệu cho trang đã chọn
                 $.ajax({
-                    url: '/Home/DeleteMember',
-                    type: 'POST',
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({ memberIds: [id] }), // Gửi danh sách memberIds
-                    success: function (response) {
-                        if (response.success) {
-                            alert(response.message);  // Hiển thị thông báo thành công
-                            const row = document.querySelector(`tr[data-id="${id}"]`);
-                            if (row) {
-                                row.remove();  // Xóa dòng ngay lập tức
-                            }
+                    url: '@Url.Action("DSMember", "ControllerName")', // Thay "ControllerName" bằng tên controller thực tế
+                    type: 'GET',
+                    data: {
+                        page: pageNumber,
+                        searchQuery: $("#searchQuery").val(), // Lọc theo tên/email
+                        role: $("#roleSelect").val(), // Lọc theo vai trò
+                        status: $("#statusSelect").val() // Lọc theo trạng thái
+                    },
+                    success: function (data) {
+                        // Cập nhật danh sách thành viên trên trang
+                        // Kiểm tra nếu không có dữ liệu
+                        if (data.trim() === "") {
+                            $("#membersTableBody").html('<tr><td colspan="8" style="text-align: center;">Không có nhân viên nào</td></tr>');
                         } else {
-                            alert(response.message); // Hiển thị thông báo lỗi
+                            $("#membersTableBody").html(data);
                         }
                     },
                     error: function () {
-                        alert("Có lỗi xảy ra khi xóa thành viên.");
+                        alert('Có lỗi xảy ra khi tải dữ liệu');
                     }
                 });
-            }
-        }
-    </script>
+            });
+        });
+
+
+
+        </script>
+    </body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -36,11 +36,12 @@
     .action-buttons .btn {
         font-size: 0.9rem;
         padding: 5px 10px;
-        width:150px
+        width: 150px
     }
-    .action-buttons .btn i{
-        padding-right:5px;
-    }
+
+        .action-buttons .btn i {
+            padding-right: 5px;
+        }
 
 .search-bar {
     display: flex;
@@ -421,11 +422,11 @@ textarea {
         color: #187498;
         font-size: 14px;
         cursor: pointer;
-        padding:7px;
+        padding: 7px;
     }
 
         .popup-delete-container .delete-btn:hover {
-            text-decoration:none;
+            text-decoration: none;
             background-color: #e09898;
         }
 
