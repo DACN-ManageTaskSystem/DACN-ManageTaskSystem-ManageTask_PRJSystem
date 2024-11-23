@@ -95,6 +95,7 @@ namespace ManageTaskWeb.Controllers
             data.SubmitChanges();
 
             // Nếu đăng nhập thành công, lưu thông tin vào session
+            Session["Password"] = decryptedPassword;
             Session["MemberID"] = member.MemberID;
             Session["FullName"] = member.FullName;
             Session["Role"] = member.Role;
@@ -109,6 +110,33 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public ActionResult ChangePassword(string oldPassword, string newPassword)
+        {
+            var sessionPassword = Session["Password"]?.ToString();
+            if (sessionPassword == null)
+            {
+                ViewBag.ErrorMessage = "Session expired. Please log in again.";
+                return RedirectToAction("Login", "Home");
+            }
+
+            // So sánh mật khẩu cũ
+            if (oldPassword != sessionPassword)
+            {
+                ViewBag.ErrorMessage = "Old password is incorrect.";
+                return View();
+            }
+
+            var MemberID_Session = Session["MemberID"].ToString();
+            var currentMember = data.Members.SingleOrDefault(m => m.MemberID == MemberID_Session);
+
+         
+            currentMember.Password = EncryptPassword(newPassword, "mysecretkey");
+            data.SubmitChanges();
+
+            return View("TrangChu");
+        }
+
         //Load Thong bao 
 
         public JsonResult GetNotifications()
