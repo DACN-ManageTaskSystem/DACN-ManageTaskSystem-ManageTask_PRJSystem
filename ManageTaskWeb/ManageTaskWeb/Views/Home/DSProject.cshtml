@@ -100,6 +100,7 @@
                             <td>
                                 <div class="avatar-group">
                                     <a href="@Url.Action("MembersOfProject", "Home", new { projectId = project.ProjectID })">
+                                        <button>abc</button>
                                         @for (int i = 0; i < Math.Min(3, project.Members.Count); i++)
                                         {
                                             var member = project.Members[i];

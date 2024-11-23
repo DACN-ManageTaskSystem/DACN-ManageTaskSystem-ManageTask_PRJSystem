@@ -25,7 +25,7 @@ namespace ManageTaskWeb.Controllers
         //DangNhap-GET
         public ActionResult DangNhap()
         {
-          
+
             return View();
         }
         public static string EncryptPassword(string plainText, string key)
@@ -71,7 +71,7 @@ namespace ManageTaskWeb.Controllers
         [HttpPost]
         public ActionResult DangNhap(string username, string password)
         {
-           
+
             // Tìm kiếm thành viên
             var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.deleteTime == null);
 
@@ -81,7 +81,7 @@ namespace ManageTaskWeb.Controllers
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
-            
+
             // Giải mã mật khẩu
             string decryptedPassword = DecryptPassword(member.Password, "mysecretkey");
             if (decryptedPassword != password)
@@ -90,7 +90,7 @@ namespace ManageTaskWeb.Controllers
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
-            
+
             member.Status = "Active";
             data.SubmitChanges();
 
@@ -105,9 +105,8 @@ namespace ManageTaskWeb.Controllers
             // Chuyển hướng về trang chủ sau khi đăng nhập thành công
             return RedirectToAction("TrangChu");
         }
-   
-        //Load Thong bao 
 
+        //Load Thong bao 
         public JsonResult GetNotifications()
         {
             if (Session["MemberID"] != null)
@@ -142,8 +141,7 @@ namespace ManageTaskWeb.Controllers
             // If MemberID is null, return an error response
             return Json(new { success = false, message = "User not logged in" }, JsonRequestBehavior.AllowGet);
         }
-
-        //An Accept trong thong bao
+        //Accept trong thong bao
         [HttpPost]
         public JsonResult AcceptJoinRequest(string notificationId)
         {
@@ -264,8 +262,7 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = "Error processing your request: " + ex.Message });
             }
         }
-
-        //An Reject trong thong bao
+        //Reject trong thong bao
         [HttpPost]
         public JsonResult RejectJoinRequest(int notificationId, string reason)
         {
@@ -293,9 +290,7 @@ namespace ManageTaskWeb.Controllers
                     .FirstOrDefault(pm => pm.MemberID == requestMemberId && pm.ProjectID == projectId && pm.Status == "Pending");
                 if (projectMember != null)
                 {
-                    projectMember.Status = "Rejected";
-                    projectMember.Reason = reason; // Lưu lý do từ chối
-                    data.SubmitChanges();
+                     data.ProjectMembers.DeleteOnSubmit(projectMember);
                 }
 
                 // Xóa tất cả thông báo có cùng ExtraData
@@ -329,7 +324,78 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
+        //Hien danh sach REquest trong moi project
+        public ActionResult GetJoinRequests(string projectId)
+        {
+            // Lấy tất cả các thông báo với NotificationType là "JoinRequest"
+            var notifications = data.Notifications
+                .Where(n => n.NotificationType == "JoinRequest")
+                .ToList(); // Tải tất cả thông báo vào bộ nhớ
 
+            // Lọc các thông báo có chứa "ProjectID" trong ExtraData và so sánh với projectId
+            var requestMemberData = notifications
+                .Where(n =>
+                {
+                    try
+                    {
+                        // Giải mã ExtraData từ chuỗi JSON thành Dictionary
+                        var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(n.ExtraData);
+
+                        // Kiểm tra xem ExtraData có chứa ProjectID và có giá trị khớp với projectId không
+                        return extraData.ContainsKey("ProjectID") && extraData["ProjectID"] == projectId;
+                    }
+                    catch
+                    {
+                        // Bỏ qua thông báo có ExtraData không hợp lệ
+                        return false;
+                    }
+                })
+                .Select(n =>
+                {
+                    // Giải mã ExtraData một lần nữa để lấy thông tin RequestMemberID
+                    var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(n.ExtraData);
+                    return new
+                    {
+                        NotificationID = n.NotificationID,  // Thêm NotificationID vào kết quả
+                        RequestMemberID = extraData.ContainsKey("RequestMemberID") ? extraData["RequestMemberID"] : null
+                    };
+                })
+                .ToList();  // Chỉ xử lý sau khi đã tải dữ liệu vào bộ nhớ
+
+            // Lấy danh sách các MemberID từ dữ liệu đã truy vấn
+            var requestMemberIds = requestMemberData.Select(r => r.RequestMemberID).ToList();
+
+            // Truy vấn bảng Members để lấy thông tin chi tiết của thành viên
+            var members = data.Members
+                .Where(m => requestMemberIds.Contains(m.MemberID)) // Lọc thành viên theo MemberID đã lấy
+                .ToList();
+
+            // Kết hợp thông tin của members và requestMemberData (NotificationID)
+            var result = members.Select(m => new
+            {
+                m.MemberID,
+                m.FullName,
+                m.Role,
+                NotificationIDs = requestMemberData
+                    .Where(r => r.RequestMemberID == m.MemberID)
+                    .Select(r => r.NotificationID)
+                    .ToList()
+            }).ToList();
+
+            // Trả về JSON danh sách các thành viên yêu cầu tham gia cùng với NotificationID
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+
+
+
+
+
+
+
+        //Accept Request trong View
 
 
 
@@ -686,7 +752,6 @@ namespace ManageTaskWeb.Controllers
 
             return Json(new { success = true, message = "Your join request has been submitted successfully." });
         }
-
         //PROJECT - END
 
         //Danh sach Member trong Project
@@ -698,7 +763,7 @@ namespace ManageTaskWeb.Controllers
                              .Select(pm => pm.Member)
                              .Distinct()
                              .ToList();
-
+            ViewBag.ProjectId = projectId;
             return View(members);
         }
 
@@ -838,8 +903,8 @@ namespace ManageTaskWeb.Controllers
                     TaskID = task.TaskID,
                     TaskName = task.TaskName,
                     Description = task.Description,
-                    StartDate = task.StartDate ?? DateTime.MinValue,  
-                    EndDate = task.EndDate ?? DateTime.MinValue,      
+                    StartDate = task.StartDate ?? DateTime.MinValue,
+                    EndDate = task.EndDate ?? DateTime.MinValue,
                     Priority = task.Priority ?? 0,
                     Status = task.Status,
                     // If you want to get the MemberID from TaskAssignments, you can map it like so
@@ -1121,7 +1186,7 @@ namespace ManageTaskWeb.Controllers
                     Email = Email,
                     Phone = Phone,
                     Role = Role,
-                    HireDate = DateTime.Now,                  
+                    HireDate = DateTime.Now,
                     Status = "Offline",
                     //Password = Password,
                     //ImageMember = ImageMember,
@@ -1136,7 +1201,7 @@ namespace ManageTaskWeb.Controllers
             {
                 return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi thêm thành viên!", notificationType = "error" });
             }
-            }
+        }
         //Edit Member
         [HttpPost]
         public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, DateTime HireDate, HttpPostedFileBase ImageFile)
@@ -1152,7 +1217,7 @@ namespace ManageTaskWeb.Controllers
                     member.Role = Role;
                     //member.HireDate = HireDate;
                     //member.Password = Password;
-                    
+
 
                     if (!string.IsNullOrEmpty(Password))
                     {
@@ -1193,8 +1258,10 @@ namespace ManageTaskWeb.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = "Có lỗi xảy ra khi xóa thành viên: " + ex.Message });
-}}
+            }
+        }
 
-        
+
+
     }
 }
