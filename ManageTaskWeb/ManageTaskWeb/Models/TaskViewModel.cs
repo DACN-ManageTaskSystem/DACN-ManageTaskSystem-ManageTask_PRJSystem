@@ -16,9 +16,12 @@ namespace ManageTaskWeb.Models
         public DateTime? EndDate { get; set; }   // Nullable DateTime
         public int? Priority { get; set; }       // Nullable int
         public string Status { get; set; }
+
+
         public List<TaskViewModel> ListTasks { get; set; }
         public List<MemberViewModel> AssignedMembers { get; set; }
-       
+        public List<MemberViewModel> ProjectMembers { get; set; }
+
         public MemberViewModel Creator { get; set; }            // Người tạo
     }
      

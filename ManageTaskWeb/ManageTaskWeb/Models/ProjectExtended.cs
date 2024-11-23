@@ -10,5 +10,6 @@ namespace ManageTaskWeb.Models
         public int MemberCount { get; set; }
 
         public List<MemberDTO> Members { get; set; }
+
     }
 }

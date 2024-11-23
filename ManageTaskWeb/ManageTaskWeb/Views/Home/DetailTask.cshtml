@@ -516,27 +516,21 @@
         }
 
     .avatar {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
-        margin-right: 10px;
+        overflow: hidden;
+        display: inline-block;
+        margin-right:30px;
     }
 
-    .avatar-green {
-        background-color: #9bc47d;
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .avatar-orange {
-        background-color: #f5a623;
-    }
-
-    .avatar-blue {
-        background-color: #4a90e2;
-    }
-
-    .avatar-yellow {
-        background-color: #ffd700;
-    }
+    
 
     .info {
         flex: 1;
@@ -823,48 +817,31 @@
                         <label for="toggle-members"></label>
                     </div>
                 </div>
-                <ul class="member-list">
-                    <li>
-                        <div class="avatar avatar-green"></div>
-                        <div class="info">
-                            <p>Nguyễn Nhật Quân</p>
-                            <span class="role">Developer</span>
+                @foreach (var member in Model.ProjectMembers)
+                {
+                    <ul class="member-list">
+                        <li>
+                            <div class="avatar">
+                                <!-- Display the member's image if available -->
+                                <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)"  class="avatar-img" />
+                            </div>
+                            <div class="info">
+                                <p>@member.FullName</p>
+                                <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
+                            </div>
+                            <button class="add-button">➕</button>
+                        </li>
+                     </ul>
+                  }
+                      
+                        <div class="pagination">
+                            <button>◀</button>
+                            <button class="active">1</button>
+                            <button>2</button>
+                            <button>3</button>
+                            <button>▶</button>
                         </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-orange"></div>
-                        <div class="info">
-                            <p>Huỳnh Bảo Ngọc</p>
-                            <span class="role">Developer</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-blue"></div>
-                        <div class="info">
-                            <p>Trần Phương Uyên</p>
-                            <span class="role">Tester</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-yellow"></div>
-                        <div class="info">
-                            <p>Đỗ Lan Hương</p>
-                            <span class="role">Developer</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
-                </ul>
-                <div class="pagination">
-                    <button>◀</button>
-                    <button class="active">1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>▶</button>
                 </div>
-            </div>
 
             <!-- Members In Project -->
             <div class="panel">
@@ -877,29 +854,22 @@
                         <label for="toggle-project-members"></label>
                     </div>
                 </div>
-                <ul class="member-list">
-                    <li>
-                        <div class="avatar avatar-yellow"></div>
-                        <div class="info">
-                            <p>Phạm Nguyên Vũ</p>
-                            <span class="role project-manager">Project Manager</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-orange"></div>
-                        <div class="info">
-                            <p>Trương Minh Trang</p>
-                            <span class="role">Developer</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="avatar avatar-blue"></div>
-                        <div class="info">
-                            <p>Trần Phương Lan</p>
-                            <span class="role">Tester</span>
-                        </div>
-                    </li>
-                </ul>
+                @foreach (var member in Model.AssignedMembers)
+                {
+                    <ul class="member-list">
+                        <li>
+                            <div class="avatar">
+                                <!-- Display the member's image if available -->
+                                <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" class="avatar-img" />
+                            </div>
+                            <div class="info">
+                                <p>@member.FullName</p>
+                                <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
+                            </div>
+                            <button class="add-button">➕</button>
+                        </li>
+                    </ul>
+                }
                 <div class="pagination">
                     <button>◀</button>
                     <button class="active">1</button>
@@ -1018,8 +988,6 @@
             });
         }
     }
-
-
 
     document.getElementById('button-member').addEventListener('click', function () {
         var overlay = document.getElementById('overlay');

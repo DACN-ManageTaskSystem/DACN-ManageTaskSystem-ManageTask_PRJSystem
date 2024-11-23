@@ -829,6 +829,7 @@ namespace ManageTaskWeb.Controllers
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
+            
             if (taskId == null)
                 return HttpNotFound();  // Nếu không có taskId, trả về lỗi Not Found
 
@@ -900,9 +901,20 @@ namespace ManageTaskWeb.Controllers
                                            Role = member.Role,
                                            ImageMember = member.ImageMember
                                        }).ToList(),
+                    ProjectMembers = (from pm in data.ProjectMembers
+                                      join m in data.Members on pm.MemberID equals m.MemberID
+                                      where pm.ProjectID == task.ProjectID && pm.Status == "Accepted"
+                                      select new MemberViewModel
+                                      {
+                                          MemberID = m.MemberID,        // Correct reference to 'm'
+                                          FullName = m.FullName,        // Correct reference to 'm'
+                                          Role = m.Role,                // Correct reference to 'm'
+                                          ImageMember = m.ImageMember  // Correct reference to 'm'
+                                      }).ToList(),
                     Creator = creator,  // Assign the creator here
                     ListTasks = listTasks  // Assign the list of tasks here
                 };
+                
 
                 return View(viewModel);
             }
