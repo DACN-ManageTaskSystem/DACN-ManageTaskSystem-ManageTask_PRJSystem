@@ -105,7 +105,10 @@ namespace ManageTaskWeb.Controllers
             // Chuyển hướng về trang chủ sau khi đăng nhập thành công
             return RedirectToAction("TrangChu");
         }
-   
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
         //Load Thong bao 
 
         public JsonResult GetNotifications()
