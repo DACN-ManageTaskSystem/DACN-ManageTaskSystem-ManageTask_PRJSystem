@@ -28,6 +28,7 @@ namespace ManageTaskWeb.Controllers
 
             return View();
         }
+        //Ma hoa
         public static string EncryptPassword(string plainText, string key)
         {
             using (Aes aes = Aes.Create())
@@ -44,6 +45,7 @@ namespace ManageTaskWeb.Controllers
                 }
             }
         }
+        //Giai ma
         public static string DecryptPassword(string encryptedText, string key)
         {
             using (Aes aes = Aes.Create())
@@ -106,10 +108,12 @@ namespace ManageTaskWeb.Controllers
             // Chuyển hướng về trang chủ sau khi đăng nhập thành công
             return RedirectToAction("TrangChu");
         }
+        //Hien thi View Doi MK
         public ActionResult ChangePassword()
         {
             return View();
         }
+        //Chuc nang doi mat khau
         [HttpPost]
         public ActionResult ChangePassword(string oldPassword, string newPassword)
         {
@@ -416,20 +420,6 @@ namespace ManageTaskWeb.Controllers
             // Trả về JSON danh sách các thành viên yêu cầu tham gia cùng với NotificationID
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-
-
-
-
-
-
-
-
-
-
-        //Accept Request trong View
-
-
-
         //DangXuat
         public ActionResult Logout()
         {
@@ -896,6 +886,7 @@ namespace ManageTaskWeb.Controllers
 
             }
         }
+        //Toggle status
         [HttpPost]
         public ActionResult ToggleStatus(int taskId, string status)
         {
@@ -922,9 +913,6 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
-
-
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
@@ -1017,9 +1005,8 @@ namespace ManageTaskWeb.Controllers
 
                 return View(viewModel);
             }
-        }
-        
-
+        }   
+        //Xoa task
         [HttpPost]
         public ActionResult DeleteTaskByMember(string memberId, int taskId)
         {
@@ -1074,8 +1061,7 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
-
-        // Thêm  SubTask
+        // Them Subtask
         
         [HttpPost]
         public ActionResult CreateSubTask(SubTask subTask)
@@ -1363,10 +1349,10 @@ namespace ManageTaskWeb.Controllers
             }
             return Json(new { success = false });
         }
-
         //CHAT - END
 
 
+        //MEMBER - START
         public ActionResult DSMember(string searchQuery, string role, string status)
         {
             var roleSession = Session["Role"]?.ToString();
@@ -1449,17 +1435,6 @@ namespace ManageTaskWeb.Controllers
             return View(members);
         }
 
-
-
-        public string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            }
-        }
-
         // Hàm tạo ID thành viên duy nhất
         public string GenerateMemberID()
         {
@@ -1467,11 +1442,11 @@ namespace ManageTaskWeb.Controllers
             DateTime now = DateTime.Now;
 
             // Định dạng thành chuỗi: HHmmssddMMyyyy
-            string formattedTime = now.ToString("HHmmssddMMyyyy");
+            string formattedTime = now.ToString("HHmmssddMMyy");
 
             return formattedTime;
         }
-
+        //Kiem tra trung MemberID
         public string GetUniqueMemberID()
         {
             string memberIDnew;
@@ -1486,7 +1461,6 @@ namespace ManageTaskWeb.Controllers
 
             return memberIDnew;
         }
-
         // Action AddMember
         [HttpPost]
         public ActionResult AddMember(string FullName, string Email, string Phone, string Role, string Password, string ImageMember, string HireDate, HttpPostedFileBase ImageFile)
@@ -1509,7 +1483,7 @@ namespace ManageTaskWeb.Controllers
                 }
 
                 // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
-                string encryptedPassword = EncryptPassword(Password, "your-secret-key");
+                string encryptedPassword = EncryptPassword(Password, "mysecretkey");
 
                 // Chuyển đổi HireDate từ string sang DateTime
                 DateTime hireDate = DateTime.Parse(HireDate);
@@ -1543,7 +1517,6 @@ namespace ManageTaskWeb.Controllers
             }
         }
         //Edit Member
-
         [HttpPost]
         public ActionResult EditMember(string MemberID, string FullName, string Email, string Phone, string Role, string Password, string ImageMember, string HireDate, HttpPostedFileBase ImageFile)
         {
@@ -1600,8 +1573,7 @@ namespace ManageTaskWeb.Controllers
                 return RedirectToAction("DSMember", new { notificationMessage = "Đã xảy ra lỗi khi sửa thành viên!", notificationType = "error" });
             }
         }
-
-
+        //Xoa member
         [HttpPost]
         public JsonResult DeleteMember(List<string> memberIds)
         {

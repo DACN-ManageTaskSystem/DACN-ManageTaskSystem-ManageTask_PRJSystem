@@ -490,3 +490,19 @@ textarea {
 .cancel-btn:hover {
     background-color: #c82333;
 }
+
+.sortable {
+    cursor: pointer;
+}
+
+.sortable i {
+    margin-left: 5px;
+}
+
+.sortable.asc i:before {
+    content: "\f0de";  /* Font Awesome sort-up icon */
+}
+
+.sortable.desc i:before {
+    content: "\f0dd";  /* Font Awesome sort-down icon */
+}
