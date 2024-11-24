@@ -579,6 +579,7 @@ namespace ManageTaskWeb.Controllers
                                {
                                    ProjectID = p.ProjectID,
                                    ProjectName = p.ProjectName,
+                                   Description =p.Description,
                                    StartDate = p.StartDate,
                                    EndDate = p.EndDate,
                                    Status = p.Status,
@@ -619,6 +620,7 @@ namespace ManageTaskWeb.Controllers
                                {
                                    ProjectID = p.ProjectID,
                                    ProjectName = p.ProjectName,
+                                   Description = p.Description,
                                    StartDate = p.StartDate,
                                    EndDate = p.EndDate,
                                    Status = p.Status,
@@ -1147,7 +1149,10 @@ namespace ManageTaskWeb.Controllers
         {
             var role = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
-
+            var project = data.Projects.FirstOrDefault(p=>p.ProjectID == projectId);
+                
+                ViewBag.ProjectStartDate = project.StartDate;
+                ViewBag.ProjectEndDate = project.EndDate;
             // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
             if (role == "Manager" || role == "Admin")
             {

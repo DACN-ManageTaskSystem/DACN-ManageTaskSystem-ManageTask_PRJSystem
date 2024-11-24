@@ -425,7 +425,7 @@
                                 <td>@member.Email</td>
                                 <td>@member.Phone</td>
                                 <td>@member.Role</td>
-                                <td>@member.HireDate</td>
+                                <td>@member.HireDate.Value.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(member.ImageMember))
                                     {
@@ -613,12 +613,12 @@
             /*===============================================================*/
             //EditMember
             function editMember(memberID) {
-                // Tìm hàng tương ứng với MemberID
                 const row = document.querySelector(`tr[data-id="${memberID}"]`);
                 if (!row) {
                     console.error("Không tìm thấy hàng với ID:", memberID);
                     return;
                 }
+                
                 // Lấy dữ liệu từ các cột trong hàng
                 const fullName = row.querySelector("td:nth-child(2)").innerText.trim();
                 const email = row.querySelector("td:nth-child(3)").innerText.trim();
@@ -627,11 +627,11 @@
                 const hireDate = row.querySelector("td:nth-child(6)").innerText.trim();
                 const imageSrc = row.querySelector("td:nth-child(7) img") ? row.querySelector("td:nth-child(7) img").src : '';
 
-                // Kiểm tra nếu có ảnh, nếu không thì gán ảnh mặc định
+                // Kiểm tra và gán ảnh
                 if (imageSrc) {
                     document.getElementById("currentImage").src = imageSrc;
                 } else {
-                    document.getElementById("currentImage").src = '/Content/images/default-avatar.jpg'; // Thay đổi link ảnh mặc định nếu cần
+                    document.getElementById("currentImage").src = '/Content/images/default-avatar.jpg';
                 }
 
                 // Gán dữ liệu vào modal
@@ -641,10 +641,10 @@
                 document.getElementById("phoneEdit").value = phone;
                 document.getElementById("roleEdit").value = role;
 
-                // Kiểm tra và chuyển đổi hireDate nếu cần (dưới đây giả sử nó ở định dạng 'MM/DD/YYYY')
-                const hireDateFormatted = new Date(hireDate);
-                const formattedDate = hireDateFormatted.toISOString().split('T')[0];  // Chuyển đổi sang định dạng YYYY-MM-DD
-                document.getElementById("hireDate").value = formattedDate;
+                // Chuyển đổi định dạng ngày từ dd/MM/yyyy sang yyyy-MM-dd
+                const [day, month, year] = hireDate.split('/');
+                const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                document.getElementById("hireDateEdit").value = formattedDate;  // Sửa ID từ hireDate thành hireDateEdit
             }
             /*===============================================================*/
             /*===============================================================*/

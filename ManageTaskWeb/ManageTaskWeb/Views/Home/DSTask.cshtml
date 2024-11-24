@@ -2,6 +2,9 @@
     ViewBag.Title = "Task Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var projectId = Request.QueryString["projectId"];
+    // Sửa lại cách lấy giá trị từ ViewBag
+    var projectStartDate = ViewBag.ProjectStartDate.ToString("yyyy-MM-dd");
+    var projectEndDate = ViewBag.ProjectEndDate.ToString("yyyy-MM-dd");
 }
 @model List<ManageTaskWeb.Models.Task>
 <link href="@Url.Content("~/Content/css/task.css?v=1")" rel="stylesheet" />
@@ -257,7 +260,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addTaskModalLabel">Add New Task</h5>
+                <h5 class="modal-title" id="addTaskModalLabel">Add New Parent Task</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="/Home/AddTask" method="post" enctype="multipart/form-data">
@@ -274,15 +277,15 @@
                             <label for="projectId">Project ID *</label>
                             <input type="text" class="form-control" name="ProjectID" id="projectId" value="@projectId" readonly>
 
-                            <label for="parentTaskId">Parent Task ID</label>
-                            <input type="text" class="form-control" name="ParentTaskID" id="parentTaskId" placeholder="Enter parent task ID...">
                         </div>
                         <div class="col-md-6">
                             <label for="startDate">Start Date</label>
-                            <input type="date" class="form-control" name="StartDate" id="startDate" required>
+                            <input type="date" class="form-control" name="StartDate" id="startDate" 
+                                   required min="@projectStartDate" max="@projectEndDate">
 
                             <label for="endDate">End Date</label>
-                            <input type="date" class="form-control" name="EndDate" id="endDate" required>
+                            <input type="date" class="form-control" name="EndDate" id="endDate" 
+                                   required min="@projectStartDate" max="@projectEndDate">
 
                             <label for="priority">Priority</label>
                             <div class="custom-dropdown">
@@ -312,10 +315,7 @@
 
                             <label for="status">Status</label>
                             <select class="form-select" name="Status" id="status">
-                                <option>On Hold</option>
                                 <option>Pending</option>
-                                <option>In Progress</option>
-                                <option>Completed</option>
                             </select>
                         </div>
                     </div>
@@ -358,10 +358,12 @@
                             <input type="text" class="form-control" name="ParentTaskID" id="editParentTaskId" placeholder="Enter parent task ID...">
 
                             <label for="editStartDate">Start Date</label>
-                            <input type="date" class="form-control" name="StartDate" id="editStartDate" required>
+                            <input type="date" class="form-control" name="StartDate" id="editStartDate" 
+                                   required min="@projectStartDate" max="@projectEndDate">
 
                             <label for="editEndDate">End Date</label>
-                            <input type="date" class="form-control" name="EndDate" id="editEndDate" required>
+                            <input type="date" class="form-control" name="EndDate" id="editEndDate" 
+                                   required min="@projectStartDate" max="@projectEndDate">
 
                             <label for="priority">Priority</label>
                             <div class="custom-dropdown">
@@ -521,5 +523,23 @@
             showNotificationPopup(message, type);
         }
     };
+
+    // Add this validation function
+    function validateDates(startDateId, endDateId) {
+        const startDate = document.getElementById(startDateId);
+        const endDate = document.getElementById(endDateId);
+        
+        startDate.addEventListener('change', function() {
+            endDate.min = this.value;
+        });
+        
+        endDate.addEventListener('change', function() {
+            startDate.max = this.value;
+        });
+    }
+
+    // Initialize validation for both modals
+    validateDates('startDate', 'endDate');
+    validateDates('editStartDate', 'editEndDate');
 </script>
 
