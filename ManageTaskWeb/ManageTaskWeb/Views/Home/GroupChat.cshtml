@@ -77,10 +77,13 @@
             </form>
 
 
-            @foreach (var interaction in Model.Interactions.OrderByDescending(i => i.IsPinned).ThenByDescending(i => i.InteractionDate))
+            @foreach (var interaction in Model.Interactions
+                .OrderByDescending(i => i.IsPinned)  // Sắp xếp tin nhắn được ghim lên trước
+                .ThenByDescending(i => i.InteractionDate)) // Sau đó sắp xếp theo thời gian mới nhất
             {
                 var timeElapsed = DateTime.Now - (interaction.InteractionDate ?? DateTime.Now);
                 string timeDisplay;
+                bool canEditDelete = timeElapsed.TotalMinutes <= 5; // Kiểm tra có trong khoảng 5 phút không
 
                 if (timeElapsed.TotalMinutes < 1)
                 {
@@ -99,10 +102,34 @@
                     timeDisplay = (int)timeElapsed.TotalDays + " ngày trước";
                 }
 
-                <div class="comment">
+                <div class="comment @(interaction.IsPinned == true ? "pinned" : "")">
                     <img src="~/Content/images/member-img/@interaction.Member.ImageMember" alt="User profile picture">
                     <div class="comment-content">
-                        <h3>@interaction.Member.FullName</h3>
+                        <div class="comment-header">
+                            <h3>@interaction.Member.FullName</h3>
+                            @if (Session["Role"] != null &&
+                                (Session["Role"].ToString() == "Admin" ||
+                                 Session["Role"].ToString() == "Manager" ||
+                                 Session["MemberID"].ToString() == interaction.MemberID.ToString()))
+                            {
+                                <div class="options-menu-container">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    <ul class="options-menu">
+                                        @if (canEditDelete)
+                                        {
+                                            <li onclick="editMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">Sửa</li>
+                                            <li onclick="deleteMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">Xóa</li>
+                                        }
+                                        @if (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager")
+                                        {
+                                            <li onclick="togglePinMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">
+                                                @(interaction.IsPinned == true ? "Bỏ ghim" : "Ghim")
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
                         <p class="time">@timeDisplay</p>
                         <p class="message short-message">
                             @if (interaction.IsPinned == true)
@@ -119,27 +146,6 @@
                         </p>
 
                         <p class="role">@interaction.Member.Role</p>
-
-                        <!-- Icon ba chấm và menu -->
-                        @if (Session["Role"] != null &&
-                            (Session["Role"].ToString() == "Admin" ||
-                             Session["Role"].ToString() == "Manager" ||
-                             Session["MemberID"].ToString() == interaction.MemberID.ToString()))
-                        {
-                            <div class="options-menu-container">
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                <ul class="options-menu">
-                                    <li onclick="editMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">Sửa</li>
-                                    <li onclick="deleteMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">Xóa</li>
-                                    @if (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager")
-                                    {
-                                        <li onclick="togglePinMessage(@interaction.InteractionID, '@ViewBag.ProjectID')">
-                                            @(interaction.IsPinned == true ? "Bỏ ghim" : "Ghim")
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        }
                     </div>
                 </div>
             }
@@ -207,13 +213,14 @@
     .options-menu-container {
         position: relative;
         display: inline-block;
-        margin-left: auto;
         cursor: pointer;
+        padding: 5px;
     }
 
     .options-icon {
         font-size: 16px;
         color: #333;
+        
     }
 
     .options-menu {
@@ -245,6 +252,31 @@
     /* Hiển thị menu khi có class 'show' */
     .options-menu-container:hover .options-menu {
         display: block;
+    }
+
+    .comment.pinned {
+        background-color: rgba(255, 255, 0, 0.1);
+        border-left: 3px solid #ffd700;
+    }
+
+    .pinned-label {
+        background-color: #ffd700;
+        color: #000;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-right: 8px;
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .comment-header h3 {
+        margin: 0;
     }
 
 </style>

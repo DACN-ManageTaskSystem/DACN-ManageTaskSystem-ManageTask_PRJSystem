@@ -1629,7 +1629,8 @@ namespace ManageTaskWeb.Controllers
                     ProjectID = ProjectID,
                     MemberID = memberID,
                     InteractionDate = DateTime.Now,
-                    Message = Message
+                    Message = Message,
+                    IsPinned = false
                 };
 
                 // Lưu vào cơ sở dữ liệu
@@ -1680,7 +1681,7 @@ namespace ManageTaskWeb.Controllers
             var message = data.Interactions.FirstOrDefault(m => m.InteractionID == messageId);
             if (message != null)
             {
-                //message.IsPinned = true;
+                message.IsPinned = true;
                 data.SubmitChanges();
             }
             return RedirectToAction("GroupChat", new { projectId = projectId });
@@ -1692,9 +1693,7 @@ namespace ManageTaskWeb.Controllers
             var interaction = data.Interactions.FirstOrDefault(i => i.InteractionID == messageId && i.ProjectID == projectId);
             if (interaction != null)
             {
-                // Đảo trạng thái ghim và cập nhật ngày tương tác
-                //interaction.IsPinned = !(interaction.IsPinned ?? false);
-                interaction.InteractionDate = DateTime.Now;
+                interaction.IsPinned = !(interaction.IsPinned ?? false);
                 data.SubmitChanges();
                 return Json(new { success = true });
             }
