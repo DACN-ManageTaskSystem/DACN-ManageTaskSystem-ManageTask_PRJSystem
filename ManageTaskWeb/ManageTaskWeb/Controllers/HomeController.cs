@@ -22,12 +22,8 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
-        //DangNhap-GET
-        public ActionResult DangNhap()
-        {
-
-            return View();
-        }
+        
+        #region MA-HOA
         //Ma hoa
         public static string EncryptPassword(string plainText, string key)
         {
@@ -69,6 +65,17 @@ namespace ManageTaskWeb.Controllers
                 }
             }
         }
+
+        #endregion
+
+        #region LOGIN - LOGOUT - CHANGE PASSWORD
+        //DangNhap-GET
+        public ActionResult DangNhap()
+        {
+
+            return View();
+        }
+
         //DangNhap-POST
         [HttpPost]
         public ActionResult DangNhap(string username, string password)
@@ -108,6 +115,29 @@ namespace ManageTaskWeb.Controllers
             // Chuyển hướng về trang chủ sau khi đăng nhập thành công
             return RedirectToAction("TrangChu");
         }
+
+        //DangXuat
+        public ActionResult Logout()
+        {
+            // Lấy MemberID từ session để cập nhật trạng thái thành Offline
+            var memberId = Session["MemberID"]?.ToString();
+            if (memberId != null)
+            {
+                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
+                if (member != null)
+                {
+                    member.Status = "Offline";
+                    data.SubmitChanges();
+                }
+            }
+
+            // Xóa session
+            Session.Clear();
+
+            // Chuyển hướng về trang đăng nhập
+            return RedirectToAction("DangNhap");
+        }
+
         //Hien thi View Doi MK
         public ActionResult ChangePassword()
         {
@@ -140,7 +170,18 @@ namespace ManageTaskWeb.Controllers
 
             return View("TrangChu");
         }
+        #endregion
 
+        #region INFO
+        //Thong tin ca nhan
+        public ActionResult TTCaNhan()
+        {
+            return View();
+        }
+
+#endregion
+
+        #region NOTIFICATION - REQUEST
         //Load Thong bao 
         public JsonResult GetNotifications()
         {
@@ -358,89 +399,9 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
+        #endregion
 
-        //Hien danh sach REquest trong moi project
-        public ActionResult GetJoinRequests(string projectId)
-        {
-            // Lấy tất cả các thông báo với NotificationType là "JoinRequest"
-            var notifications = data.Notifications
-                .Where(n => n.NotificationType == "JoinRequest")
-                .ToList(); // Tải tất cả thông báo vào bộ nhớ
-
-            // Lọc các thông báo có chứa "ProjectID" trong ExtraData và so sánh với projectId
-            var requestMemberData = notifications
-                .Where(n =>
-                {
-                    try
-                    {
-                        // Giải mã ExtraData từ chuỗi JSON thành Dictionary
-                        var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(n.ExtraData);
-
-                        // Kiểm tra xem ExtraData có chứa ProjectID và có giá trị khớp với projectId không
-                        return extraData.ContainsKey("ProjectID") && extraData["ProjectID"] == projectId;
-                    }
-                    catch
-                    {
-                        // Bỏ qua thông báo có ExtraData không hợp lệ
-                        return false;
-                    }
-                })
-                .Select(n =>
-                {
-                    // Giải mã ExtraData một lần nữa để lấy thông tin RequestMemberID
-                    var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(n.ExtraData);
-                    return new
-                    {
-                        NotificationID = n.NotificationID,  // Thêm NotificationID vào kết quả
-                        RequestMemberID = extraData.ContainsKey("RequestMemberID") ? extraData["RequestMemberID"] : null
-                    };
-                })
-                .ToList();  // Chỉ xử lý sau khi đã tải dữ liệu vào bộ nhớ
-
-            // Lấy danh sách các MemberID từ dữ liệu đã truy vấn
-            var requestMemberIds = requestMemberData.Select(r => r.RequestMemberID).ToList();
-
-            // Truy vấn bảng Members để lấy thông tin chi tiết của thành viên
-            var members = data.Members
-                .Where(m => requestMemberIds.Contains(m.MemberID)) // Lọc thành viên theo MemberID đã lấy
-                .ToList();
-
-            // Kết hợp thông tin của members và requestMemberData (NotificationID)
-            var result = members.Select(m => new
-            {
-                m.MemberID,
-                m.FullName,
-                m.Role,
-                NotificationIDs = requestMemberData
-                    .Where(r => r.RequestMemberID == m.MemberID)
-                    .Select(r => r.NotificationID)
-                    .ToList()
-            }).ToList();
-
-            // Trả về JSON danh sách các thành viên yêu cầu tham gia cùng với NotificationID
-            return Json(result, JsonRequestBehavior.AllowGet);
-        }
-        //DangXuat
-        public ActionResult Logout()
-        {
-            // Lấy MemberID từ session để cập nhật trạng thái thành Offline
-            var memberId = Session["MemberID"]?.ToString();
-            if (memberId != null)
-            {
-                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
-                if (member != null)
-                {
-                    member.Status = "Offline";
-                    data.SubmitChanges();
-                }
-            }
-
-            // Xóa session
-            Session.Clear();
-
-            // Chuyển hướng về trang đăng nhập
-            return RedirectToAction("DangNhap");
-        }
+        #region PROJECT
         //PROJECT - START
         //Danh sach project
         public ActionResult DSProject(string statusFilter = "All")
@@ -774,7 +735,9 @@ namespace ManageTaskWeb.Controllers
             return Json(new { success = true, message = "Your join request has been submitted successfully." });
         }
         //PROJECT - END
+        #endregion
 
+        #region PROJECT'S MEMBER
         //Danh sach Member trong Project
         public ActionResult MembersOfProject(string projectId)
         {
@@ -787,13 +750,70 @@ namespace ManageTaskWeb.Controllers
             ViewBag.ProjectId = projectId;
             return View(members);
         }
-
-        //Thong tin ca nhan
-        public ActionResult TTCaNhan()
+        //Hien danh sach REquest trong moi project
+        public ActionResult GetJoinRequests(string projectId)
         {
-            return View();
-        }
+            // Lấy tất cả các thông báo với NotificationType là "JoinRequest"
+            var notifications = data.Notifications
+                .Where(n => n.NotificationType == "JoinRequest")
+                .ToList(); // Tải tất cả thông báo vào bộ nhớ
 
+            // Lọc các thông báo có chứa "ProjectID" trong ExtraData và so sánh với projectId
+            var requestMemberData = notifications
+                .Where(n =>
+                {
+                    try
+                    {
+                        // Giải mã ExtraData từ chuỗi JSON thành Dictionary
+                        var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(n.ExtraData);
+
+                        // Kiểm tra xem ExtraData có chứa ProjectID và có giá trị khớp với projectId không
+                        return extraData.ContainsKey("ProjectID") && extraData["ProjectID"] == projectId;
+                    }
+                    catch
+                    {
+                        // Bỏ qua thông báo có ExtraData không hợp lệ
+                        return false;
+                    }
+                })
+                .Select(n =>
+                {
+                    // Giải mã ExtraData một lần nữa để lấy thông tin RequestMemberID
+                    var extraData = JsonConvert.DeserializeObject<Dictionary<string, string>>(n.ExtraData);
+                    return new
+                    {
+                        NotificationID = n.NotificationID,  // Thêm NotificationID vào kết quả
+                        RequestMemberID = extraData.ContainsKey("RequestMemberID") ? extraData["RequestMemberID"] : null
+                    };
+                })
+                .ToList();  // Chỉ xử lý sau khi đã tải dữ liệu vào bộ nhớ
+
+            // Lấy danh sách các MemberID từ dữ liệu đã truy vấn
+            var requestMemberIds = requestMemberData.Select(r => r.RequestMemberID).ToList();
+
+            // Truy vấn bảng Members để lấy thông tin chi tiết của thành viên
+            var members = data.Members
+                .Where(m => requestMemberIds.Contains(m.MemberID)) // Lọc thành viên theo MemberID đã lấy
+                .ToList();
+
+            // Kết hợp thông tin của members và requestMemberData (NotificationID)
+            var result = members.Select(m => new
+            {
+                m.MemberID,
+                m.FullName,
+                m.Role,
+                NotificationIDs = requestMemberData
+                    .Where(r => r.RequestMemberID == m.MemberID)
+                    .Select(r => r.NotificationID)
+                    .ToList()
+            }).ToList();
+
+            // Trả về JSON danh sách các thành viên yêu cầu tham gia cùng với NotificationID
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+#endregion
+
+        #region TASK
         //Danh sach task
         public ActionResult DSTask(string projectId)
         {
@@ -805,7 +825,7 @@ namespace ManageTaskWeb.Controllers
             {
                 // Lấy tất cả task của dự án nhưng loại bỏ task có Priority == null
                 var tasks = data.Tasks
-                                .Where(t => t.ProjectID == projectId && t.Priority != null)
+                                .Where(t => t.ProjectID == projectId && t.Priority != null && t.ParentTaskID == null)
                                 .ToList();
                 return View(tasks);
             }
@@ -815,13 +835,12 @@ namespace ManageTaskWeb.Controllers
                 var tasks = data.Tasks
                                 .Where(t => t.ProjectID == projectId
                                             && t.Priority != null
-                                            && data.TaskAssignments.Any(ta => ta.TaskID == t.TaskID && ta.MemberID == memberId))
+                                            && data.TaskAssignments.Any(ta => ta.TaskID == t.TaskID && ta.MemberID == memberId)
+                                            && t.ParentTaskID == null)
                                 .ToList();
                 return View(tasks);
             }
         }
-
-
         //Them Task
         [HttpPost]
         public ActionResult AddTask(string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string ProjectID, int? ParentTaskID = null)
@@ -913,6 +932,10 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        #endregion
+
+        #region SUBTASK
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
@@ -1062,7 +1085,6 @@ namespace ManageTaskWeb.Controllers
         }
 
         // Them Subtask
-        
         [HttpPost]
         public ActionResult CreateSubTask(SubTask subTask)
         {
@@ -1174,7 +1196,6 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
         // delete member in task
         [HttpPost]
         public ActionResult DeleteTaskAssignment(int taskId, string memberId)
@@ -1203,6 +1224,9 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
+        #endregion
+
+        #region CHAT
         //CHAT - START
         //Load Chat
         public ActionResult GroupChat(string projectId, int page = 1)
@@ -1262,7 +1286,6 @@ namespace ManageTaskWeb.Controllers
             };
             return View(viewModel);
         }
-
         //Them Chat
         [HttpPost]
         public ActionResult SendMessage(string Message, string ProjectID)
@@ -1350,9 +1373,11 @@ namespace ManageTaskWeb.Controllers
             return Json(new { success = false });
         }
         //CHAT - END
+        #endregion
 
-
+        #region MEMBER
         //MEMBER - START
+        //Load DS member
         public ActionResult DSMember(string searchQuery, string role, string status)
         {
             var roleSession = Session["Role"]?.ToString();
@@ -1434,7 +1459,6 @@ namespace ManageTaskWeb.Controllers
 
             return View(members);
         }
-
         // Hàm tạo ID thành viên duy nhất
         public string GenerateMemberID()
         {
@@ -1592,8 +1616,7 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = "Có lỗi xảy ra khi xóa thành viên: " + ex.Message });
             }
         }
-
-
+        #endregion
 
     }
 }
