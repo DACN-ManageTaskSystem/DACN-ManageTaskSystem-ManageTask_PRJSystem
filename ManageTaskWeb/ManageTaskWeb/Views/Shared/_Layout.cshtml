@@ -159,7 +159,7 @@
                             data.notifications.forEach(notification => {
                                 const statusClass = notification.IsRead ? 'notification-read' : 'notification-unread';
                                 let notificationItem = `
-        <div class="notification ${statusClass}" data-id="${notification.NotificationID}">
+        <div class="notification ${statusClass}" data-id="${notification.NotificationID}" onclick="toggleReadStatus(event, ${notification.NotificationID}, ${notification.IsRead})">
             <div class="content">
                 <p class="title">${notification.Content}</p>
                 <p class="time">${notification.NotificationDate}</p>
@@ -187,6 +187,43 @@
             }
         }
 
+        // Thêm hàm mới để xử lý việc toggle read status
+        function toggleReadStatus(event, notificationId, currentIsRead) {
+            // Ngăn chặn event bubbling nếu click vào nút Accept/Reject
+            if (event.target.classList.contains('btn')) {
+                return;
+            }
+
+            fetch('/Home/ToggleNotificationStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    notificationId: notificationId,
+                    currentIsRead: currentIsRead
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notification = event.currentTarget;
+                    const statusDiv = notification.querySelector('.status');
+                    
+                    // Toggle classes
+                    notification.classList.toggle('notification-read');
+                    notification.classList.toggle('notification-unread');
+                    
+                    // Update status text
+                    statusDiv.textContent = currentIsRead ? 'Unread' : 'Read';
+                    
+                    // Update the onclick handler with new status
+                    notification.setAttribute('onclick', `toggleReadStatus(event, ${notificationId}, ${!currentIsRead})`);
+                    toggleNotifications();
+                }
+            })
+            .catch(error => console.error('Error toggling notification status:', error));
+        }
 
         function acceptJoinRequest(notificationId) {
             fetch(`/Home/AcceptJoinRequest?notificationId=${notificationId}`,{

@@ -17,16 +17,20 @@
 <div class="memberofproject-content">
     <div class="memberofproject-project-section">
         <div class="memberofproject-project-info">
-            <h1>Project For HUIT University</h1>
+            <h1>@ViewBag.Project.ProjectName</h1>
             <div class="project-description">
-                <p>Mô tả dự án cho: Câu hỏi thực tập sinh</p>
-                <p>- Thiết kế câu hỏi cho thực tập sinh</p>
-                <p>- Thực tập sinh: Xem câu hỏi, đưa câu hỏi, xem câu trả lời, xóa câu hỏi, hiển thị danh sách câu hỏi trả lời</p>
-                <p>- Admin: Đăng nhập, xem câu hỏi, thêm câu trả lời, xóa câu trả lời, hiển thị danh sách câu hỏi trả lời</p>
+                @if (ViewBag.Project != null)
+                {
+                    <p>@Html.Raw(ViewBag.Project.Description.Replace("\n", "<br>"))</p>
+                }
+                else
+                {
+                    <p>Project information is not available.</p>
+                }
             </div>
         </div>
 
-        <div class="memberofproject-owner-status">
+        @*<div class="memberofproject-owner-status">
             <div class="memberofproject-owner-info">
                 <img src="/api/placeholder/50/50" alt="Owner" />
                 <div class="memberofproject-owner-details">
@@ -38,7 +42,7 @@
                 <div class="memberofproject-status-label">Status</div>
                 <button class="memberofproject-status-button">DONE</button>
             </div>
-        </div>
+        </div>*@
     </div>
 
     <div class="memberofproject-toolbar">
@@ -205,29 +209,15 @@
             <div class="panel">
                 <h3>Members</h3>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search Name Members...">
-                    <button>🔍</button>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="toggle-members">
-                        <label for="toggle-members"></label>
-                    </div>
+                    <input type="text" id="searchNonMembers" placeholder="Search Name Members...">
+                    <button onclick="searchNonMembers()">🔍</button>
+                    
                 </div>
-                <ul class="member-list">
-                    <li>
-                        <div class="avatar avatar-green"></div>
-                        <div class="info">
-                            <p>Nguyễn Nhật Quân</p>
-                            <span class="role">Developer</span>
-                        </div>
-                        <button class="add-button">➕</button>
-                    </li>
+                <ul class="member-list" id="nonMembersList">
+                    <!-- Data will be loaded here dynamically -->
                 </ul>
-                <div class="pagination">
-                    <button>◀</button>
-                    <button class="active">1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>▶</button>
+                <div class="pagination" id="nonMembersPagination">
+                    <!-- Pagination will be updated dynamically -->
                 </div>
             </div>
 
@@ -235,28 +225,15 @@
             <div class="panel">
                 <h3>Members In Project</h3>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search Name Members...">
-                    <button>🔍</button>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="toggle-project-members">
-                        <label for="toggle-project-members"></label>
-                    </div>
+                    <input type="text" id="searchProjectMembers" placeholder="Search Name Members...">
+                    <button onclick="searchProjectMembers()">🔍</button>
+                    
                 </div>
-                <ul class="member-list">
-                    <li>
-                        <div class="avatar avatar-yellow"></div>
-                        <div class="info">
-                            <p>Phạm Nguyên Vũ</p>
-                            <span class="role project-manager">Project Manager</span>
-                        </div>
-                    </li>
+                <ul class="member-list" id="projectMembersList">
+                    <!-- Data will be loaded here dynamically -->
                 </ul>
-                <div class="pagination">
-                    <button>◀</button>
-                    <button class="active">1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>▶</button>
+                <div class="pagination" id="projectMembersPagination">
+                    <!-- Pagination will be updated dynamically -->
                 </div>
             </div>
         </div>
@@ -270,13 +247,7 @@
         <div class="close-button">✕</div>
         <ul class="request-list">
             <li>
-                <div class="avatar avatar-green"></div>
-                <div class="info">
-                    <p></p>
-                    <span class="role"></span>
-                </div>
-                <button class="accept-button">✔ Accept</button>
-                <button class="reject-button">✖ Reject</button>
+              
             </li>
         </ul>
         <div class="pagination">
@@ -288,8 +259,40 @@
         </div>
     </div>
 </div>
+
+<style>
+    .pagination {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .pagination button {
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        background: white;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+
+    .pagination button.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination button:disabled {
+        background: #f5f5f5;
+        cursor: not-allowed;
+    }
+
+    .pagination button:hover:not(:disabled) {
+        background: #e9ecef;
+    }
+</style>
 <script>
-function toggleRequest() {
+    function toggleRequest() {
     var overlay = document.getElementById('overlay-2');
     var requestList = document.querySelector('.request-list');
     overlay.style.visibility = 'visible';
@@ -344,8 +347,6 @@ function toggleRequest() {
         })
         .catch(error => console.error('Error fetching join requests:', error));
 }
-
-
     function acceptProjectRequest(notificationId) {
         fetch(`/Home/AcceptJoinRequest?notificationId=${notificationId}`, {
             method: 'POST',
@@ -365,7 +366,6 @@ function toggleRequest() {
                 alert('There was an error while processing your request: ' + error.message); // Display error message
             });
     }
-
     function rejectProjectRequest(notificationId) {
         const notificationElement = document.querySelector(`.notification[data-id="${notificationId}"]`);
         if (!notificationElement) return;
@@ -417,20 +417,10 @@ function toggleRequest() {
         notificationElement.appendChild(confirmButton);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    document.getElementById('addmember').addEventListener('click', function () {
+        document.getElementById('addmember').addEventListener('click', function () {
         var overlay = document.getElementById('overlay');
         overlay.style.visibility = 'visible'; // Hiển thị overlay
+        loadMembers(); // Load data when opening popup
     });
     document.querySelectorAll('.close-button').forEach(function (closeButton) {
         closeButton.addEventListener('click', function () {
@@ -466,6 +456,203 @@ function toggleRequest() {
         });
     });
 
+    function loadMembers() {
+        var projectId = '@ViewBag.ProjectId';
+        const itemsPerPage = 3; // Số item trên mỗi trang
+        let currentNonMembersPage = 1;
+        let currentProjectMembersPage = 1;
+
+        // Load non-members
+        fetch(`/Home/GetNonProjectMembers?projectId=${projectId}`)
+            .then(response => response.json())
+            .then(data => {
+                const nonMembersList = document.getElementById('nonMembersList');
+                const nonMembersPagination = document.getElementById('nonMembersPagination');
+                
+                function displayNonMembers(page) {
+                    nonMembersList.innerHTML = '';
+                    const start = (page - 1) * itemsPerPage;
+                    const end = start + itemsPerPage;
+                    const paginatedItems = data.slice(start, end);
+
+                    paginatedItems.forEach(member => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <div class="avatar avatar-green"></div>
+                            <div class="info">
+                                <p>${member.MemberId}</p>
+                                <p>${member.FullName}</p>
+                                <span class="role">${member.Role}</span>
+                            </div>
+                            <button class="add-button" onclick="addMemberToProject('${member.MemberId}')">➕</button>
+                        `;
+                        nonMembersList.appendChild(li);
+                    });
+
+                    // Cập nhật phân trang
+                    const totalPages = Math.ceil(data.length / itemsPerPage);
+                    updatePagination(nonMembersPagination, totalPages, currentNonMembersPage, (newPage) => {
+                        currentNonMembersPage = newPage;
+                        displayNonMembers(newPage);
+                    });
+                }
+
+                displayNonMembers(1);
+            });
+
+        // Load project members
+        fetch(`/Home/GetProjectMembers?projectId=${projectId}`)
+            .then(response => response.json())
+            .then(data => {
+                const projectMembersList = document.getElementById('projectMembersList');
+                const projectMembersPagination = document.getElementById('projectMembersPagination');
+
+                function displayProjectMembers(page) {
+                    projectMembersList.innerHTML = '';
+                    const start = (page - 1) * itemsPerPage;
+                    const end = start + itemsPerPage;
+                    const paginatedItems = data.slice(start, end);
+
+                    paginatedItems.forEach(member => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <div class="avatar avatar-yellow"></div>
+                            <div class="info">
+                                <p>${member.MemberId}</p>
+                                <p>${member.FullName}</p>
+                                <span class="role ${member.Role.toLowerCase()}">${member.Role}</span>
+                            </div>
+                            <button class="remove-button" onclick="removeMemberFromProject('${member.MemberId}')">✖</button>
+                        `;
+                        projectMembersList.appendChild(li);
+                    });
+
+                    // Cập nhật phân trang
+                    const totalPages = Math.ceil(data.length / itemsPerPage);
+                    updatePagination(projectMembersPagination, totalPages, currentProjectMembersPage, (newPage) => {
+                        currentProjectMembersPage = newPage;
+                        displayProjectMembers(newPage);
+                    });
+                }
+
+                displayProjectMembers(1);
+            });
+    }
+
+    function updatePagination(paginationElement, totalPages, currentPage, callback) {
+        paginationElement.innerHTML = '';
+        
+        if (totalPages <= 1) return; // Không hiện phân trang nếu chỉ có 1 trang
+
+        // Nút Previous
+        const prevButton = document.createElement('button');
+        prevButton.innerHTML = '◀';
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = () => callback(currentPage - 1);
+        paginationElement.appendChild(prevButton);
+
+        // Các nút số trang
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.innerHTML = i;
+            pageButton.classList.toggle('active', i === currentPage);
+            pageButton.onclick = () => callback(i);
+            paginationElement.appendChild(pageButton);
+        }
+
+        // Nút Next
+        const nextButton = document.createElement('button');
+        nextButton.innerHTML = '▶';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = () => callback(currentPage + 1);
+        paginationElement.appendChild(nextButton);
+    }
+
+            function addMemberToProject(memberId) {
+            console.log("Adding MemberID: ", memberId); // Debug
+            var projectId = '@ViewBag.ProjectId';
+            fetch('/Home/AddMemberToProject', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    projectId: projectId,
+                    memberId: memberId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadMembers(); // Reload both lists
+                    alert('Member added successfully');
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+
+    function removeMemberFromProject(memberId) {
+        var projectId = '@ViewBag.ProjectId';
+        fetch('/Home/RemoveMemberFromProject', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                projectId: projectId,
+                memberId: memberId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadMembers(); // Reload both lists
+                alert('Member removed successfully');
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+
+    function searchNonMembers() {
+        const searchText = document.getElementById('searchNonMembers').value.toLowerCase();
+        const nonMembersList = document.getElementById('nonMembersList');
+        const listItems = nonMembersList.getElementsByTagName('li');
+
+        Array.from(listItems).forEach(item => {
+            const memberName = item.querySelector('.info p:nth-child(2)').textContent.toLowerCase();
+            const memberId = item.querySelector('.info p:nth-child(1)').textContent.toLowerCase();
+            
+            if (memberName.includes(searchText) || memberId.includes(searchText)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function searchProjectMembers() {
+        const searchText = document.getElementById('searchProjectMembers').value.toLowerCase();
+        const projectMembersList = document.getElementById('projectMembersList');
+        const listItems = projectMembersList.getElementsByTagName('li');
+
+        Array.from(listItems).forEach(item => {
+            const memberName = item.querySelector('.info p:nth-child(2)').textContent.toLowerCase();
+            const memberId = item.querySelector('.info p:nth-child(1)').textContent.toLowerCase();
+            
+            if (memberName.includes(searchText) || memberId.includes(searchText)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Thêm event listener cho input để tìm kiếm khi gõ
+    document.getElementById('searchNonMembers').addEventListener('input', searchNonMembers);
+    document.getElementById('searchProjectMembers').addEventListener('input', searchProjectMembers);
 </script>
 
 
