@@ -10,7 +10,10 @@ using System.Web.Mvc;
 using System.Security.Cryptography;
 using System.Text;
 using System.Net;
-
+using System.Net.Mail;
+using System.Net;
+using System.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace ManageTaskWeb.Controllers
 {
@@ -22,7 +25,7 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
-        
+
         #region MA-HOA
         //Ma hoa
         public static string EncryptPassword(string plainText, string key)
@@ -81,24 +84,33 @@ namespace ManageTaskWeb.Controllers
         public ActionResult DangNhap(string username, string password)
         {
 
-            // Tìm kiếm thành viên
             var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.deleteTime == null);
 
             if (member == null)
             {
-                // Không tìm thấy người dùng
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
 
             // Giải mã mật khẩu
             string decryptedPassword = DecryptPassword(member.Password, "mysecretkey");
+
+            // Kiểm tra mật khẩu và thời gian hết hạn
             if (decryptedPassword != password)
             {
-                // Sai mật khẩu
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
+
+            // Kiểm tra thời gian hết hạn nếu có
+            if (member.ExpiryTime.HasValue && DateTime.Now > member.ExpiryTime.Value)
+            {
+                ViewBag.ErrorMessage = "*Mật khẩu tạm thời đã hết hạn. Vui lòng yêu cầu mật khẩu mới.";
+                return View();
+            }
+
+            // Xóa thời gian hết hạn sau khi đăng nhập thành công
+            member.ExpiryTime = null;
 
             member.Status = "Active";
             data.SubmitChanges();
@@ -164,11 +176,137 @@ namespace ManageTaskWeb.Controllers
             var MemberID_Session = Session["MemberID"].ToString();
             var currentMember = data.Members.SingleOrDefault(m => m.MemberID == MemberID_Session);
 
-         
+
             currentMember.Password = EncryptPassword(newPassword, "mysecretkey");
             data.SubmitChanges();
 
             return View("TrangChu");
+        }
+
+        //Hiem form Quen MK
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+        //Xu ly Quen MK
+        [HttpPost]
+        public ActionResult ForgotPassword(string memberID, string email)
+        {
+            try
+            {
+                //// Verify reCAPTCHA
+                //var response = Request["g-recaptcha-response"];
+                //string secretKey = ConfigurationManager.AppSettings["reCaptcha:SecretKey"];
+                //var client = new WebClient();
+
+                //var result = client.DownloadString(string.Format(
+                //    "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}",
+                //    secretKey, response));
+
+                //var obj = JObject.Parse(result);
+                //var status = (bool)obj.SelectToken("success");
+
+                //if (!status)
+                //{
+                //    ViewBag.Message = "Please verify that you are not a robot.";
+                //    ViewBag.IsError = true;
+                //    return View();
+                //}
+
+                var member = data.Members.FirstOrDefault(m =>
+                    m.MemberID == memberID &&
+                    m.Email == email &&
+                    m.deleteTime == null);
+
+                if (member == null)
+                {
+                    ViewBag.IsError = true;
+                    ViewBag.Message = "Invalid Member ID or Email";
+                    return View();
+                }
+
+                // Tạo mật khẩu mới ngẫu nhiên
+                string newPassword = GenerateRandomPasswordForgot();
+
+                // Đặt thời gian hết hạn (10 phút từ hiện tại)
+                DateTime expiryTime = DateTime.Now.AddMinutes(1);
+
+                // Cập nhật mật khẩu và thời gian hết hạn trong database
+                member.Password = EncryptPassword(newPassword, "mysecretkey");
+                member.ExpiryTime = expiryTime;
+                data.SubmitChanges();
+
+                // Gửi email với thông tin về thời gian hết hạn
+                SendPasswordResetEmail(email, newPassword, expiryTime);
+
+                ViewBag.IsError = false;
+                ViewBag.Message = "New password has been sent to your email. Please change it within 10 minutes.";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.IsError = true;
+                ViewBag.Message = "Error processing request. Please try again later.";
+            }
+
+            return View();
+        }
+        //Tao MK moi 8 ki tu
+        private string GenerateRandomPasswordForgot()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 8)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+        //Gui Mail mk moi
+        private void SendPasswordResetEmail(string email, string newPassword, DateTime expiryTime)
+        {
+            try
+            {
+                var fromEmail = ConfigurationManager.AppSettings["EmailFrom"];
+                var fromName = ConfigurationManager.AppSettings["EmailFromName"];
+                var emailPassword = ConfigurationManager.AppSettings["EmailPassword"];
+
+                if (string.IsNullOrEmpty(fromEmail) || string.IsNullOrEmpty(emailPassword))
+                {
+                    throw new ConfigurationErrorsException("Email settings are missing in Web.config");
+                }
+
+                var fromAddress = new MailAddress(fromEmail, fromName ?? "System Admin");
+                var toAddress = new MailAddress(email);
+
+                string subject = "Password Reset";
+                string body = $@"Your temporary password is: {newPassword}
+                        
+                        This password will expire at: {expiryTime.ToString("yyyy-MM-dd HH:mm:ss")}
+                        
+                        Please login and change your password before it expires.
+                        
+                        If you don't change your password within 10 minutes, you'll need to request a new password reset.";
+
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = false
+                })
+                using (var smtp = new SmtpClient()
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromEmail, emailPassword)
+                })
+                {
+                    smtp.Send(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to send password reset email", ex);
+            }
         }
         #endregion
 
@@ -179,7 +317,7 @@ namespace ManageTaskWeb.Controllers
             return View();
         }
 
-#endregion
+        #endregion
 
         #region NOTIFICATION - REQUEST
         //Load Thong bao 
@@ -389,7 +527,7 @@ namespace ManageTaskWeb.Controllers
                     .FirstOrDefault(pm => pm.MemberID == requestMemberId && pm.ProjectID == projectId && pm.Status == "Pending");
                 if (projectMember != null)
                 {
-                     data.ProjectMembers.DeleteOnSubmit(projectMember);
+                    data.ProjectMembers.DeleteOnSubmit(projectMember);
                 }
 
                 // Xóa tất cả thông báo có cùng ExtraData
@@ -1129,7 +1267,7 @@ namespace ManageTaskWeb.Controllers
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
-            
+
             if (taskId == null)
                 return HttpNotFound();  // Nếu không có taskId, trả về lỗi Not Found
 
@@ -1214,11 +1352,11 @@ namespace ManageTaskWeb.Controllers
                     Creator = creator,  // Assign the creator here
                     ListTasks = listTasks  // Assign the list of tasks here
                 };
-                
+
 
                 return View(viewModel);
             }
-        }   
+        }
         //Xoa task
         [HttpPost]
         public ActionResult DeleteTaskByMember(string memberId, int taskId)
@@ -1366,7 +1504,7 @@ namespace ManageTaskWeb.Controllers
                 }
                 // Add new Task Assignment entry
                 var taskAssignment = new TaskAssignment
-                {   
+                {
                     TaskID = taskId,
                     MemberID = memberId,
                     AssignedBy = assignedByID,  // Assuming the current user assigns
@@ -1813,7 +1951,7 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
-
-
+       
     }
 }
+
