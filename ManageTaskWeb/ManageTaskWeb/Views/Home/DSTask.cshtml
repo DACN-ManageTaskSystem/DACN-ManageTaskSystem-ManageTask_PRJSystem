@@ -33,8 +33,8 @@
 <div class="task-board">
     <!-- ON HOLD Column -->
     <div class="task-column">
-        <h2 style="background-color: rgba(56, 155, 253, 1)">ON HOLD</h2>
-        @foreach (var task in Model.Where(t => t.Status == "On Hold").OrderBy(t => t.Priority))
+        <h2 style="background-color: rgba(56, 155, 253, 1)">PENDING</h2>
+        @foreach (var task in Model.Where(t => t.Status == "Pending").OrderBy(t => t.Priority))
         {
             <div class="task" style="background-color: @{
                 string taskBackgroundColor;
@@ -143,8 +143,8 @@
 
     <!-- IN REVIEW Column -->
     <div class="task-column">
-        <h2 style="background-color: rgba(56, 155, 253, 1)">IN REVIEW</h2>
-        @foreach (var task in Model.Where(t => t.Status == "Pending").OrderBy(t => t.Priority))
+        <h2 style="background-color: rgba(56, 155, 253, 1)">ON HOLD</h2>
+        @foreach (var task in Model.Where(t => t.Status == "On Hold").OrderBy(t => t.Priority))
         {
             <div class="task" style="background-color: @{
                 string taskBackgroundColor;

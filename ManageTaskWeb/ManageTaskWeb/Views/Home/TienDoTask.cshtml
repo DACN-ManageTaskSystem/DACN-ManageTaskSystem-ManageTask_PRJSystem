@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Tiến độ công việc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="@Url.Content("~/Content/css/tiendotask.css?v=1")" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container">
+    <h1 class="dashboard-title">Biểu đồ tiến độ công việc</h1>
+    
+    <div class="gantt-chart">
+        <div class="task-container">
+            <canvas id="progressChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    
+    const data = {
+        labels: ['20/11', '21/11', '22/11', '23/11', '24/11'],
+        datasets: [
+            {
+                label: 'Task A1',
+                data: [1, 1, 2, 3, 3],
+                borderColor: '#4CAF50',
+                backgroundColor: '#4CAF50',
+                pointBackgroundColor: function(context) {
+                    const value = context.dataset.data[context.dataIndex];
+                    if (value === 1) return '#FFA726';      // Pending
+                    if (value === 2) return '#42A5F5';      // Processing
+                    if (value === 3) return '#66BB6A';      // Completed
+                    return '#gray';
+                },
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                tension: 0.4,
+                fill: false
+            },
+            {
+                label: 'Task A2',
+                data: [1, 2, 2, 2, 3],
+                borderColor: '#2196F3',
+                backgroundColor: '#2196F3',
+                pointBackgroundColor: function(context) {
+                    const value = context.dataset.data[context.dataIndex];
+                    if (value === 1) return '#FFA726';
+                    if (value === 2) return '#42A5F5';
+                    if (value === 3) return '#66BB6A';
+                    return '#gray';
+                },
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                tension: 0.4,
+                fill: false
+            }
+        ]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 4,
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            if (value === 1) return 'Pending';
+                            if (value === 2) return 'Processing';
+                            if (value === 3) return 'Completed';
+                            return '';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            let status = '';
+                            if (value === 1) status = 'Pending';
+                            if (value === 2) status = 'Processing';
+                            if (value === 3) status = 'Completed';
+                            return `${label}: ${status}`;
+                        }
+                    }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+});
+</script>

@@ -155,6 +155,7 @@
     <Content Include="Content\css\member.css" />
     <Content Include="Content\css\membersofproject.css" />
     <Content Include="Content\css\styleproject.css" />
+    <Content Include="Content\css\tiendotask.css" />
     <Content Include="Content\css\task.css" />
     <Content Include="Content\images\hinh1.png" />
     <Content Include="Content\images\logo.png" />
@@ -265,6 +266,7 @@
     <Content Include="Views\Home\DetailTask.cshtml" />
     <Content Include="Views\Home\DSMember.cshtml" />
     <Content Include="Views\Home\ChangePassword.cshtml" />
+    <Content Include="Views\Home\TienDoTask.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

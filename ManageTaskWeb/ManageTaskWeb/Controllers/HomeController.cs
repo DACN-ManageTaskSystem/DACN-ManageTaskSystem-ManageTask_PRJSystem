@@ -217,6 +217,29 @@ namespace ManageTaskWeb.Controllers
             // If MemberID is null, return an error response
             return Json(new { success = false, message = "User not logged in" }, JsonRequestBehavior.AllowGet);
         }
+        //Cap nhat trang thai read - unread
+        [HttpPost]
+        public JsonResult ToggleNotificationStatus(int notificationId, bool currentIsRead)
+        {
+            try
+            {
+                // Lấy notification từ database
+                var notification = data.Notifications.FirstOrDefault(n => n.NotificationID == notificationId);
+                if (notification != null)
+                {
+                    // Toggle trạng thái Read
+                    notification.IsRead = !currentIsRead;
+                    data.SubmitChanges();
+
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, message = "Notification not found" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         //Accept trong thong bao
         [HttpPost]
         public JsonResult AcceptJoinRequest(string notificationId)
@@ -816,7 +839,169 @@ namespace ManageTaskWeb.Controllers
             // Trả về JSON danh sách các thành viên yêu cầu tham gia cùng với NotificationID
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-#endregion
+        //DS member khong trong du an
+        public JsonResult GetNonProjectMembers(string projectId)
+        {
+            try
+            {
+                // Lấy danh sách thành viên chưa tham gia project
+                var nonMembers = data.Members
+                    .Where(m => m.deleteTime == null &&
+                          !data.ProjectMembers.Any(pm =>
+                              pm.ProjectID == projectId &&
+                              pm.MemberID == m.MemberID &&
+                              pm.Status == "Accepted"))
+                    .Select(m => new
+                    {
+                        MemberId = m.MemberID,
+                        FullName = m.FullName,
+                        Role = m.Role,
+                        ImageMember = m.ImageMember,
+                        Email = m.Email
+                    })
+                    .ToList();
+
+                return Json(nonMembers, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        //DSMember trong du an
+        public JsonResult GetProjectMembers(string projectId)
+        {
+            try
+            {
+                // Lấy danh sách thành viên đang trong project
+                var projectMembers = data.ProjectMembers
+                    .Where(pm => pm.ProjectID == projectId &&
+                           pm.Status == "Accepted" &&
+                           pm.Member.deleteTime == null)
+                    .Select(pm => new
+                    {
+                        MemberId = pm.MemberID,
+                        FullName = pm.Member.FullName,
+                        Role = pm.Member.Role,
+                        ImageMember = pm.Member.ImageMember,
+                        Email = pm.Member.Email,
+                        JoinDate = pm.JoinDate
+                    })
+                    .ToList();
+
+                return Json(projectMembers, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        //Them member bao du an
+        [HttpPost]
+        public JsonResult AddMemberToProject(string projectId, string memberId)
+        {
+            try
+            {
+                // Kiểm tra xem member đã tồn tại trong project chưa
+                var existingMember = data.ProjectMembers
+                    .FirstOrDefault(pm => pm.ProjectID == projectId &&
+                                  pm.MemberID == memberId);
+
+                if (existingMember != null)
+                {
+                    return Json(new { success = false, message = "Member already exists in the project." });
+                }
+
+                // Thêm member vào project
+                var projectMember = new ProjectMember
+                {
+                    ProjectID = projectId,
+                    MemberID = memberId,
+                    JoinDate = DateTime.Now,
+                    Status = "Accepted"
+                };
+
+                data.ProjectMembers.InsertOnSubmit(projectMember);
+                data.SubmitChanges();
+
+                // Lấy thông tin project và member để tạo thông báo
+                var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
+
+                // Tạo thông báo cho member được thêm vào
+                var notification = new Notification
+                {
+                    MemberID = memberId,
+                    Content = $"You have been added to project '{project.ProjectName}'",
+                    NotificationDate = DateTime.Now,
+                    NotificationType = "ProjectJoin",
+                    IsRead = false
+                };
+
+                data.Notifications.InsertOnSubmit(notification);
+                data.SubmitChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        //Xoa member khoi du an
+        [HttpPost]
+        public JsonResult RemoveMemberFromProject(string projectId, string memberId)
+        {
+            try
+            {
+                // Kiểm tra xem member có đang làm task nào không
+                var hasActiveTasks = data.TaskAssignments
+                    .Any(ta => ta.Task.ProjectID == projectId &&
+                         ta.MemberID == memberId &&
+                         ta.Status != "Completed");
+
+                if (hasActiveTasks)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Cannot remove member with active tasks."
+                    });
+                }
+
+                // Tìm và xóa member khỏi project
+                var projectMember = data.ProjectMembers
+                    .FirstOrDefault(pm => pm.ProjectID == projectId &&
+                                  pm.MemberID == memberId);
+
+                if (projectMember != null)
+                {
+                    data.ProjectMembers.DeleteOnSubmit(projectMember);
+                    data.SubmitChanges();
+
+                    // Tạo thông báo cho member bị xóa
+                    var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+                    var notification = new Notification
+                    {
+                        MemberID = memberId,
+                        Content = $"You have been removed from project '{project.ProjectName}'",
+                        NotificationDate = DateTime.Now,
+                        NotificationType = "ProjectRemoval",
+                        IsRead = false
+                    };
+
+                    data.Notifications.InsertOnSubmit(notification);
+                    data.SubmitChanges();
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
 
         #region TASK
         //Danh sach task
@@ -1623,189 +1808,12 @@ namespace ManageTaskWeb.Controllers
         }
         #endregion
 
-        public JsonResult GetNonProjectMembers(string projectId)
-        {
-            try
-            {
-                // Lấy danh sách thành viên chưa tham gia project
-                var nonMembers = data.Members
-                    .Where(m => m.deleteTime == null && 
-                          !data.ProjectMembers.Any(pm => 
-                              pm.ProjectID == projectId && 
-                              pm.MemberID == m.MemberID && 
-                              pm.Status == "Accepted"))
-                    .Select(m => new
-                    {
-                        MemberId = m.MemberID,
-                        FullName = m.FullName,
-                        Role = m.Role,
-                        ImageMember = m.ImageMember,
-                        Email = m.Email
-                    })
-                    .ToList();
 
-                return Json(nonMembers, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
+        public ActionResult TienDoTask()
+        {
+            return View();
         }
 
-        public JsonResult GetProjectMembers(string projectId)
-        {
-            try
-            {
-                // Lấy danh sách thành viên đang trong project
-                var projectMembers = data.ProjectMembers
-                    .Where(pm => pm.ProjectID == projectId && 
-                           pm.Status == "Accepted" && 
-                           pm.Member.deleteTime == null)
-                    .Select(pm => new
-                    {
-                        MemberId = pm.MemberID,
-                        FullName = pm.Member.FullName,
-                        Role = pm.Member.Role,
-                        ImageMember = pm.Member.ImageMember,
-                        Email = pm.Member.Email,
-                        JoinDate = pm.JoinDate
-                    })
-                    .ToList();
-
-                return Json(projectMembers, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
-        }
-
-        [HttpPost]
-        public JsonResult AddMemberToProject(string projectId, string memberId)
-        {
-            try
-            {
-                // Kiểm tra xem member đã tồn tại trong project chưa
-                var existingMember = data.ProjectMembers
-                    .FirstOrDefault(pm => pm.ProjectID == projectId && 
-                                  pm.MemberID == memberId);
-
-                if (existingMember != null)
-                {
-                    return Json(new { success = false, message = "Member already exists in the project." });
-                }
-
-                // Thêm member vào project
-                var projectMember = new ProjectMember
-                {
-                    ProjectID = projectId,
-                    MemberID = memberId,
-                    JoinDate = DateTime.Now,
-                    Status = "Accepted"
-                };
-
-                data.ProjectMembers.InsertOnSubmit(projectMember);
-                data.SubmitChanges();
-
-                // Lấy thông tin project và member để tạo thông báo
-                var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
-                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
-
-                // Tạo thông báo cho member được thêm vào
-                var notification = new Notification
-                {
-                    MemberID = memberId,
-                    Content = $"You have been added to project '{project.ProjectName}'",
-                    NotificationDate = DateTime.Now,
-                    NotificationType = "ProjectJoin",
-                    IsRead = false
-                };
-
-                data.Notifications.InsertOnSubmit(notification);
-                data.SubmitChanges();
-
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public JsonResult RemoveMemberFromProject(string projectId, string memberId)
-        {
-            try
-            {
-                // Kiểm tra xem member có đang làm task nào không
-                var hasActiveTasks = data.TaskAssignments
-                    .Any(ta => ta.Task.ProjectID == projectId && 
-                         ta.MemberID == memberId && 
-                         ta.Status != "Completed");
-
-                if (hasActiveTasks)
-                {
-                    return Json(new { 
-                        success = false, 
-                        message = "Cannot remove member with active tasks." 
-                    });
-                }
-
-                // Tìm và xóa member khỏi project
-                var projectMember = data.ProjectMembers
-                    .FirstOrDefault(pm => pm.ProjectID == projectId && 
-                                  pm.MemberID == memberId);
-
-                if (projectMember != null)
-                {
-                    data.ProjectMembers.DeleteOnSubmit(projectMember);
-                    data.SubmitChanges();
-
-                    // Tạo thông báo cho member bị xóa
-                    var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
-                    var notification = new Notification
-                    {
-                        MemberID = memberId,
-                        Content = $"You have been removed from project '{project.ProjectName}'",
-                        NotificationDate = DateTime.Now,
-                        NotificationType = "ProjectRemoval",
-                        IsRead = false
-                    };
-
-                    data.Notifications.InsertOnSubmit(notification);
-                    data.SubmitChanges();
-                }
-
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public JsonResult ToggleNotificationStatus(int notificationId, bool currentIsRead)
-        {
-            try
-            {
-                // Lấy notification từ database
-                var notification = data.Notifications.FirstOrDefault(n => n.NotificationID == notificationId);
-                if (notification != null)
-                {
-                    // Toggle trạng thái Read
-                    notification.IsRead = !currentIsRead;
-                    data.SubmitChanges();
-                    
-                    return Json(new { success = true });
-                }
-                return Json(new { success = false, message = "Notification not found" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
 
     }
 }
