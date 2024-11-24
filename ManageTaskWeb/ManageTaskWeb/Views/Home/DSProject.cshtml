@@ -34,7 +34,7 @@
         </div>
 
         <div class="search-bar">
-            <input type="text" id="projectSearchInput" placeholder="Enter project name...">
+            <input type="text" id="projectSearchInput" placeholder="Enter project name or project ID...">
             <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
         </div>
         <div class="filter">
@@ -50,8 +50,8 @@
                     <th>Select</th>
                     <th>Image</th>
                     <th>Project Name</th>
-                    <th>Start</th>
-                    <th>End</th>
+                            <th class="sortable" data-sort="start">Start <i class="fas fa-sort"></i></th>
+        <th class="sortable" data-sort="end">End <i class="fas fa-sort"></i></th>
                     <th>Thành viên</th>
                     <th>Số lượng</th>
                     <th>Status</th>
@@ -95,8 +95,8 @@
                                     <span>Project Code: @project.ProjectID</span>
                                 </div>
                             </td>
-                            <td>@project.StartDate.ToString("HH:mm dd/MM/yyyy")</td>
-                            <td>@project.EndDate.ToString("HH:mm dd/MM/yyyy")</td>
+                            <td>@project.StartDate.ToString("dd/MM/yyyy")</td>
+                            <td>@project.EndDate.ToString("dd/MM/yyyy")</td>
                             <td>
                                 <div class="avatar-group">
                                     <a href="@Url.Action("MembersOfProject", "Home", new { projectId = project.ProjectID })">
@@ -367,6 +367,58 @@
     </div>
 
     <script>
+    /* --- Sorting Projects - START --- */
+document.addEventListener('DOMContentLoaded', function() {
+    const headers = document.querySelectorAll('th.sortable');
+    headers.forEach(header => {
+        header.addEventListener('click', function() {
+            const sortType = this.dataset.sort;
+            const isAsc = !this.classList.contains('asc');
+            
+            // Reset all headers
+            headers.forEach(h => {
+                h.classList.remove('asc', 'desc');
+            });
+            
+            // Set current header sort state
+            this.classList.add(isAsc ? 'asc' : 'desc');
+            
+            // Sort the table
+            sortProjects(sortType, isAsc);
+        });
+    });
+});
+
+function sortProjects(sortType, isAsc) {
+    const tbody = document.getElementById('projectTableBody');
+    const rows = Array.from(tbody.querySelectorAll('tr.project-row'));
+    
+    rows.sort((a, b) => {
+        let dateA, dateB;
+        
+        if (sortType === 'start') {
+            dateA = parseDate(a.children[3].textContent);
+            dateB = parseDate(b.children[3].textContent);
+        } else if (sortType === 'end') {
+            dateA = parseDate(a.children[4].textContent);
+            dateB = parseDate(b.children[4].textContent);
+        }
+        
+        return isAsc ? dateA - dateB : dateB - dateA;
+    });
+    
+    // Clear and re-append rows
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+function parseDate(dateStr) {
+    // Convert dd/MM/yyyy to Date object
+    const [day, month, year] = dateStr.trim().split('/');
+    return new Date(year, month - 1, day);
+}
+/* --- Sorting Projects - END --- */
+
+
         /* --- JoinProject By ID - START --- */
         document.getElementById("joinProjectSubmit").addEventListener("click", function () {
             console.log("Join button clicked"); // Kiểm tra xem có chạy đến đây không
@@ -403,19 +455,34 @@
 
 
         /* --- Tim Kiem Theo Ten Project - START   --- */
-        document.getElementById("searchBtn").addEventListener("click", function () {
+        // Tạo hàm search riêng để tái sử dụng
+        function searchProjects() {
             var input = document.getElementById("projectSearchInput").value.toLowerCase();
             var rows = document.querySelectorAll(".project-row");
 
             rows.forEach(function (row) {
                 var projectName = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
-                if (projectName.includes(input)) {
+                var projectId = row.querySelector("td:nth-child(3) span").textContent.toLowerCase().replace("project code:", "").trim();
+                
+                if (projectName.includes(input) || projectId.includes(input)) {
                     row.style.display = "";
                 } else {
                     row.style.display = "none";
                 }
             });
+        }
+
+        // Event listener cho nút search
+        document.getElementById("searchBtn").addEventListener("click", searchProjects);
+
+        // Event listener cho phím Enter
+        document.getElementById("projectSearchInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Ngăn form submit nếu có
+                searchProjects();
+            }
         });
+
         /* ---Tim Kiem Theo Ten Project - END   --- */
 
         /* --- Loc project theo trang thai - START   --- */

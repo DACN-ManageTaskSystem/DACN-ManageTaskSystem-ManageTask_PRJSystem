@@ -64,7 +64,7 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info">
+                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
                     <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
@@ -81,7 +81,6 @@
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
                 </div>
-                <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
         
@@ -120,7 +119,7 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info">
+                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
                     <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
@@ -137,7 +136,6 @@
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
                 </div>
-                <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
         
@@ -176,7 +174,7 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info">
+                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
                     <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
@@ -193,7 +191,6 @@
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
                 </div>
-                <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
         
@@ -232,7 +229,7 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info">
+                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
                     <p>@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
@@ -249,7 +246,6 @@
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
                 </div>
-                <img alt="User Image" height="40" src="" width="40" />
             </div>
         }
         
