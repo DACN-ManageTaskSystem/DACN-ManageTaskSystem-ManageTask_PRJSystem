@@ -591,6 +591,65 @@
         background-color: gray; /* Màu mặc định nếu không có trạng thái */
     }
 
+    .transfer-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 5px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .transfer-button:hover {
+        background-color: #45a049;
+    }
+
+    .member-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .member-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    #memberSearch {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+.btn-transfer {
+    background-color: #9c27b0;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 250px;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.btn-transfer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-transfer img {
+    filter: invert(100%);
+    margin-left: auto;
+}
 </style>
 <div class="breadcrumb">
     <span>Home</span> <div class="arrow-right"></div>
@@ -786,7 +845,9 @@
                 <button class="btn-edit">
                     Edit Task <img src="edit-icon.png" alt="Edit">
                 </button>
-
+ <button class="btn-transfer" onclick="showTransferPopup()">
+       Transfer Task <img src="transfer-icon.png" alt="Transfer">
+   </button>
                 <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
                     <input type="hidden" name="taskId" value="@Model.TaskID" />
                     @foreach (var member in Model.AssignedMembers)
@@ -887,6 +948,60 @@
         </div>
     </div>
 </div>
+
+<!-- Transfer Task Popup -->
+<div class="overlay" id="transferTaskOverlay" style="display: none;">
+    <div class="blind-container-1">
+        <h2>Transfer Tasks</h2>
+        <div class="close-button" onclick="closeTransferPopup()">✕</div>
+        <div class="member-section">
+            <!-- Current Member -->
+            <div class="panel">
+                <h3>Current Member</h3>
+                <div class="member-list">
+                    <li>
+                        <div class="avatar">
+                            <img src="@Url.Content("~/Content/images/member-img/" + Model.AssignedMembers.First().ImageMember)" class="avatar-img" />
+                        </div>
+                        <div class="info">
+                            <p>@Model.AssignedMembers.First().FullName</p>
+                            <span class="role @(Model.AssignedMembers.First().Role == "Manager" ? "project-manager" : "")">
+                                @Model.AssignedMembers.First().Role
+                            </span>
+                        </div>
+                    </li>
+                </div>
+            </div>
+
+            <!-- Transfer To -->
+            <div class="panel">
+                <h3>Transfer To</h3>
+                <div class="search-bar">
+                    <input type="text" id="memberSearch" placeholder="Search members...">
+                    <button onclick="searchMembers()">🔍</button>
+                </div>
+                <div id="membersList" class="member-list">
+                    @foreach (var member in Model.ProjectMembers.Where(m => m.MemberID != Model.AssignedMembers.First().MemberID))
+                    {
+                        <li class="member-item" data-member-id="@member.MemberID">
+                            <div class="avatar">
+                                <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" class="avatar-img" />
+                            </div>
+                            <div class="info">
+                                <p>@member.FullName</p>
+                                <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
+                            </div>
+                            <button class="transfer-button" onclick="transferTasks('@Model.AssignedMembers.First().MemberID', '@member.MemberID', '@Model.TaskID')">
+                                Transfer
+                            </button>
+                        </li>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 
@@ -1052,5 +1167,61 @@
         var overlay = document.getElementById('overlay');
         overlay.style.visibility = 'hidden'; // Hiển thị overlay
     });
+
+    // Show transfer popup
+    function showTransferPopup() {
+        document.getElementById('transferTaskOverlay').style.display = 'flex';
+    }
+
+    // Close transfer popup
+    function closeTransferPopup() {
+        document.getElementById('transferTaskOverlay').style.display = 'none';
+    }
+
+    // Search members
+    function searchMembers() {
+        const searchText = document.getElementById('memberSearch').value.toLowerCase();
+        const memberItems = document.querySelectorAll('.member-item');
+
+        memberItems.forEach(item => {
+            const memberName = item.querySelector('.info p').textContent.toLowerCase();
+            if (memberName.includes(searchText)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Transfer tasks
+    function transferTasks(fromMemberId, toMemberId, taskId) {
+        if (!confirm('Are you sure you want to transfer this task?')) {
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("TransferTask", "Home")',
+            type: 'POST',
+            data: {
+                fromMemberId: fromMemberId,
+                toMemberId: toMemberId,
+                taskId: taskId
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+    }
+
+    // Add event listener for search input
+    document.getElementById('memberSearch').addEventListener('input', searchMembers);
 
 </script>
