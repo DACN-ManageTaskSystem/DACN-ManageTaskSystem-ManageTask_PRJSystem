@@ -35,3 +35,28 @@
 .export-buttons .btn {
     margin-right: 0.5rem;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-pointer:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+.fa-chevron-down.rotated {
+    transform: rotate(180deg);
+}
+/* Thêm class mới để kiểm soát chiều cao */
+chart-container {
+    height: 300px; /* hoặc giá trị phù hợp khác */
+}
+ .chart-body {
+    height: 100%;
+ }
+ .chart-body canvas {
+    max-height: 250px !important;}

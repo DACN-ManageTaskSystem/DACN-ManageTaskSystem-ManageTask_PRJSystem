@@ -84,7 +84,7 @@ namespace ManageTaskWeb.Controllers
         public ActionResult DangNhap(string username, string password)
         {
 
-            var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.deleteTime == null);
+            var member = data.Members.FirstOrDefault(m => m.MemberID == username);
 
             if (member == null)
             {
@@ -237,8 +237,7 @@ namespace ManageTaskWeb.Controllers
 
                 var member = data.Members.FirstOrDefault(m =>
                     m.MemberID == memberID &&
-                    m.Email == email &&
-                    m.deleteTime == null);
+                    m.Email == email);
 
                 if (member == null)
                 {
@@ -1065,8 +1064,7 @@ namespace ManageTaskWeb.Controllers
             {
                 // Lấy danh sách thành viên chưa tham gia project
                 var nonMembers = data.Members
-                    .Where(m => m.deleteTime == null &&
-                          !data.ProjectMembers.Any(pm =>
+                    .Where(m =>!data.ProjectMembers.Any(pm =>
                               pm.ProjectID == projectId &&
                               pm.MemberID == m.MemberID &&
                               pm.Status == "Accepted"))
@@ -1095,8 +1093,7 @@ namespace ManageTaskWeb.Controllers
                 // Lấy danh sách thành viên đang trong project
                 var projectMembers = data.ProjectMembers
                     .Where(pm => pm.ProjectID == projectId &&
-                           pm.Status == "Accepted" &&
-                           pm.Member.deleteTime == null)
+                           pm.Status == "Accepted")
                     .Select(pm => new
                     {
                         MemberId = pm.MemberID,
@@ -1459,7 +1456,7 @@ namespace ManageTaskWeb.Controllers
                     .Any(ta => ta.TaskID == taskId && ta.MemberID == memberId);
 
                 var hasLogsWithMember = context.TaskLogs
-                    .Any(tl => tl.TaskID == taskId && tl.MemberID == memberId);
+                    .Any(tl => tl.TaskID == taskId);
 
                 if (hasAssignmentsWithMember || hasLogsWithMember)
                 {
@@ -1796,7 +1793,7 @@ namespace ManageTaskWeb.Controllers
             List<Members> members;
 
             // Lọc ban đầu
-            var query = data.Members.Where(m => m.deleteTime == null);
+            var query = data.Members.AsQueryable();
 
             // Tìm kiếm theo tên hoặc email
             if (!string.IsNullOrEmpty(searchQuery))
@@ -1842,7 +1839,7 @@ namespace ManageTaskWeb.Controllers
             else
             {
                 members = data.TaskAssignments
-                    .Where(a => a.AssignedBy == memberId && a.Member.deleteTime == null)
+                    .Where(a => a.AssignedBy == memberId)
                     .Select(a => a.Member)
                     .Distinct()
                     .Select(m => new Members
@@ -1935,7 +1932,6 @@ namespace ManageTaskWeb.Controllers
                     Status = "Offline",
                     Password = encryptedPassword, // Lưu mật khẩu đã mã hóa
                     ImageMember = ImageMember, // Lưu tên file ảnh
-                    deleteTime = null
                 };
 
                 // Thêm member vào database
@@ -2106,9 +2102,9 @@ namespace ManageTaskWeb.Controllers
 
                 // Tính toán số liệu thống kê
                 var totalProjects = data.Projects.Count(p => p.deleteTime == null);
-                var completedTasks = tasksQuery.Count(t => t.Status == "Done");
+                var completedTasks = tasksQuery.Count(t => t.Status == "Completed");
                 var inProgressTasks = tasksQuery.Count(t => t.Status == "In Progress");
-                var overdueTasks = tasksQuery.Count(t => t.EndDate < DateTime.Now && t.Status != "Done");
+                var overdueTasks = tasksQuery.Count(t => t.EndDate < DateTime.Now && t.Status != "Completed");
 
                 // Dữ liệu cho biểu đồ
                 var projectProgress = data.Projects
@@ -2116,17 +2112,18 @@ namespace ManageTaskWeb.Controllers
                     .Select(p => new {
                         projectName = p.ProjectName,
                         totalTasks = p.Tasks.Count(),
-                        completedTasks = p.Tasks.Count(t => t.Status == "Done")
+                        completedTasks = p.Tasks.Count(t => t.Status == "Completed")
                     })
                     .ToList();
 
                 var taskDistribution = data.TaskAssignments
-                    .GroupBy(ta => ta.Member.FullName)
-                    .Select(g => new {
-                        memberName = g.Key,
-                        taskCount = g.Count()
-                    })
-                    .ToList();
+   .GroupBy(ta => new { ta.MemberID, ta.Member.FullName })  // Group theo MemberID và FullName
+   .Select(g => new {
+       memberName = g.Key.FullName,
+       memberId = g.Key.MemberID,
+       taskCount = g.Count()
+   })
+   .ToList();
 
                 // Chi tiết báo cáo
                 var detailedReport = tasksQuery
@@ -2137,8 +2134,18 @@ namespace ManageTaskWeb.Controllers
                         status = t.Status,
                         startDate = t.StartDate,
                         endDate = t.EndDate,
-                        progress = t.Status == "Done" ? 100 : 
+                        progress = t.Status == "Completed" ? 100 : 
                                   t.Status == "In Progress" ? 50 : 0
+                    })
+                    .ToList();
+
+                var taskDistributionByAssigner = data.TaskAssignments
+                    .Where(ta => ta.AssignedBy != null)  // Chỉ lấy các task có người giao
+                    .GroupBy(ta => new { ta.AssignedBy, ta.Member.FullName })
+                    .Select(g => new {
+                        memberName = g.Key.FullName,
+                        memberId = g.Key.AssignedBy,
+                        taskCount = g.Count()
                     })
                     .ToList();
 
@@ -2150,6 +2157,7 @@ namespace ManageTaskWeb.Controllers
                     overdueTasks,
                     projectProgress,
                     taskDistribution,
+                    taskDistributionByAssigner,  // Thêm dữ liệu mới
                     detailedReport
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -2164,6 +2172,8 @@ namespace ManageTaskWeb.Controllers
 
         #endregion
 
+
+        #region tranfer
         [HttpPost]
         public JsonResult TransferTask(string fromMemberId, string toMemberId, int taskId)
         {
@@ -2237,6 +2247,8 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        #endregion
     }
 }
 

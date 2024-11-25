@@ -89,23 +89,44 @@
 
     <!-- Charts Section -->
     <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header cursor-pointer" onclick="toggleChart('projectProgress')">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Tiến độ dự án</h5>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="card-body chart-body chart-container" id="projectProgressBody" style="display: none;">
+                    <canvas id="projectProgress"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-6">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Tiến độ dự án</h5>
+                <div class="card-header cursor-pointer" onclick="toggleChart('taskDistribution')">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Phân bổ công việc theo thành viên</h5>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <canvas id="projectProgress"></canvas>
+                <div class="card-body chart-body chart-container" id="taskDistributionBody" style="display: none;">
+                    <canvas id="taskDistribution"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Phân bổ công việc theo thành viên</h5>
+                <div class="card-header cursor-pointer" onclick="toggleChart('taskDistributionByAssigner')">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Phân bổ công việc theo người giao</h5>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <canvas id="taskDistribution"></canvas>
+                <div class="card-body chart-body chart-container" id="taskDistributionByAssignerBody" style="display: none;">
+                    <canvas id="taskDistributionByAssigner"></canvas>
                 </div>
             </div>
         </div>
@@ -152,6 +173,7 @@
 <script>
 let projectProgressChart;
 let taskDistributionChart;
+let taskDistributionByAssignerChart;
 let isLoading = false;
 
 $(document).ready(function() {
@@ -311,6 +333,52 @@ function updateCharts(data) {
             }]
         }
     });
+
+    // Update Task Distribution By Assigner Chart
+    if (taskDistributionByAssignerChart) {
+        taskDistributionByAssignerChart.destroy();
+    }
+
+    const assignerCtx = document.getElementById('taskDistributionByAssigner').getContext('2d');
+    taskDistributionByAssignerChart = new Chart(assignerCtx, {
+        type: 'doughnut',  // Sử dụng kiểu doughnut để khác biệt với biểu đồ taskDistribution
+        data: {
+            labels: data.taskDistributionByAssigner.map(t => t.memberName),
+            datasets: [{
+                data: data.taskDistributionByAssigner.map(t => t.taskCount),
+                backgroundColor: [
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(201, 203, 207, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(201, 203, 207, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Số lượng task đã giao'
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
 }
 
 function updateDetailedReport(data) {
@@ -426,6 +494,33 @@ function exportToPDF() {
     };
     
     html2pdf().set(opt).from(element).save();
+}
+
+function toggleChart(chartId) {
+    const bodyElement = document.getElementById(chartId + 'Body');
+    const iconElement = bodyElement.parentElement.querySelector('.fa-chevron-down');
+    
+    // Toggle hiển thị
+    if (bodyElement.style.display === 'none') {
+        bodyElement.style.display = 'block';
+        iconElement.classList.add('rotated');
+        
+        // Vẽ lại biểu đồ khi hiện ra để đảm bảo hiển thị đúng
+        switch(chartId) {
+            case 'projectProgress':
+                if (projectProgressChart) projectProgressChart.resize();
+                break;
+            case 'taskDistribution':
+                if (taskDistributionChart) taskDistributionChart.resize();
+                break;
+            case 'taskDistributionByAssigner':
+                if (taskDistributionByAssignerChart) taskDistributionByAssignerChart.resize();
+                break;
+        }
+    } else {
+        bodyElement.style.display = 'none';
+        iconElement.classList.remove('rotated');
+    }
 }
 </script>
 
