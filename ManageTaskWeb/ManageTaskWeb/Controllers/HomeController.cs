@@ -109,9 +109,6 @@ namespace ManageTaskWeb.Controllers
                 return View();
             }
 
-            // Xóa thời gian hết hạn sau khi đăng nhập thành công
-            member.ExpiryTime = null;
-
             member.Status = "Active";
             data.SubmitChanges();
 
@@ -124,6 +121,10 @@ namespace ManageTaskWeb.Controllers
             Session["Phone"] = member.Phone;
             Session["ImageMember"] = member.ImageMember;
 
+                if (member.ExpiryTime.HasValue)
+                {
+                    return RedirectToAction("ChangePassword");
+                }
             // Chuyển hướng về trang chủ sau khi đăng nhập thành công
             return RedirectToAction("TrangChu");
         }
@@ -166,21 +167,42 @@ namespace ManageTaskWeb.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            // So sánh mật khẩu cũ
-            if (oldPassword != sessionPassword)
+            var MemberID_Session = Session["MemberID"].ToString();
+            var currentMember = data.Members.SingleOrDefault(m => m.MemberID == MemberID_Session);
+
+            // Kiểm tra mật khẩu cũ với database
+            if (EncryptPassword(oldPassword, "mysecretkey") != currentMember.Password)
             {
                 ViewBag.ErrorMessage = "Old password is incorrect.";
                 return View();
             }
 
-            var MemberID_Session = Session["MemberID"].ToString();
-            var currentMember = data.Members.SingleOrDefault(m => m.MemberID == MemberID_Session);
-
+            // Kiểm tra quy tắc mật khẩu mạnh
+            if (!IsStrongPassword(newPassword))
+            {
+                ViewBag.ErrorMessage = "Password must be at least 8 characters long and contain: uppercase letter, lowercase letter, number, and special character.";
+                return View();
+            }
 
             currentMember.Password = EncryptPassword(newPassword, "mysecretkey");
+            currentMember.ExpiryTime = null; // Xóa giá trị ExpiryTime
             data.SubmitChanges();
 
             return View("TrangChu");
+        }
+
+        private bool IsStrongPassword(string password)
+        {
+            // Kiểm tra độ dài tối thiểu
+            if (password.Length < 8) return false;
+
+            // Kiểm tra các yêu cầu về ký tự
+            bool hasUppercase = password.Any(char.IsUpper);
+            bool hasLowercase = password.Any(char.IsLower);
+            bool hasDigit = password.Any(char.IsDigit);
+            bool hasSpecialChar = password.Any(ch => !char.IsLetterOrDigit(ch));
+
+            return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
         }
 
         //Hiem form Quen MK
@@ -540,7 +562,7 @@ namespace ManageTaskWeb.Controllers
                     data.Notifications.DeleteOnSubmit(notif);
                 }
 
-                // Tạo thông báo cho người bị từ chối
+                // Tạo th��ng báo cho ngư���i bị từ chối
                 data.Notifications.InsertOnSubmit(new Notification
                 {
                     MemberID = requestMemberId,
