@@ -562,7 +562,7 @@ namespace ManageTaskWeb.Controllers
                     data.Notifications.DeleteOnSubmit(notif);
                 }
 
-                // Tạo th��ng báo cho ngư���i bị từ chối
+                // Tạo thng báo cho người bị từ chối
                 data.Notifications.InsertOnSubmit(new Notification
                 {
                     MemberID = requestMemberId,
@@ -1972,12 +1972,138 @@ namespace ManageTaskWeb.Controllers
         }
         #endregion
 
-
         public ActionResult TienDoTask()
         {
             return View();
         }
-       
+
+        #region REPORT
+        //Load view 
+        public ActionResult BaoCaoThongKe()
+        {
+            return View();
+        }
+
+        #endregion
+
+        [HttpGet]
+        public JsonResult GetFilterOptions()
+        {
+            try
+            {
+                var projects = data.Projects
+                    .Where(p => p.deleteTime == null)
+                    .Select(p => new { 
+                        ProjectID = p.ProjectID, 
+                        ProjectName = p.ProjectName 
+                    })
+                    .ToList();
+
+                var members = data.Members
+                    .Select(m => new { 
+                        MemberID = m.MemberID, 
+                        FullName = m.FullName 
+                    })
+                    .ToList();
+
+                return Json(new { 
+                    success = true, 
+                    projects = projects, 
+                    members = members 
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { 
+                    success = false, 
+                    message = ex.Message 
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetReportData(string projectId, string memberId, DateTime? startDate, DateTime? endDate)
+        {
+            try
+            {
+                // Query cơ bản cho tasks
+                var tasksQuery = data.Tasks.AsQueryable();
+                
+                // Áp dụng các bộ lọc
+                if (!string.IsNullOrEmpty(projectId))
+                {
+                    tasksQuery = tasksQuery.Where(t => t.ProjectID == projectId);
+                }
+                if (!string.IsNullOrEmpty(memberId))
+                {
+                    tasksQuery = tasksQuery.Where(t => t.TaskAssignments.Any(ta => ta.MemberID == memberId));
+                }
+                if (startDate.HasValue)
+                {
+                    tasksQuery = tasksQuery.Where(t => t.StartDate >= startDate);
+                }
+                if (endDate.HasValue)
+                {
+                    tasksQuery = tasksQuery.Where(t => t.EndDate <= endDate);
+                }
+
+                // Tính toán số liệu thống kê
+                var totalProjects = data.Projects.Count(p => p.deleteTime == null);
+                var completedTasks = tasksQuery.Count(t => t.Status == "Done");
+                var inProgressTasks = tasksQuery.Count(t => t.Status == "In Progress");
+                var overdueTasks = tasksQuery.Count(t => t.EndDate < DateTime.Now && t.Status != "Done");
+
+                // Dữ liệu cho biểu đồ
+                var projectProgress = data.Projects
+                    .Where(p => p.deleteTime == null)
+                    .Select(p => new {
+                        projectName = p.ProjectName,
+                        totalTasks = p.Tasks.Count(),
+                        completedTasks = p.Tasks.Count(t => t.Status == "Done")
+                    })
+                    .ToList();
+
+                var taskDistribution = data.TaskAssignments
+                    .GroupBy(ta => ta.Member.FullName)
+                    .Select(g => new {
+                        memberName = g.Key,
+                        taskCount = g.Count()
+                    })
+                    .ToList();
+
+                // Chi tiết báo cáo
+                var detailedReport = tasksQuery
+                    .Select(t => new {
+                        projectName = t.Project.ProjectName,
+                        taskName = t.TaskName,
+                        assignedTo = t.TaskAssignments.Select(ta => ta.Member.FullName).FirstOrDefault(),
+                        status = t.Status,
+                        startDate = t.StartDate,
+                        endDate = t.EndDate,
+                        progress = t.Status == "Done" ? 100 : 
+                                  t.Status == "In Progress" ? 50 : 0
+                    })
+                    .ToList();
+
+                return Json(new {
+                    success = true,
+                    totalProjects,
+                    completedTasks,
+                    inProgressTasks,
+                    overdueTasks,
+                    projectProgress,
+                    taskDistribution,
+                    detailedReport
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { 
+                    success = false, 
+                    message = ex.Message 
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }
 

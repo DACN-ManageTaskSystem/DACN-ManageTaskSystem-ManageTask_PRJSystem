@@ -1,0 +1,434 @@
+﻿@{
+    ViewBag.Title = "Báo cáo - Thống kê";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="@Url.Content("~/Content/css/bctk.css?v=1")" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<div class="container-fluid mt-4">
+    <!-- Filter Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-filter"></i> Bộ lọc báo cáo</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Dự án</label>
+                        <select class="form-control" id="projectFilter">
+                            <option value="">Tất cả dự án</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Thành viên</label>
+                        <select class="form-control" id="memberFilter">
+                            <option value="">Tất cả thành viên</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Khoảng thời gian</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" id="startDate">
+                            <div class="input-group-prepend input-group-append">
+                                <span class="input-group-text">đến</span>
+                            </div>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary btn-block" id="filterBtn">
+                        <i class="fas fa-search"></i> Lọc
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <h5>Tổng số dự án</h5>
+                    <h2 class="mb-0" id="totalProjects">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <h5>Công việc hoàn thành</h5>
+                    <h2 class="mb-0" id="completedTasks">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <h5>Công việc đang thực hiện</h5>
+                    <h2 class="mb-0" id="inProgressTasks">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-body">
+                    <h5>Công việc trễ hạn</h5>
+                    <h2 class="mb-0" id="overdueTasks">0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Tiến độ dự án</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="projectProgress"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Phân bổ công việc theo thành viên</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="taskDistribution"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Reports -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Chi tiết báo cáo</h5>
+            <div>
+                <button class="btn btn-success" id="exportExcel">
+                    <i class="fas fa-file-excel"></i> Xuất Excel
+                </button>
+                <button class="btn btn-danger" id="exportPdf">
+                    <i class="fas fa-file-pdf"></i> Xuất PDF
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="reportTable">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Dự án</th>
+                            <th>Công việc</th>
+                            <th>Người thực hiện</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày bắt đầu</th>
+                            <th>Ngày kết thúc</th>
+                            <th>Tiến độ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let projectProgressChart;
+let taskDistributionChart;
+let isLoading = false;
+
+$(document).ready(function() {
+    // Load filter options
+    loadFilterOptions();
+    
+    // Initial load of report data
+    loadReportData();
+
+    // Bind filter button click
+    $('#filterBtn').click(function() {
+        loadReportData();
+    });
+
+    // Bind export buttons
+    $('#exportExcel').click(exportToExcel);
+    $('#exportPdf').click(exportToPDF);
+});
+
+function loadFilterOptions() {
+    $.get('/Home/GetFilterOptions', function(response) {
+        if (response.success) {
+            // Populate project dropdown
+            let projectSelect = $('#projectFilter');
+            response.projects.forEach(function(project) {
+                projectSelect.append(new Option(project.ProjectName, project.ProjectID));
+            });
+
+            // Populate member dropdown
+            let memberSelect = $('#memberFilter');
+            response.members.forEach(function(member) {
+                memberSelect.append(new Option(member.FullName, member.MemberID));
+            });
+        }
+    });
+}
+
+function showLoading() {
+    isLoading = true;
+    // Thêm loading spinner hoặc disable các nút
+    $('#filterBtn').prop('disabled', true);
+    $('#filterBtn').html('<i class="fas fa-spinner fa-spin"></i> Đang tải...');
+}
+
+function hideLoading() {
+    isLoading = false;
+    // Ẩn loading spinner
+    $('#filterBtn').prop('disabled', false);
+    $('#filterBtn').html('<i class="fas fa-search"></i> Lọc');
+}
+
+function loadReportData() {
+    if (isLoading) return;
+    
+    showLoading();
+    const filters = {
+        projectId: $('#projectFilter').val(),
+        memberId: $('#memberFilter').val(),
+        startDate: $('#startDate').val(),
+        endDate: $('#endDate').val()
+    };
+
+    // Validate date range
+    if (filters.startDate && filters.endDate) {
+        if (new Date(filters.startDate) > new Date(filters.endDate)) {
+            alert('Ngày bắt đầu không thể lớn hơn ngày kết thúc');
+            hideLoading();
+            return;
+        }
+    }
+
+    $.get('/Home/GetReportData', filters)
+        .done(function(response) {
+            if (response.success) {
+                updateDashboardStats(response);
+                updateCharts(response);
+                updateDetailedReport(response);
+            } else {
+                alert('Lỗi: ' + response.message);
+            }
+        })
+        .fail(function(error) {
+            console.error('Error loading report data:', error);
+            alert('Không thể tải dữ liệu báo cáo. Vui lòng thử lại sau.');
+        })
+        .always(function() {
+            hideLoading();
+        });
+}
+
+function updateDashboardStats(data) {
+    $('#totalProjects').text(data.totalProjects);
+    $('#completedTasks').text(data.completedTasks);
+    $('#inProgressTasks').text(data.inProgressTasks);
+    $('#overdueTasks').text(data.overdueTasks);
+}
+
+function updateCharts(data) {
+    // Update Project Progress Chart
+    if (projectProgressChart) {
+        projectProgressChart.destroy();
+    }
+    
+    const projectCtx = document.getElementById('projectProgress').getContext('2d');
+    projectProgressChart = new Chart(projectCtx, {
+        type: 'bar',
+        data: {
+            labels: data.projectProgress.map(p => p.projectName),
+            datasets: [{
+                label: 'Completed Tasks',
+                data: data.projectProgress.map(p => p.completedTasks),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Total Tasks',
+                data: data.projectProgress.map(p => p.totalTasks),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Update Task Distribution Chart
+    if (taskDistributionChart) {
+        taskDistributionChart.destroy();
+    }
+
+    const taskCtx = document.getElementById('taskDistribution').getContext('2d');
+    taskDistributionChart = new Chart(taskCtx, {
+        type: 'pie',
+        data: {
+            labels: data.taskDistribution.map(t => t.memberName),
+            datasets: [{
+                data: data.taskDistribution.map(t => t.taskCount),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        }
+    });
+}
+
+function updateDetailedReport(data) {
+    const tbody = $('#reportTable tbody');
+    tbody.empty();
+
+    data.detailedReport.forEach(function(item) {
+        tbody.append(`
+            <tr>
+                <td>${item.projectName}</td>
+                <td>${item.taskName}</td>
+                <td>${item.assignedTo || 'Unassigned'}</td>
+                <td>${item.status}</td>
+                <td>${formatDate(item.startDate)}</td>
+                <td>${formatDate(item.endDate)}</td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: ${item.progress}%" 
+                             aria-valuenow="${item.progress}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            ${item.progress}%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `);
+    });
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString();
+}
+
+function exportToExcel() {
+    try {
+        // Lấy dữ liệu từ bảng
+        const table = document.getElementById('reportTable');
+        const tableData = [];
+        
+        // Lấy headers từ bảng
+        const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
+        
+        // Lấy dữ liệu từ các dòng
+        const rows = Array.from(table.querySelectorAll('tbody tr')).map(row => {
+            return Array.from(row.querySelectorAll('td')).map(cell => {
+                // Nếu cell chứa progress bar, lấy giá trị phần trăm
+                if (cell.querySelector('.progress')) {
+                    return cell.querySelector('.progress-bar').textContent.trim();
+                }
+                return cell.textContent.trim();
+            });
+        });
+
+        // Tạo workbook mới
+        const wb = XLSX.utils.book_new();
+        
+        // Tạo dữ liệu cho worksheet với header tùy chỉnh
+        const wsData = [
+            ['BÁO CÁO CHI TIẾT CÔNG VIỆC'],
+            [`Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}`],
+            [], // Dòng trống
+            headers, // Headers của bảng
+            ...rows  // Dữ liệu các dòng
+        ];
+        
+        // Tạo worksheet
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        
+        // Merge cells cho tiêu đề
+        ws['!merges'] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 6 } }, // Merge dòng tiêu đề
+            { s: { r: 1, c: 0 }, e: { r: 1, c: 6 } }  // Merge dòng ngày xuất
+        ];
+        
+        // Style cho header
+        ws['A1'] = { v: 'BÁO CÁO CHI TIẾT CÔNG VIỆC', t: 's', s: { 
+            font: { bold: true, sz: 16 },
+            alignment: { horizontal: 'center' }
+        }};
+        ws['A2'] = { v: `Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}`, t: 's', s: {
+            font: { sz: 12 },
+            alignment: { horizontal: 'center' }
+        }};
+        
+        // Auto-size columns
+        const cols = ws['!cols'] = [];
+        headers.forEach(() => {
+            cols.push({ wch: 20 }); // Set column width rộng hơn
+        });
+        
+        // Thêm worksheet vào workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Báo cáo');
+        
+        // Xuất file
+        XLSX.writeFile(wb, `BaoCaoCongViec_${new Date().toISOString().split('T')[0]}.xlsx`);
+    } catch (error) {
+        console.error('Error exporting to Excel:', error);
+        alert('Có lỗi xảy ra khi xuất Excel. Vui lòng thử lại sau.');
+    }
+}
+
+function exportToPDF() {
+    const element = document.getElementById('reportTable');
+    const opt = {
+        margin: 1,
+        filename: `BaoCaoCongViec_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+    };
+    
+    html2pdf().set(opt).from(element).save();
+}
+</script>
+
+<!-- Add required libraries for export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>

@@ -1,0 +1,37 @@
+﻿.progress {
+    height: 20px;
+    margin-bottom: 0;
+}
+
+.progress-bar {
+    line-height: 20px;
+    font-size: 12px;
+}
+
+.card {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.card-header {
+    padding: 0.75rem 1.25rem;
+}
+
+.dashboard-stats .card {
+    transition: transform 0.2s;
+}
+
+.dashboard-stats .card:hover {
+    transform: translateY(-5px);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.export-buttons {
+    margin-bottom: 1rem;
+}
+
+.export-buttons .btn {
+    margin-right: 0.5rem;
+}

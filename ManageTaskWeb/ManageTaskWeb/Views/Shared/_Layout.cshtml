@@ -1,6 +1,13 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
+@{
+    if (Session["MemberID"] == null && 
+        !Request.Url.AbsolutePath.ToLower().Contains("/home/dangnhap"))
+    {
+        Response.Redirect("/Home/DangNhap");
+        return;
+    }
+}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,13 +37,12 @@
                 {
                     <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
                     <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
-                    <a href="#"><i class="fas fa-users"></i> GroupChat</a>
+                    <a href="/Home/BaoCaoThongKe"><i class="fas fa-users"></i> Report</a>
                     <a href="#"><i class="fas fa-question-circle"></i>Help</a>
                 }
                 else
                 {
                     <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
-                    <a href="#"><i class="fas fa-users"></i> GroupChat</a>
                     <a href="#"><i class="fas fa-question-circle"></i>Help</a>
                 }
 
