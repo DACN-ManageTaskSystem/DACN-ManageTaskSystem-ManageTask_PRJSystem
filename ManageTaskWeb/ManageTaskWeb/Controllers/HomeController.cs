@@ -1946,12 +1946,30 @@ namespace ManageTaskWeb.Controllers
         }
         #endregion
 
-
+        #region TienDO
         public ActionResult TienDoTask()
         {
-            return View();
+            var taskLogs = data.TaskLogs
+                .Join(data.Tasks,
+                      tl => tl.TaskID,
+                      t => t.TaskID,
+                      (tl, t) => new TaskLogViewModel
+                      {
+                          LogID = tl.LogID,
+                          TaskID = tl.TaskID,
+                          TaskName = t.TaskName, // Thêm thông tin từ bảng Task
+                          MemberID = tl.MemberID,
+                          Status = tl.Status,
+                          LogDate = tl.LogDate,
+                          Note = tl.Note,
+                          
+                      })
+                .ToList();
+
+            return View(taskLogs);
         }
-       
+
+        #endregion
     }
 }
 

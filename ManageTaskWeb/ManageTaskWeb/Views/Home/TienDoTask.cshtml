@@ -2,112 +2,216 @@
     ViewBag.Title = "Tiến độ công việc";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@model List<ManageTaskWeb.Models.TaskLogViewModel>
+
+@using Newtonsoft.Json
+
+
+
 <link href="@Url.Content("~/Content/css/tiendotask.css?v=1")" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="container">
     <h1 class="dashboard-title">Biểu đồ tiến độ công việc</h1>
-    
+
     <div class="gantt-chart">
         <div class="task-container">
             <canvas id="progressChart"></canvas>
         </div>
     </div>
 </div>
+@{
+    var logIDs = new List<int>();
+    var taskIDs = new List<int>();
+    var statuses = new List<string>();
+    var logDates = new List<string>(); // Chuỗi định dạng dd/MM
+    var taskNames = new List<string>();
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('progressChart').getContext('2d');
-    
-    const data = {
-        labels: ['20/11', '21/11', '22/11', '23/11', '24/11'],
-        datasets: [
+    foreach (var item in Model)
+    {
+        // Lấy các giá trị tương ứng với từng trường
+        taskIDs.Add(item.TaskID.GetValueOrDefault());
+        statuses.Add(item.Status);
+        logDates.Add(item.LogDate.HasValue ? item.LogDate.Value.ToString("dd/MM") : string.Empty);
+        taskNames.Add(item.TaskName);
+    }
+    var jsonLogDates = JsonConvert.SerializeObject(logDates); // Chuyển đổi thành JSON
+    var jsonTName = JsonConvert.SerializeObject(taskNames); // Chuyển đổi thành JSON
+
+    // Khởi tạo một Dictionary để chứa dữ liệu
+    Dictionary<int, List<int>> data = new Dictionary<int, List<int>>();
+
+    // Lấy danh sách tất cả các ngày LogDate duy nhất và sắp xếp chúng
+    var allLogDates = Model
+        .Select(m => m.LogDate)
+        .Distinct()
+        .OrderBy(d => d)
+        .ToList();
+
+    // Biến lưu trạng thái cuối cùng
+    int lastStatus = 1; // Mặc định trạng thái ban đầu là 0 (chưa có trạng thái)
+
+    // Duyệt qua tất cả các TaskID duy nhất trong Model
+    foreach (var taskID in Model.Select(m => m.TaskID).Distinct())
+    {
+        // Khởi tạo một danh sách trạng thái cho TaskID, với giá trị mặc định là 0
+        data[taskID.GetValueOrDefault()] = new List<int>(new int[allLogDates.Count+1]);
+        int i = 0;
+        int flag = 0;
+        foreach (var item in Model)
+        {
+
+            if (taskID == item.TaskID)
             {
-                label: 'Task A1',
-                data: [1, 1, 2, 3, 3],
-                borderColor: '#4CAF50',
-                backgroundColor: '#4CAF50',
-                pointBackgroundColor: function(context) {
-                    const value = context.dataset.data[context.dataIndex];
-                    if (value === 1) return '#FFA726';      // Pending
-                    if (value === 2) return '#42A5F5';      // Processing
-                    if (value === 3) return '#66BB6A';      // Completed
-                    return '#gray';
-                },
-                pointRadius: 8,
-                pointHoverRadius: 10,
-                tension: 0.4,
-                fill: false
-            },
-            {
-                label: 'Task A2',
-                data: [1, 2, 2, 2, 3],
-                borderColor: '#2196F3',
-                backgroundColor: '#2196F3',
-                pointBackgroundColor: function(context) {
-                    const value = context.dataset.data[context.dataIndex];
-                    if (value === 1) return '#FFA726';
-                    if (value === 2) return '#42A5F5';
-                    if (value === 3) return '#66BB6A';
-                    return '#gray';
-                },
-                pointRadius: 8,
-                pointHoverRadius: 10,
-                tension: 0.4,
-                fill: false
+                flag = 1;
             }
-        ]
-    };
+            if (flag == 1)
+            {
+                int newStatus = lastStatus; // Mặc định giữ nguyên trạng thái cuối cùng
 
-    new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    min: 0,
-                    max: 4,
-                    ticks: {
-                        stepSize: 1,
-                        callback: function(value) {
-                            if (value === 1) return 'Pending';
-                            if (value === 2) return 'Processing';
-                            if (value === 3) return 'Completed';
-                            return '';
-                        }
+                if (item != null)
+                {
+                    // Xác định trạng thái từ dữ liệu
+                    if (item.Status == "Pending")
+                    {
+                        newStatus = 1; // Pending
+                    }
+                    else if (item.Status == "In Progress")
+                    {
+                        newStatus = 2; // In Progress
+                    }
+                    else if (item.Status == "Completed")
+                    {
+                        newStatus = 3; // Completed
                     }
                 }
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        padding: 20
+                // Cập nhật trạng thái vào danh sách nếu có thay đổi
+
+                if (data[taskID.GetValueOrDefault()][i] != newStatus)
+                {
+                    if (item.TaskID != taskID)
+                    {
+                        data[taskID.GetValueOrDefault()][i] = lastStatus;
+
                     }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.dataset.label || '';
-                            const value = context.parsed.y;
-                            let status = '';
-                            if (value === 1) status = 'Pending';
-                            if (value === 2) status = 'Processing';
-                            if (value === 3) status = 'Completed';
-                            return `${label}: ${status}`;
-                        }
+                    else
+                    {
+                        data[taskID.GetValueOrDefault()][i] = newStatus;
+                        lastStatus = newStatus; // Cập nhật trạng thái cuối cùng
                     }
+
                 }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index'
+                else
+                {
+                    data[taskID.GetValueOrDefault()][i] = newStatus;
+
+                }
+
             }
+            else if (flag == 0)
+            {
+                data[taskID.GetValueOrDefault()][i] = 0;
+            }
+            i++;
         }
+        flag = flag - 1;
+    }
+
+
+    // Chuyển đổi từ data thành JSON
+    var jsonData = JsonConvert.SerializeObject(data);
+    var jsonTaskID = JsonConvert.SerializeObject(taskIDs);
+
+
+}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        const logDates = @Html.Raw(jsonLogDates);  // Dữ liệu C# đã chuyển thành JSON
+        const logTName = @Html.Raw(jsonTName);  // Dữ liệu C# đã chuyển thành JSON
+        const logTDT = @Html.Raw(jsonData);  // Dữ liệu C# đã chuyển thành JSON
+        const jsonTaskID = @Html.Raw(jsonTaskID);  // Dữ liệu C# đã chuyển thành JSON
+
+        //Lọc
+        const uniqueLogTName = logTName.filter((value, index, self) => self.indexOf(value) === index);
+        const uniquetask = jsonTaskID.filter((value, index, self) => self.indexOf(value) === index);
+        const count = uniquetask.length;
+
+
+        const datasets = uniqueLogTName.map((taskName, index) => ({
+            label: taskName, // Gắn nhãn cho từng Task
+            data: logTDT[uniquetask[index]], // Lấy dữ liệu từ `logTDT` tương ứng với `uniquetask`
+            borderColor: '#4CAF50',
+            backgroundColor: '#4CAF50',
+            pointBackgroundColor: function (context) {
+                const value = context.dataset.data[context.dataIndex];
+                if (value === 1) return '#FFA726'; // Pending
+                if (value === 2) return '#42A5F5'; // Processing
+                if (value === 3) return '#66BB6A'; // Completed
+                return '#gray'; // Mặc định nếu không khớp
+            },
+            pointRadius: 8,
+            pointHoverRadius: 10,
+            tension: 0.4,
+            fill: false,
+        }));
+
+
+
+        const data = {
+            labels: logDates,
+            datasets: datasets
+        };
+
+        new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 4,
+                        ticks: {
+                            stepSize: 1,
+                            callback: function (value) {
+                                if (value === 1) return 'Pending';
+                                if (value === 2) return 'In Progress';
+                                if (value === 3) return 'Completed';
+                                return '';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.dataset.label || '';
+                                const value = context.parsed.y;
+                                let status = '';
+                                if (value === 1) status = 'Pending';
+                                if (value === 2) status = 'In Progress';
+                                if (value === 3) status = 'Completed';
+                                return `${label}: ${status}`;
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
     });
-});
 </script>

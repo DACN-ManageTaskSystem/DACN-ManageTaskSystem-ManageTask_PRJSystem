@@ -157,3 +157,4 @@ $RECYCLE.BIN/
 .DS_Store
 ManageTaskWeb/ManageTaskWeb/Web.config
 ManageTaskWeb/ManageTaskWeb/Web.config
+*.vsidx
