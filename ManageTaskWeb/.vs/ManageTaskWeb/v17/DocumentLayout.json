@@ -3,19 +3,59 @@
   "WorkspaceRootPath": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\tiendotask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\tiendotask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\dangnhap.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dangnhap.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\views\\home\\dstask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dstask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\subtask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\subtask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\tasklogviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\tasklogviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\taskviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\memberdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\memberdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\members.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\members.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\groupchatviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\groupchatviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\memberviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\memberviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\models\\projectextended.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\projectextended.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\views\\home\\forgotpassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\forgotpassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\views\\home\\dsproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dsproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\dsmember.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dsmember.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\models\\taskviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\taskviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -23,35 +63,31 @@
       "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\membersofproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\groupchat.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\groupchat.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\tiendotask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\tiendotask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\detailtask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\detailtask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\trangchu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\trangchu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\dstask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dstask.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\ttcanhan.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\ttcanhan.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\dsproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\dsproject.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\views\\home\\forgotpassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\views\\home\\forgotpassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\qlcv.dbml||{B465B5AD-8799-4507-B90A-EE29ACF36AF9}|",
-      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\qlcv.dbml||{B465B5AD-8799-4507-B90A-EE29ACF36AF9}|"
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\controllers\\membercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\controllers\\membercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\models\\qlcv.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\qlcv.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|c:\\users\\phamn\\onedrive\\m\u00E1y t\u00EDnh\\dacn-managetasksystem-managetask_prjsystem\\managetaskweb\\managetaskweb\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\models\\qlcv.dbml||{B465B5AD-8799-4507-B90A-EE29ACF36AF9}|",
+      "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\models\\qlcv.dbml||{B465B5AD-8799-4507-B90A-EE29ACF36AF9}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\managetaskweb\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{C5ED2C0D-524D-49A8-BEBB-6AC02D738521}|ManageTaskWeb\\ManageTaskWeb.csproj|solutionrelative:managetaskweb\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
@@ -62,7 +98,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -78,111 +114,137 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "TaskViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskViewModel.cs",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\TaskViewModel.cs",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskViewModel.cs",
-              "RelativeToolTip": "ManageTaskWeb\\Models\\TaskViewModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T05:08:10.184Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "TaskLogViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskLogViewModel.cs",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\TaskLogViewModel.cs",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskLogViewModel.cs",
-              "RelativeToolTip": "ManageTaskWeb\\Models\\TaskLogViewModel.cs",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAsAAABOAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T04:58:02.633Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Controllers\\HomeController.cs",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "ManageTaskWeb\\Controllers\\HomeController.cs",
-              "ViewState": "AQIAAAQAAAAAAAAAAAASwBcAAAAmAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T04:37:47.933Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "TienDoTask.cshtml",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
-              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
-              "ViewState": "AQIAAIUAAAAAAAAAAAAmwJgAAAAwAAAA",
+              "Title": "DangNhap.cshtml",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DangNhap.cshtml",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\DangNhap.cshtml",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DangNhap.cshtml",
+              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\DangNhap.cshtml",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAACsAAAATAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-25T04:43:36.408Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "MembersOfProject.cshtml",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
-              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-25T04:43:34.692Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "GroupChat.cshtml",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\GroupChat.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-25T05:05:42.936Z",
+              "WhenOpened": "2024-11-25T16:06:43.763Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "DetailTask.cshtml",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DetailTask.cshtml",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\DetailTask.cshtml",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DetailTask.cshtml",
-              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\DetailTask.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAUAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-25T05:05:52.209Z",
+              "Title": "Members.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\Members.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\Members.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\Members.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\Members.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T15:53:18.473Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 4,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Controllers\\HomeController.cs",
+              "ViewState": "AQIAAHYEAAAAAAAAAAAlwJAEAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T10:37:55.115Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TaskLogViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskLogViewModel.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\TaskLogViewModel.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskLogViewModel.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\TaskLogViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T15:45:31.084Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SubTask.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\SubTask.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\SubTask.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\SubTask.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\SubTask.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T15:45:30.015Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "DSTask.cshtml",
               "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
               "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
               "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
               "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\DSTask.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAowCMAAABMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-11-25T05:05:51.001Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MemberDTO.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\MemberDTO.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\MemberDTO.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\MemberDTO.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\MemberDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T15:53:19.184Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "GroupChatViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\GroupChatViewModel.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\GroupChatViewModel.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\GroupChatViewModel.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\GroupChatViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T15:53:20.447Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 8,
+              "Title": "MemberViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\MemberViewModel.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\MemberViewModel.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\MemberViewModel.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\MemberViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T15:53:17.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "DSMember.cshtml",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSMember.cshtml",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\DSMember.cshtml",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSMember.cshtml",
+              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\DSMember.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-11-25T15:53:01.309Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "DSProject.cshtml",
               "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\DSProject.cshtml",
               "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\DSProject.cshtml",
@@ -195,7 +257,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "ForgotPassword.cshtml",
               "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\ForgotPassword.cshtml",
               "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\ForgotPassword.cshtml",
@@ -208,32 +270,123 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "QLCV.designer.cs",
-              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\QLCV.designer.cs",
-              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\QLCV.designer.cs",
-              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\QLCV.designer.cs",
-              "RelativeToolTip": "ManageTaskWeb\\Models\\QLCV.designer.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAAD0AAAA4AAAA",
+              "DocumentIndex": 9,
+              "Title": "ProjectExtended.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\ProjectExtended.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\ProjectExtended.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\ProjectExtended.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\ProjectExtended.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T04:39:45.296Z",
+              "WhenOpened": "2024-11-25T10:37:21.317Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
+              "Title": "TienDoTask.cshtml",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
+              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\TienDoTask.cshtml",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAEYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-11-25T15:42:07.291Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "TrangChu.cshtml",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TrangChu.cshtml",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\TrangChu.cshtml",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TrangChu.cshtml",
+              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\TrangChu.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-11-25T15:45:23.687Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "MembersOfProject.cshtml",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
+              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\MembersOfProject.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-11-25T15:45:24.881Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "TaskViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskViewModel.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\TaskViewModel.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\TaskViewModel.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\TaskViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T05:08:10.184Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "TTCaNhan.cshtml",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TTCaNhan.cshtml",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Views\\Home\\TTCaNhan.cshtml",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Views\\Home\\TTCaNhan.cshtml",
+              "RelativeToolTip": "ManageTaskWeb\\Views\\Home\\TTCaNhan.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-11-25T15:45:22.823Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "MemberController.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\MemberController.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Controllers\\MemberController.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Controllers\\MemberController.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Controllers\\MemberController.cs",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAEwEMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T10:38:36.781Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
               "Title": "QLCV.dbml",
               "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\QLCV.dbml",
               "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\QLCV.dbml",
               "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\QLCV.dbml",
               "RelativeToolTip": "ManageTaskWeb\\Models\\QLCV.dbml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001722|",
-              "WhenOpened": "2024-11-25T04:38:32.563Z",
+              "WhenOpened": "2024-11-25T10:37:21.851Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 19,
+              "Title": "QLCV.designer.cs",
+              "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\QLCV.designer.cs",
+              "RelativeDocumentMoniker": "ManageTaskWeb\\Models\\QLCV.designer.cs",
+              "ToolTip": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Models\\QLCV.designer.cs",
+              "RelativeToolTip": "ManageTaskWeb\\Models\\QLCV.designer.cs",
+              "ViewState": "AQIAAC0AAAAAAAAAAAA+wEEAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-25T04:39:45.296Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
               "Title": "Web.config",
               "DocumentMoniker": "C:\\Users\\phamn\\OneDrive\\M\u00E1y t\u00EDnh\\DACN-ManageTaskSystem-ManageTask_PRJSystem\\ManageTaskWeb\\ManageTaskWeb\\Web.config",
               "RelativeDocumentMoniker": "ManageTaskWeb\\Web.config",

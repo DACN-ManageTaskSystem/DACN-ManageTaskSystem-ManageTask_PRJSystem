@@ -84,7 +84,7 @@ namespace ManageTaskWeb.Controllers
         public ActionResult DangNhap(string username, string password)
         {
 
-            var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.deleteTime == null);
+            var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.ExpiryTime == null);
 
             if (member == null)
             {
@@ -216,7 +216,7 @@ namespace ManageTaskWeb.Controllers
                 var member = data.Members.FirstOrDefault(m =>
                     m.MemberID == memberID &&
                     m.Email == email &&
-                    m.deleteTime == null);
+                    m.ExpiryTime == null);
 
                 if (member == null)
                 {
@@ -984,7 +984,7 @@ namespace ManageTaskWeb.Controllers
             {
                 // Lấy danh sách thành viên chưa tham gia project
                 var nonMembers = data.Members
-                    .Where(m => m.deleteTime == null &&
+                    .Where(m => m.ExpiryTime == null &&
                           !data.ProjectMembers.Any(pm =>
                               pm.ProjectID == projectId &&
                               pm.MemberID == m.MemberID &&
@@ -1015,7 +1015,7 @@ namespace ManageTaskWeb.Controllers
                 var projectMembers = data.ProjectMembers
                     .Where(pm => pm.ProjectID == projectId &&
                            pm.Status == "Accepted" &&
-                           pm.Member.deleteTime == null)
+                           pm.Member.ExpiryTime == null)
                     .Select(pm => new
                     {
                         MemberId = pm.MemberID,
@@ -1372,10 +1372,10 @@ namespace ManageTaskWeb.Controllers
 
                 // Kiểm tra nếu có MemberID tồn tại trong TaskAssignments hoặc TaskLogs
                 var hasAssignmentsWithMember = context.TaskAssignments
-                    .Any(ta => ta.TaskID == taskId && ta.MemberID == memberId);
+                    .Any(ta => ta.TaskID == taskId );
 
                 var hasLogsWithMember = context.TaskLogs
-                    .Any(tl => tl.TaskID == taskId && tl.MemberID == memberId);
+                    .Any(tl => tl.TaskID == taskId );
 
                 if (hasAssignmentsWithMember || hasLogsWithMember)
                 {
@@ -1713,7 +1713,7 @@ namespace ManageTaskWeb.Controllers
             List<Members> members;
 
             // Lọc ban đầu
-            var query = data.Members.Where(m => m.deleteTime == null);
+            var query = data.Members.Where(m => m.ExpiryTime == null);
 
             // Tìm kiếm theo tên hoặc email
             if (!string.IsNullOrEmpty(searchQuery))
@@ -1759,7 +1759,7 @@ namespace ManageTaskWeb.Controllers
             else
             {
                 members = data.TaskAssignments
-                    .Where(a => a.AssignedBy == memberId && a.Member.deleteTime == null)
+                    .Where(a => a.AssignedBy == memberId && a.Member.ExpiryTime == null)
                     .Select(a => a.Member)
                     .Distinct()
                     .Select(m => new Members
@@ -1852,7 +1852,7 @@ namespace ManageTaskWeb.Controllers
                     Status = "Offline",
                     Password = encryptedPassword, // Lưu mật khẩu đã mã hóa
                     ImageMember = ImageMember, // Lưu tên file ảnh
-                    deleteTime = null
+                    ExpiryTime = null
                 };
 
                 // Thêm member vào database
@@ -1947,27 +1947,28 @@ namespace ManageTaskWeb.Controllers
         #endregion
 
         #region TienDO
-        public ActionResult TienDoTask()
+        public ActionResult TienDoTask(string projectID)
         {
             var taskLogs = data.TaskLogs
                 .Join(data.Tasks,
                       tl => tl.TaskID,
                       t => t.TaskID,
-                      (tl, t) => new TaskLogViewModel
-                      {
-                          LogID = tl.LogID,
-                          TaskID = tl.TaskID,
-                          TaskName = t.TaskName, // Thêm thông tin từ bảng Task
-                          MemberID = tl.MemberID,
-                          Status = tl.Status,
-                          LogDate = tl.LogDate,
-                          Note = tl.Note,
-                          
-                      })
+                      (tl, t) => new { tl, t })
+                .Where(joined => joined.t.ProjectID == projectID) // Lọc theo projectID
+                .Select(joined => new TaskLogViewModel
+                {
+                    LogID = joined.tl.LogID,
+                    TaskID = joined.tl.TaskID,
+                    TaskName = joined.t.TaskName, // Thêm thông tin từ bảng Task
+                    Status = joined.tl.Status,
+                    LogDate = joined.tl.LogDate,
+                    Note = joined.tl.Note,
+                })
                 .ToList();
 
             return View(taskLogs);
         }
+
 
         #endregion
     }

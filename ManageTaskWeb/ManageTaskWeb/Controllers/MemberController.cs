@@ -65,7 +65,6 @@ namespace ManageTaskWeb.Controllers
                     Status = "Offline",
                     Password = Password, // Lưu mật khẩu
                     ImageMember = ImageMember, // Lưu tên file ảnh
-                    deleteTime = null
                 };
 
                 // Thêm member vào database
