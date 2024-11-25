@@ -71,7 +71,7 @@ namespace ManageTaskWeb.Controllers
 
         #endregion
 
-        #region LOGIN - LOGOUT - CHANGE PASSWORD
+        #region LOGIN - LOGOUT - CHANGE PASSWORD - FORGOT PASSWORD
         //DangNhap-GET
         public ActionResult DangNhap()
         {
@@ -229,7 +229,7 @@ namespace ManageTaskWeb.Controllers
                 string newPassword = GenerateRandomPasswordForgot();
 
                 // Đặt thời gian hết hạn (10 phút từ hiện tại)
-                DateTime expiryTime = DateTime.Now.AddMinutes(1);
+                DateTime expiryTime = DateTime.Now.AddMinutes(10);
 
                 // Cập nhật mật khẩu và thời gian hết hạn trong database
                 member.Password = EncryptPassword(newPassword, "mysecretkey");
