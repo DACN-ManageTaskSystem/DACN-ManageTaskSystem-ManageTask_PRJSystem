@@ -701,45 +701,68 @@ namespace ManageTaskWeb.Controllers
         }
         //Them Project
         [HttpPost]
-        public ActionResult AddProject(string ProjectName, string Description, DateTime StartDate, DateTime EndDate, int Priority, string Status, string ImageProject, HttpPostedFileBase ImageFile)
+        public ActionResult AddProject(string ProjectName, string Description, DateTime StartDate, DateTime EndDate, int Priority, string Status, HttpPostedFileBase ImageFile)
         {
             try
             {
-                // Lưu hình ảnh vào thư mục ~/Content/images/project-img nếu có file upload
-                string imagePath = null;
+                string imageFileName = null;
+
+                // Xử lý file ảnh nếu có
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    // Lưu ảnh vào thư mục
+                    // Kiểm tra định dạng file
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var extension = Path.GetExtension(ImageFile.FileName).ToLower();
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        return RedirectToAction("DSProject", new { notificationMessage = "Chỉ chấp nhận file ảnh có định dạng: .jpg, .jpeg, .png, .gif!", notificationType = "error" });
+                    }
+
+                    // Tạo tên file duy nhất
+                    imageFileName = $"project_{Guid.NewGuid()}{extension}";
+                    
+                    // Lưu file
                     string path = Server.MapPath("~/Content/images/project-img/");
-                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
-                    imagePath = Path.Combine(path, ImageProject);
-                    ImageFile.SaveAs(imagePath);
+                    Directory.CreateDirectory(path);
+                    string fullPath = Path.Combine(path, imageFileName);
+                    ImageFile.SaveAs(fullPath);
                 }
 
-                // Tạo một đối tượng Project mới và lưu thông tin
+                // Tạo project mới
                 var project = new Project
                 {
-                    ProjectID = GetUniqueProjectID(), // Tạo ID duy nhất
-                    ProjectName = ProjectName,
-                    Description = Description,
+                    ProjectID = GetUniqueProjectID(),
+                    ProjectName = ProjectName?.Trim(),
+                    Description = Description?.Trim(),
                     StartDate = StartDate,
                     EndDate = EndDate,
-                    Priority = Priority, // Lưu giá trị Priority (1: Highest, 5: Lowest)
+                    Priority = Priority,
                     Status = Status,
-                    ImageProject = ImageProject, // Lưu tên file ảnh
+                    ImageProject = imageFileName,
                     deleteTime = null
                 };
 
-                // Thêm project vào database
+                // Validate dữ liệu
+                if (string.IsNullOrEmpty(project.ProjectName))
+                {
+                    return RedirectToAction("DSProject", new { notificationMessage = "Tên dự án không được để trống!", notificationType = "error" });
+                }
+
+                if (project.EndDate <= project.StartDate)
+                {
+                    return RedirectToAction("DSProject", new { notificationMessage = "Ngày kết thúc phải sau ngày bắt đầu!", notificationType = "error" });
+                }
+
+                // Lưu vào database
                 data.Projects.InsertOnSubmit(project);
                 data.SubmitChanges();
 
-                // Redirect with success message
-                return RedirectToAction("DSProject", new { notificationMessage = "Thêm Project mới thành công!", notificationType = "success" });
+                return RedirectToAction("DSProject", new { notificationMessage = "Thêm dự án mới thành công!", notificationType = "success" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Redirect with error message
+                // Log error
+                System.Diagnostics.Debug.WriteLine($"Error adding project: {ex.Message}");
                 return RedirectToAction("DSProject", new { notificationMessage = "Đã xảy ra lỗi khi thêm dự án!", notificationType = "error" });
             }
         }
@@ -752,34 +775,68 @@ namespace ManageTaskWeb.Controllers
                 var project = data.Projects.FirstOrDefault(p => p.ProjectID == ProjectID);
                 if (project == null)
                 {
-                    return RedirectToAction("DSProject", new { notificationMessage = "Project not found!", notificationType = "error" });
+                    return RedirectToAction("DSProject", new { notificationMessage = "Không tìm thấy dự án!", notificationType = "error" });
                 }
 
-                // Update project details
-                project.ProjectName = ProjectName;
-                project.Description = Description;
+                // Validate dữ liệu
+                if (string.IsNullOrEmpty(ProjectName?.Trim()))
+                {
+                    return RedirectToAction("DSProject", new { notificationMessage = "Tên dự án không được để trống!", notificationType = "error" });
+                }
+
+                if (EndDate <= StartDate)
+                {
+                    return RedirectToAction("DSProject", new { notificationMessage = "Ngày kết thúc phải sau ngày bắt đầu!", notificationType = "error" });
+                }
+
+                // Xử lý file ảnh mới nếu có
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    // Kiểm tra định dạng file
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var extension = Path.GetExtension(ImageFile.FileName).ToLower();
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        return RedirectToAction("DSProject", new { notificationMessage = "Chỉ chấp nhận file ảnh có định dạng: .jpg, .jpeg, .png, .gif!", notificationType = "error" });
+                    }
+
+                    // Xóa ảnh cũ nếu có
+                    if (!string.IsNullOrEmpty(project.ImageProject))
+                    {
+                        string oldImagePath = Path.Combine(Server.MapPath("~/Content/images/project-img/"), project.ImageProject);
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    // Lưu ảnh mới
+                    string newFileName = $"project_{Guid.NewGuid()}{extension}";
+                    string path = Server.MapPath("~/Content/images/project-img/");
+                    Directory.CreateDirectory(path);
+                    string fullPath = Path.Combine(path, newFileName);
+                    ImageFile.SaveAs(fullPath);
+
+                    project.ImageProject = newFileName;
+                }
+
+                // Cập nhật thông tin project
+                project.ProjectName = ProjectName.Trim();
+                project.Description = Description?.Trim();
                 project.StartDate = StartDate;
                 project.EndDate = EndDate;
                 project.Priority = Priority;
                 project.Status = Status;
 
-                // Update image if a new file is uploaded
-                if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    string path = Server.MapPath("~/Content/images/project-img/");
-                    Directory.CreateDirectory(path); // Ensure directory exists
-                    string imagePath = Path.Combine(path, ImageFile.FileName);
-                    ImageFile.SaveAs(imagePath);
-                    project.ImageProject = ImageFile.FileName;
-                }
-
                 data.SubmitChanges();
 
-                return RedirectToAction("DSProject", new { notificationMessage = "Project updated successfully!", notificationType = "success" });
+                return RedirectToAction("DSProject", new { notificationMessage = "Cập nhật dự án thành công!", notificationType = "success" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return RedirectToAction("DSProject", new { notificationMessage = "An error occurred while updating the project!", notificationType = "error" });
+                // Log error
+                System.Diagnostics.Debug.WriteLine($"Error updating project: {ex.Message}");
+                return RedirectToAction("DSProject", new { notificationMessage = "Đã xảy ra lỗi khi cập nhật dự án!", notificationType = "error" });
             }
         }
         //Xoa project 
@@ -1984,8 +2041,7 @@ namespace ManageTaskWeb.Controllers
             return View();
         }
 
-        #endregion
-
+        //Lay du lieu Filter
         [HttpGet]
         public JsonResult GetFilterOptions()
         {
@@ -2021,6 +2077,7 @@ namespace ManageTaskWeb.Controllers
             }
         }
 
+        //Lay du lieu report
         [HttpGet]
         public JsonResult GetReportData(string projectId, string memberId, DateTime? startDate, DateTime? endDate)
         {
@@ -2104,6 +2161,8 @@ namespace ManageTaskWeb.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        #endregion
     }
 }
 

@@ -80,7 +80,8 @@
                                                 data-start-date="@project.StartDate.ToString("yyyy-MM-dd")"
                                                 data-end-date="@project.EndDate.ToString("yyyy-MM-dd")"
                                                 data-priority="@project.Priority"
-                                                data-status="@project.Status">
+                                                data-status="@project.Status"
+                                                data-image="@project.ImageProject">
                                             <i class="fas fa-pencil-alt"></i> <span>Edit Project</span>
                                         </button>
                                     }
@@ -298,7 +299,10 @@
                                 <button type="button" class="btn-upload" id="uploadBtnEdit" onclick="document.getElementById('imageInputEdit').click();">
                                     <i class="fas fa-upload"></i> Upload
                                 </button>
-                                <input type="file" name="ImageFile" id="imageInputEdit" style="display: none;" />
+                                <input type="file" name="ImageFile" id="imageInputEdit" style="display: none;" onchange="handleEditFileUpload()" />
+                                <input type="hidden" name="ImageProject" id="editImageProject">
+                                <p id="editFileName" style="margin: 5px 0; font-size: 0.9em; color: #555;"></p>
+                                <img id="editPreviewImage" src="" alt="Preview" style="display: none; margin-top: 10px; width: 100px; height: 100px; border: 1px solid #ddd; object-fit: cover;">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -710,6 +714,14 @@ function parseDate(dateStr) {
                 priorityDropdown.textContent = ` ${text}`;
                 priorityIcon.className = `fa-solid ${iconClass}`;
                 document.getElementById('editStatusProject').value = projectStatus;
+
+                // Thêm xử lý hình ảnh
+                const projectImage = this.getAttribute('data-image');
+                document.getElementById('editImageProject').value = projectImage;
+                const previewImage = document.getElementById('editPreviewImage');
+                previewImage.src = `/Content/images/project-img/${projectImage}`;
+                previewImage.style.display = "block";
+                document.getElementById('editFileName').textContent = projectImage;
             });
         });
 
@@ -720,6 +732,79 @@ function parseDate(dateStr) {
             selectedOption.textContent = ` ${text}`;
             selectedIcon.className = ''; // Reset icon class
             selectedIcon.classList.add(`fa-solid`, `fa-${text.toLowerCase().replace(' ', '-')}`, `icon`);
+        }
+
+        /* Add this after your existing script code */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set min date for start date to today
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            
+            // Get today's date in YYYY-MM-DD format
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Set minimum date for start date
+            startDateInput.setAttribute('min', today);
+            
+            // Update end date min when start date changes
+            startDateInput.addEventListener('change', function() {
+                endDateInput.setAttribute('min', this.value);
+                
+                // If end date is before new start date, reset it
+                if(endDateInput.value && endDateInput.value < this.value) {
+                    endDateInput.value = this.value;
+                }
+            });
+            
+            // Validate form before submission
+            document.querySelector('#addProjectModal form').addEventListener('submit', function(e) {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                const currentDate = new Date();
+                
+                // Reset hours to compare just the dates
+                currentDate.setHours(0,0,0,0);
+                startDate.setHours(0,0,0,0);
+                endDate.setHours(0,0,0,0);
+                
+                if(startDate < currentDate) {
+                    e.preventDefault();
+                    showNotificationPopup("Start date cannot be in the past", "error");
+                    return false;
+                }
+                
+                if(endDate < startDate) {
+                    e.preventDefault();
+                    showNotificationPopup("End date must be after start date", "error");
+                    return false;
+                }
+            });
+        });
+
+        // Thêm hàm xử lý file upload cho modal edit
+        function handleEditFileUpload() {
+            const fileInput = document.getElementById('imageInputEdit');
+            const file = fileInput.files[0];
+            const fileNameDisplay = document.getElementById('editFileName');
+            const previewImage = document.getElementById('editPreviewImage');
+
+            if (file) {
+                const validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                if (!validExtensions.includes(fileExtension)) {
+                    fileNameDisplay.textContent = "Hãy chọn file hình ảnh (.jpg, .jpeg, .png, .gif)";
+                    fileNameDisplay.style.color = "red";
+                    fileInput.value = ""; // Reset input if invalid file
+                    document.getElementById('editImageProject').value = ""; // Clear hidden input value
+                } else {
+                    document.getElementById('editImageProject').value = file.name;
+                    fileNameDisplay.textContent = "Selected file: " + file.name;
+                    fileNameDisplay.style.color = "#555";
+                    previewImage.src = URL.createObjectURL(file);
+                    previewImage.style.display = "block";
+                }
+            }
         }
 
     </script>
