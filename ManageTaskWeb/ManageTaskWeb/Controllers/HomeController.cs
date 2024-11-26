@@ -2025,6 +2025,88 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = "Có lỗi xảy ra khi xóa thành viên: " + ex.Message });
             }
         }
+        [HttpPost]
+        public ActionResult EditProfile(string FullName, string Email, string Phone, string Role, string Password, string HireDate, HttpPostedFileBase ImageFile)
+        {
+            try
+            {
+                string memberId = Session["MemberID"]?.ToString();
+                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
+
+                if (member == null)
+                {
+                    throw new Exception("Không tìm thấy thông tin thành viên.");
+                }
+
+                // Xử lý ảnh nếu người dùng tải lên ảnh mới
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
+                    string extension = Path.GetExtension(ImageFile.FileName).ToLower();
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        throw new Exception("Chỉ chấp nhận định dạng file .JPG, .JPEG, .PNG.");
+                    }
+
+                    if (ImageFile.ContentLength > 1 * 1024 * 1024)
+                    {
+                        throw new Exception("Dung lượng file vượt quá giới hạn 1 MB.");
+                    }
+
+                    string uniqueFileName = fileName + "_" + Guid.NewGuid() + extension;
+                    string path = Server.MapPath("~/Content/images/member-img/");
+                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
+                    string imagePath = Path.Combine(path, uniqueFileName);
+                    ImageFile.SaveAs(imagePath);
+
+                    member.ImageMember = uniqueFileName;
+                    Session["ImageMember"] = uniqueFileName; // Cập nhật session
+                }
+
+                // Cập nhật thông tin cá nhân
+                member.FullName = FullName;
+                member.Email = Email;
+                member.Phone = Phone;
+                member.Role = Role;
+
+                // Nếu có thay đổi mật khẩu, mã hóa và lưu mật khẩu mới
+                if (!string.IsNullOrEmpty(Password))
+                {
+                    member.Password = EncryptPassword(Password, "your-secret-key"); // Mã hóa mật khẩu
+                }
+
+                // Xử lý ngày thuê
+                if (!string.IsNullOrEmpty(HireDate) && DateTime.TryParse(HireDate, out DateTime parsedHireDate))
+                {
+                    member.HireDate = parsedHireDate;
+                    Session["HireDate"] = parsedHireDate.ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    Session["HireDate"] = null;
+                }
+
+                // Lưu thay đổi
+                data.SubmitChanges();
+
+                // Cập nhật Session
+                Session["FullName"] = FullName;
+                Session["Email"] = Email;
+                Session["Phone"] = Phone;
+                Session["Role"] = Role;
+
+                return RedirectToAction("TTCaNhan", new { notificationMessage = "Cập nhật thành công!", notificationType = "success" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToAction("TTCaNhan", new { notificationMessage = "Đã xảy ra lỗi khi cập nhật!", notificationType = "error" });
+            }
+        }
+
+
         #endregion
 
         public ActionResult TienDoTask()

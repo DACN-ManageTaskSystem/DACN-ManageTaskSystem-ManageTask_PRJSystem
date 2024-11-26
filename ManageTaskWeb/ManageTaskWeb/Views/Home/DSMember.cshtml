@@ -33,10 +33,21 @@
             align-items: center;
             margin-bottom: 20px;
         }
+            .header a {
+                text-decoration: none;
+                color: #6c63ff;
+                font-size: 1.2rem;
+                transition: color 0.3s ease;
+            }
+
+                .header a:hover {
+                    color: #4a4a8c;
+                }
 
             .header h1 {
                 font-size: 24px;
                 color: #333;
+               
             }
 
             .header button {
@@ -125,130 +136,7 @@
                     background-color: #007bff;
                     color: white;
                 }
-       /* .form-group {
-            margin-bottom: 15px;
-        }
-
-            .form-group label {
-                display: block;
-                color: #333;
-                margin-bottom: 5px;
-            }
-
-            .form-group input[type="text"],
-            .form-group input[type="email"],
-            .form-group input[type="password"],
-            .form-group input[type="date"],
-            .form-group select {
-                width: calc(100% - 20px);
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                box-sizing: border-box;
-                background-color: #f0f0f0;
-            }
-
-            .form-group input[type="checkbox"] {
-                margin-right: 10px;
-            }
-
-            .form-group .upload-btn-wrapper {
-                position: relative;
-                overflow: hidden;
-                display: inline-block;
-            }
-
-            .form-group .btn {
-                border: 2px solid #f39c12;
-                color: #f39c12;
-                background-color: #fff;
-                padding: 10px 20px;
-                border-radius: 5px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-
-            .form-group .upload-btn-wrapper input[type="file"] {
-                font-size: 100px;
-                position: absolute;
-                left: 0;
-                top: 0;
-                opacity: 0;
-            }
-
-            .form-group .required {
-                color: red;
-            }
-
-            .form-group .date-icon {
-                position: absolute;
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #ccc;
-            }
-
-            .form-group .date-input-wrapper {
-                position: relative;
-            }
-
-                .form-group .date-input-wrapper input {
-                    width: calc(100% - 30px);
-                }
-
-                .form-group .date-input-wrapper .date-icon {
-                    right: 10px;
-                }
-
-            .form-group .role-select-wrapper {
-                position: relative;
-            }
-
-                .form-group .role-select-wrapper select {
-                    width: calc(100% - 30px);
-                }
-
-                .form-group .role-select-wrapper .select-icon {
-                    position: absolute;
-                    right: 10px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    color: #ccc;
-                }
-
-            .form-group .confirm-checkbox-wrapper {
-                display: flex;
-                align-items: center;
-            }
-
-                .form-group .confirm-checkbox-wrapper input {
-                    margin-right: 10px;
-                }
-
-                .form-group .confirm-checkbox-wrapper label {
-                    margin: 0;
-                }
-
-            .form-group .confirm-btn {
-                width: 100%;
-                padding: 10px;
-                background-color: #385C8E;
-                color: #fff;
-                border: none;
-                border-radius: 5px;
-                font-size: 16px;
-                cursor: pointer;
-            }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 20px;
-            color: #ccc;
-            cursor: pointer;
-        }*/
+      
         .modal-content {
             border-radius: 15px;
             padding: 30px;
@@ -362,8 +250,12 @@
     </style>
     <body>
         <div class="container">
+            <br />
             <div class="header">
-                <h1>Danh Sách Thành Viên</h1>
+                <div>
+                    <a href="/Home/TrangChu"><i class="fas fa-home"></i> Home</a> > <a href="#">Members</a>
+                </div>
+
                 <button type="button" data-bs-toggle="modal" data-bs-target="#addMemberModal">+ Thêm Thành Viên</button>
 
             </div>
@@ -528,7 +420,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editMemberModalLabel">Edit New Member</h5>
+                        <h5 class="modal-title" id="editMemberModalLabel">Edit Member</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                     </div>
                     <form action="/Home/EditMember" method="post" enctype="multipart/form-data">
@@ -578,7 +470,7 @@
                                     <!-- Hire Date -->
                                     <div class="mb-3">
                                         <label for="hireDateEdit" class="form-label">Hire Date *</label>
-                                        <input type="date" class="form-control" id="hireDateEdit" name="HireDate" required>
+                                        <input type="date" class="form-control" id="hireDateEdit" name="HireDate" value="@(Session["HireDate"] != null ? DateTime.Parse(Session["HireDate"].ToString()).ToString("yyyy-MM-dd") : "")" required>
                                     </div>
 
                                     <!-- Current Image -->
@@ -597,14 +489,13 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Confirm</button>
-                            </div>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+
 
 
 
@@ -618,7 +509,6 @@
                     console.error("Không tìm thấy hàng với ID:", memberID);
                     return;
                 }
-                
                 // Lấy dữ liệu từ các cột trong hàng
                 const fullName = row.querySelector("td:nth-child(2)").innerText.trim();
                 const email = row.querySelector("td:nth-child(3)").innerText.trim();
@@ -641,11 +531,12 @@
                 document.getElementById("phoneEdit").value = phone;
                 document.getElementById("roleEdit").value = role;
 
-                // Chuyển đổi định dạng ngày từ dd/MM/yyyy sang yyyy-MM-dd
-                const [day, month, year] = hireDate.split('/');
-                const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                document.getElementById("hireDateEdit").value = formattedDate;  // Sửa ID từ hireDate thành hireDateEdit
+                // Chuyển đổi hireDate và gán vào ô date
+                const hireDateFormatted = new Date(hireDate);
+                const formattedDate = hireDateFormatted.toISOString().split('T')[0];  // Chuyển đổi sang định dạng YYYY-MM-DD
+                document.getElementById("hireDateEdit").value = formattedDate;
             }
+
             /*===============================================================*/
             /*===============================================================*/
             //Xóa Member
