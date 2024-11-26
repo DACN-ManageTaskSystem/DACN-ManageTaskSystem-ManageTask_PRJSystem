@@ -10,7 +10,10 @@ using System.Web.Mvc;
 using System.Security.Cryptography;
 using System.Text;
 using System.Net;
-
+using System.Net.Mail;
+using System.Net;
+using System.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace ManageTaskWeb.Controllers
 {
@@ -22,7 +25,7 @@ namespace ManageTaskWeb.Controllers
         {
             return View();
         }
-        
+
         #region MA-HOA
         //Ma hoa
         public static string EncryptPassword(string plainText, string key)
@@ -81,24 +84,33 @@ namespace ManageTaskWeb.Controllers
         public ActionResult DangNhap(string username, string password)
         {
 
-            // Tìm kiếm thành viên
             var member = data.Members.FirstOrDefault(m => m.MemberID == username && m.deleteTime == null);
 
             if (member == null)
             {
-                // Không tìm thấy người dùng
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
 
             // Giải mã mật khẩu
             string decryptedPassword = DecryptPassword(member.Password, "mysecretkey");
+
+            // Kiểm tra mật khẩu và thời gian hết hạn
             if (decryptedPassword != password)
             {
-                // Sai mật khẩu
                 ViewBag.ErrorMessage = "*Tên đăng nhập hoặc mật khẩu không đúng.";
                 return View();
             }
+
+            // Kiểm tra thời gian hết hạn nếu có
+            if (member.ExpiryTime.HasValue && DateTime.Now > member.ExpiryTime.Value)
+            {
+                ViewBag.ErrorMessage = "*Mật khẩu tạm thời đã hết hạn. Vui lòng yêu cầu mật khẩu mới.";
+                return View();
+            }
+
+            // Xóa thời gian hết hạn sau khi đăng nhập thành công
+            member.ExpiryTime = null;
 
             member.Status = "Active";
             data.SubmitChanges();
@@ -164,11 +176,137 @@ namespace ManageTaskWeb.Controllers
             var MemberID_Session = Session["MemberID"].ToString();
             var currentMember = data.Members.SingleOrDefault(m => m.MemberID == MemberID_Session);
 
-         
+
             currentMember.Password = EncryptPassword(newPassword, "mysecretkey");
             data.SubmitChanges();
 
             return View("TrangChu");
+        }
+
+        //Hiem form Quen MK
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+        //Xu ly Quen MK
+        [HttpPost]
+        public ActionResult ForgotPassword(string memberID, string email)
+        {
+            try
+            {
+                //// Verify reCAPTCHA
+                //var response = Request["g-recaptcha-response"];
+                //string secretKey = ConfigurationManager.AppSettings["reCaptcha:SecretKey"];
+                //var client = new WebClient();
+
+                //var result = client.DownloadString(string.Format(
+                //    "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}",
+                //    secretKey, response));
+
+                //var obj = JObject.Parse(result);
+                //var status = (bool)obj.SelectToken("success");
+
+                //if (!status)
+                //{
+                //    ViewBag.Message = "Please verify that you are not a robot.";
+                //    ViewBag.IsError = true;
+                //    return View();
+                //}
+
+                var member = data.Members.FirstOrDefault(m =>
+                    m.MemberID == memberID &&
+                    m.Email == email &&
+                    m.deleteTime == null);
+
+                if (member == null)
+                {
+                    ViewBag.IsError = true;
+                    ViewBag.Message = "Invalid Member ID or Email";
+                    return View();
+                }
+
+                // Tạo mật khẩu mới ngẫu nhiên
+                string newPassword = GenerateRandomPasswordForgot();
+
+                // Đặt thời gian hết hạn (10 phút từ hiện tại)
+                DateTime expiryTime = DateTime.Now.AddMinutes(1);
+
+                // Cập nhật mật khẩu và thời gian hết hạn trong database
+                member.Password = EncryptPassword(newPassword, "mysecretkey");
+                member.ExpiryTime = expiryTime;
+                data.SubmitChanges();
+
+                // Gửi email với thông tin về thời gian hết hạn
+                SendPasswordResetEmail(email, newPassword, expiryTime);
+
+                ViewBag.IsError = false;
+                ViewBag.Message = "New password has been sent to your email. Please change it within 10 minutes.";
+            }
+            catch (Exception ex)
+            {
+                ViewBag.IsError = true;
+                ViewBag.Message = "Error processing request. Please try again later.";
+            }
+
+            return View();
+        }
+        //Tao MK moi 8 ki tu
+        private string GenerateRandomPasswordForgot()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 8)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+        //Gui Mail mk moi
+        private void SendPasswordResetEmail(string email, string newPassword, DateTime expiryTime)
+        {
+            try
+            {
+                var fromEmail = ConfigurationManager.AppSettings["EmailFrom"];
+                var fromName = ConfigurationManager.AppSettings["EmailFromName"];
+                var emailPassword = ConfigurationManager.AppSettings["EmailPassword"];
+
+                if (string.IsNullOrEmpty(fromEmail) || string.IsNullOrEmpty(emailPassword))
+                {
+                    throw new ConfigurationErrorsException("Email settings are missing in Web.config");
+                }
+
+                var fromAddress = new MailAddress(fromEmail, fromName ?? "System Admin");
+                var toAddress = new MailAddress(email);
+
+                string subject = "Password Reset";
+                string body = $@"Your temporary password is: {newPassword}
+                        
+                        This password will expire at: {expiryTime.ToString("yyyy-MM-dd HH:mm:ss")}
+                        
+                        Please login and change your password before it expires.
+                        
+                        If you don't change your password within 10 minutes, you'll need to request a new password reset.";
+
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = false
+                })
+                using (var smtp = new SmtpClient()
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromEmail, emailPassword)
+                })
+                {
+                    smtp.Send(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to send password reset email", ex);
+            }
         }
         #endregion
 
@@ -179,7 +317,7 @@ namespace ManageTaskWeb.Controllers
             return View();
         }
 
-#endregion
+        #endregion
 
         #region NOTIFICATION - REQUEST
         //Load Thong bao 
@@ -216,6 +354,29 @@ namespace ManageTaskWeb.Controllers
 
             // If MemberID is null, return an error response
             return Json(new { success = false, message = "User not logged in" }, JsonRequestBehavior.AllowGet);
+        }
+        //Cap nhat trang thai read - unread
+        [HttpPost]
+        public JsonResult ToggleNotificationStatus(int notificationId, bool currentIsRead)
+        {
+            try
+            {
+                // Lấy notification từ database
+                var notification = data.Notifications.FirstOrDefault(n => n.NotificationID == notificationId);
+                if (notification != null)
+                {
+                    // Toggle trạng thái Read
+                    notification.IsRead = !currentIsRead;
+                    data.SubmitChanges();
+
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, message = "Notification not found" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
         //Accept trong thong bao
         [HttpPost]
@@ -366,7 +527,7 @@ namespace ManageTaskWeb.Controllers
                     .FirstOrDefault(pm => pm.MemberID == requestMemberId && pm.ProjectID == projectId && pm.Status == "Pending");
                 if (projectMember != null)
                 {
-                     data.ProjectMembers.DeleteOnSubmit(projectMember);
+                    data.ProjectMembers.DeleteOnSubmit(projectMember);
                 }
 
                 // Xóa tất cả thông báo có cùng ExtraData
@@ -816,7 +977,169 @@ namespace ManageTaskWeb.Controllers
             // Trả về JSON danh sách các thành viên yêu cầu tham gia cùng với NotificationID
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-#endregion
+        //DS member khong trong du an
+        public JsonResult GetNonProjectMembers(string projectId)
+        {
+            try
+            {
+                // Lấy danh sách thành viên chưa tham gia project
+                var nonMembers = data.Members
+                    .Where(m => m.deleteTime == null &&
+                          !data.ProjectMembers.Any(pm =>
+                              pm.ProjectID == projectId &&
+                              pm.MemberID == m.MemberID &&
+                              pm.Status == "Accepted"))
+                    .Select(m => new
+                    {
+                        MemberId = m.MemberID,
+                        FullName = m.FullName,
+                        Role = m.Role,
+                        ImageMember = m.ImageMember,
+                        Email = m.Email
+                    })
+                    .ToList();
+
+                return Json(nonMembers, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        //DSMember trong du an
+        public JsonResult GetProjectMembers(string projectId)
+        {
+            try
+            {
+                // Lấy danh sách thành viên đang trong project
+                var projectMembers = data.ProjectMembers
+                    .Where(pm => pm.ProjectID == projectId &&
+                           pm.Status == "Accepted" &&
+                           pm.Member.deleteTime == null)
+                    .Select(pm => new
+                    {
+                        MemberId = pm.MemberID,
+                        FullName = pm.Member.FullName,
+                        Role = pm.Member.Role,
+                        ImageMember = pm.Member.ImageMember,
+                        Email = pm.Member.Email,
+                        JoinDate = pm.JoinDate
+                    })
+                    .ToList();
+
+                return Json(projectMembers, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        //Them member bao du an
+        [HttpPost]
+        public JsonResult AddMemberToProject(string projectId, string memberId)
+        {
+            try
+            {
+                // Kiểm tra xem member đã tồn tại trong project chưa
+                var existingMember = data.ProjectMembers
+                    .FirstOrDefault(pm => pm.ProjectID == projectId &&
+                                  pm.MemberID == memberId);
+
+                if (existingMember != null)
+                {
+                    return Json(new { success = false, message = "Member already exists in the project." });
+                }
+
+                // Thêm member vào project
+                var projectMember = new ProjectMember
+                {
+                    ProjectID = projectId,
+                    MemberID = memberId,
+                    JoinDate = DateTime.Now,
+                    Status = "Accepted"
+                };
+
+                data.ProjectMembers.InsertOnSubmit(projectMember);
+                data.SubmitChanges();
+
+                // Lấy thông tin project và member để tạo thông báo
+                var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
+
+                // Tạo thông báo cho member được thêm vào
+                var notification = new Notification
+                {
+                    MemberID = memberId,
+                    Content = $"You have been added to project '{project.ProjectName}'",
+                    NotificationDate = DateTime.Now,
+                    NotificationType = "ProjectJoin",
+                    IsRead = false
+                };
+
+                data.Notifications.InsertOnSubmit(notification);
+                data.SubmitChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        //Xoa member khoi du an
+        [HttpPost]
+        public JsonResult RemoveMemberFromProject(string projectId, string memberId)
+        {
+            try
+            {
+                // Kiểm tra xem member có đang làm task nào không
+                var hasActiveTasks = data.TaskAssignments
+                    .Any(ta => ta.Task.ProjectID == projectId &&
+                         ta.MemberID == memberId &&
+                         ta.Status != "Completed");
+
+                if (hasActiveTasks)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Cannot remove member with active tasks."
+                    });
+                }
+
+                // Tìm và xóa member khỏi project
+                var projectMember = data.ProjectMembers
+                    .FirstOrDefault(pm => pm.ProjectID == projectId &&
+                                  pm.MemberID == memberId);
+
+                if (projectMember != null)
+                {
+                    data.ProjectMembers.DeleteOnSubmit(projectMember);
+                    data.SubmitChanges();
+
+                    // Tạo thông báo cho member bị xóa
+                    var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+                    var notification = new Notification
+                    {
+                        MemberID = memberId,
+                        Content = $"You have been removed from project '{project.ProjectName}'",
+                        NotificationDate = DateTime.Now,
+                        NotificationType = "ProjectRemoval",
+                        IsRead = false
+                    };
+
+                    data.Notifications.InsertOnSubmit(notification);
+                    data.SubmitChanges();
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
 
         #region TASK
         //Danh sach task
@@ -944,7 +1267,7 @@ namespace ManageTaskWeb.Controllers
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
-            
+
             if (taskId == null)
                 return HttpNotFound();  // Nếu không có taskId, trả về lỗi Not Found
 
@@ -1029,11 +1352,11 @@ namespace ManageTaskWeb.Controllers
                     Creator = creator,  // Assign the creator here
                     ListTasks = listTasks  // Assign the list of tasks here
                 };
-                
+
 
                 return View(viewModel);
             }
-        }   
+        }
         //Xoa task
         [HttpPost]
         public ActionResult DeleteTaskByMember(string memberId, int taskId)
@@ -1181,7 +1504,7 @@ namespace ManageTaskWeb.Controllers
                 }
                 // Add new Task Assignment entry
                 var taskAssignment = new TaskAssignment
-                {   
+                {
                     TaskID = taskId,
                     MemberID = memberId,
                     AssignedBy = assignedByID,  // Assuming the current user assigns
@@ -1705,189 +2028,12 @@ namespace ManageTaskWeb.Controllers
 
         #endregion
 
-        public JsonResult GetNonProjectMembers(string projectId)
+
+        public ActionResult TienDoTask()
         {
-            try
-            {
-                // Lấy danh sách thành viên chưa tham gia project
-                var nonMembers = data.Members
-                    .Where(m => m.deleteTime == null && 
-                          !data.ProjectMembers.Any(pm => 
-                              pm.ProjectID == projectId && 
-                              pm.MemberID == m.MemberID && 
-                              pm.Status == "Accepted"))
-                    .Select(m => new
-                    {
-                        MemberId = m.MemberID,
-                        FullName = m.FullName,
-                        Role = m.Role,
-                        ImageMember = m.ImageMember,
-                        Email = m.Email
-                    })
-                    .ToList();
-
-                return Json(nonMembers, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
+            return View();
         }
-
-        public JsonResult GetProjectMembers(string projectId)
-        {
-            try
-            {
-                // Lấy danh sách thành viên đang trong project
-                var projectMembers = data.ProjectMembers
-                    .Where(pm => pm.ProjectID == projectId && 
-                           pm.Status == "Accepted" && 
-                           pm.Member.deleteTime == null)
-                    .Select(pm => new
-                    {
-                        MemberId = pm.MemberID,
-                        FullName = pm.Member.FullName,
-                        Role = pm.Member.Role,
-                        ImageMember = pm.Member.ImageMember,
-                        Email = pm.Member.Email,
-                        JoinDate = pm.JoinDate
-                    })
-                    .ToList();
-
-                return Json(projectMembers, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
-        }
-
-        [HttpPost]
-        public JsonResult AddMemberToProject(string projectId, string memberId)
-        {
-            try
-            {
-                // Kiểm tra xem member đã tồn tại trong project chưa
-                var existingMember = data.ProjectMembers
-                    .FirstOrDefault(pm => pm.ProjectID == projectId && 
-                                  pm.MemberID == memberId);
-
-                if (existingMember != null)
-                {
-                    return Json(new { success = false, message = "Member already exists in the project." });
-                }
-
-                // Thêm member vào project
-                var projectMember = new ProjectMember
-                {
-                    ProjectID = projectId,
-                    MemberID = memberId,
-                    JoinDate = DateTime.Now,
-                    Status = "Accepted"
-                };
-
-                data.ProjectMembers.InsertOnSubmit(projectMember);
-                data.SubmitChanges();
-
-                // Lấy thông tin project và member để tạo thông báo
-                var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
-                var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
-
-                // Tạo thông báo cho member được thêm vào
-                var notification = new Notification
-                {
-                    MemberID = memberId,
-                    Content = $"You have been added to project '{project.ProjectName}'",
-                    NotificationDate = DateTime.Now,
-                    NotificationType = "ProjectJoin",
-                    IsRead = false
-                };
-
-                data.Notifications.InsertOnSubmit(notification);
-                data.SubmitChanges();
-
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public JsonResult RemoveMemberFromProject(string projectId, string memberId)
-        {
-            try
-            {
-                // Kiểm tra xem member có đang làm task nào không
-                var hasActiveTasks = data.TaskAssignments
-                    .Any(ta => ta.Task.ProjectID == projectId && 
-                         ta.MemberID == memberId && 
-                         ta.Status != "Completed");
-
-                if (hasActiveTasks)
-                {
-                    return Json(new { 
-                        success = false, 
-                        message = "Cannot remove member with active tasks." 
-                    });
-                }
-
-                // Tìm và xóa member khỏi project
-                var projectMember = data.ProjectMembers
-                    .FirstOrDefault(pm => pm.ProjectID == projectId && 
-                                  pm.MemberID == memberId);
-
-                if (projectMember != null)
-                {
-                    data.ProjectMembers.DeleteOnSubmit(projectMember);
-                    data.SubmitChanges();
-
-                    // Tạo thông báo cho member bị xóa
-                    var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
-                    var notification = new Notification
-                    {
-                        MemberID = memberId,
-                        Content = $"You have been removed from project '{project.ProjectName}'",
-                        NotificationDate = DateTime.Now,
-                        NotificationType = "ProjectRemoval",
-                        IsRead = false
-                    };
-
-                    data.Notifications.InsertOnSubmit(notification);
-                    data.SubmitChanges();
-                }
-
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public JsonResult ToggleNotificationStatus(int notificationId, bool currentIsRead)
-        {
-            try
-            {
-                // Lấy notification từ database
-                var notification = data.Notifications.FirstOrDefault(n => n.NotificationID == notificationId);
-                if (notification != null)
-                {
-                    // Toggle trạng thái Read
-                    notification.IsRead = !currentIsRead;
-                    data.SubmitChanges();
-                    
-                    return Json(new { success = true });
-                }
-                return Json(new { success = false, message = "Notification not found" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
+       
     }
 }
+

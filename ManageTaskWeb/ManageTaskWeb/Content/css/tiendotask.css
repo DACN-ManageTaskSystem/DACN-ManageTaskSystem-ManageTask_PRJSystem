@@ -1,0 +1,68 @@
+﻿.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-title {
+    color: #333;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.gantt-chart {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.task-container {
+    height: 400px;
+    position: relative;
+}
+
+.task-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 150px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.task-label {
+    min-width: 100px;
+    font-weight: 600;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+.chart-line {
+    flex-grow: 1;
+    height: 100%;
+    position: relative;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .task-section {
+        height: 120px;
+    }
+    
+    .task-label {
+        min-width: 80px;
+        font-size: 0.9rem;
+    }
+    
+    .task-container {
+        height: 300px;
+    }
+}
+
