@@ -79,7 +79,6 @@
 
         .status span {
             font-weight: bold;
-           
             padding: 5px 10px;
             border-radius: 5px;
             color: #333;
@@ -467,41 +466,7 @@
             color: #666;
         }
 
-    .toggle-switch {
-        position: relative;
-        width: 40px;
-        height: 20px;
-    }
 
-        .toggle-switch input {
-            display: none;
-        }
-
-        .toggle-switch label {
-            width: 100%;
-            height: 100%;
-            background-color: #ddd;
-            border-radius: 10px;
-            display: block;
-            cursor: pointer;
-            position: relative;
-        }
-
-            .toggle-switch label::after {
-                content: "";
-                width: 18px;
-                height: 18px;
-                background-color: #ffffff;
-                border-radius: 50%;
-                position: absolute;
-                top: 1px;
-                left: 1px;
-                transition: 0.3s;
-            }
-
-        .toggle-switch input:checked + label::after {
-            left: 20px;
-        }
 
     .member-list {
         list-style: none;
@@ -521,7 +486,7 @@
         border-radius: 50%;
         overflow: hidden;
         display: inline-block;
-        margin-right:30px;
+        margin-right: 30px;
     }
 
     .avatar-img {
@@ -530,7 +495,7 @@
         object-fit: cover;
     }
 
-    
+
 
     .info {
         flex: 1;
@@ -575,8 +540,9 @@
                 background-color: #2d5c89;
                 color: #ffffff;
             }
+
     .completed {
-        background-color: green; /* Màu xanh lá */
+        background-color: lightgreen; /* Màu xanh lá */
     }
 
     .in-progress {
@@ -590,7 +556,104 @@
     .default {
         background-color: gray; /* Màu mặc định nếu không có trạng thái */
     }
+    /* Tùy chỉnh giao diện cho toàn bộ combo box */
+    .status-dropdown {
+        width: 100px; /* Chiều rộng của combo box */
+        padding: 8px; /* Đệm bên trong */
+        border: 1px solid #ccc; /* Đường viền */
+        border-radius: 4px; /* Bo tròn góc */
+        font-size: 14px; /* Kích thước chữ */
+        color: #333; /* Màu chữ */
+        background-color: #f9f9f9; /* Màu nền */
+        cursor: pointer; /* Con trỏ chuột khi hover */
+    }
 
+        /* Hiệu ứng khi hover vào combo box */
+        .status-dropdown:hover {
+            border-color: #007bff; /* Màu đường viền khi hover */
+            background-color: #fff; /* Màu nền khi hover */
+        }
+
+        /* Thay đổi giao diện khi chọn trạng thái */
+        .status-dropdown:focus {
+            outline: none; /* Xóa viền mặc định khi focus */
+            border-color: #007bff; /* Đổi màu đường viền khi focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Hiệu ứng shadow khi focus */
+        }
+
+        /* Tùy chỉnh màu cho các tùy chọn */
+        .status-dropdown option {
+            color: #333; /* Màu chữ của các tùy chọn */
+            background-color: #fff; /* Màu nền của các tùy chọn */
+        }
+    /* Định dạng cơ bản cho combo box */
+    .assigned-member-dropdown {
+        width: 150px; /* Combo box chiếm toàn bộ chiều ngang container */
+        padding: 8px; /* Khoảng cách bên trong */
+        border: 1px solid #ccc; /* Đường viền */
+        border-radius: 4px; /* Góc bo tròn */
+        font-size: 14px; /* Kích thước chữ */
+        background-color: #f9f9f9; /* Màu nền */
+        color: #333; /* Màu chữ */
+        cursor: pointer; /* Con trỏ thay đổi thành bàn tay khi hover */
+        transition: all 0.3s ease; /* Hiệu ứng mượt khi thay đổi trạng thái */
+    }
+
+        /* Khi combo box được hover */
+        .assigned-member-dropdown:hover {
+            background-color: #e6f7ff; /* Thay đổi màu nền khi hover */
+            border-color: #1890ff; /* Thay đổi màu đường viền */
+        }
+
+        /* Khi combo box được focus (được chọn) */
+        .assigned-member-dropdown:focus {
+            outline: none; /* Xóa khung viền mặc định */
+            border-color: #40a9ff; /* Màu viền khi focus */
+            box-shadow: 0 0 5px rgba(24, 144, 255, 0.5); /* Hiệu ứng đổ bóng */
+        }
+
+        /* Tùy chỉnh mũi tên dropdown */
+        .assigned-member-dropdown::-ms-expand {
+            display: none; /* Ẩn mũi tên mặc định trên IE */
+        }
+
+        .assigned-member-dropdown option {
+            background-color: #ffffff; /* Nền của các lựa chọn */
+            color: #333; /* Màu chữ */
+        }
+
+            /* Tùy chỉnh màu khi chọn một mục */
+            .assigned-member-dropdown option:checked {
+                background-color: #bae7ff; /* Màu nền của mục đã chọn */
+                color: #000; /* Màu chữ */
+            }
+
+    .assigned-users {
+        width: 100%; /* Adjust as needed */
+    }
+
+    .user-list {
+        max-height: 200px; /* Adjust height to fit 3 items */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+
+    .user {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+        .user img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+    .user-name {
+        font-size: 14px;
+    }
 </style>
 <div class="breadcrumb">
     <span>Home</span> <div class="arrow-right"></div>
@@ -608,7 +671,33 @@
                     <p>End: @(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</p>
                 </div>
                 <div class="double-arrow">
-                    <i class="fas fa-angle-double-up"></i>
+                    @{
+                        string iconClass = "";
+
+                        // Determine the icon class based on the priority value
+                        switch (Model.Priority)
+                        {
+                            case 1:
+                                iconClass = "fa-angles-up ic1 icon";
+                                break;
+                            case 2:
+                                iconClass = "fa-angle-up ic2 icon";
+                                break;
+                            case 3:
+                                iconClass = "fa-bars ic3 icon";
+                                break;
+                            case 4:
+                                iconClass = "fa-angle-down ic4 icon";
+                                break;
+                            case 5:
+                                iconClass = "fa-angles-down ic5 icon";
+                                break;
+                            default:
+                                iconClass = "fa-question-circle ic-default icon"; // Default icon for other cases
+                                break;
+                        }
+                    }
+                    <i class="fas @iconClass"></i>
                 </div>
             </div>
         </div>
@@ -648,28 +737,50 @@
                     {
                         doneCount++;
                     }
-                <div class="task-container">
-                    @if (task.Status == "Done")
-                    {
-                        <i class="fas fa-check task-icon"
-                           data-id="@task.TaskID"
-                           data-status="Done"
-                           onclick="toggleTaskStatus(this)"></i>
-                        <div class="task-details">@task.Description</div>
-                        <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+                    <div class="task-container">
+                        @foreach (var assignment in Model.TaskAssignment)
+                        {
+                            if (task.Status == "Done")
+                            {
 
-                    }
-                    else if (task.Status == "Pending")
-                    {
-                        <i class="fas fa-square task-icon"
-                           data-id="@task.TaskID"
-                           data-status="Pending"
-                           onclick="toggleTaskStatus(this)"></i>
-                        <div class="task-details">@task.Description</div>
-                        <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+                                <div class="task-details">@task.Description</div>
+                                <td>
+                                    <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                        <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                        <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
+                                    </select>
+                                </td>
+                                <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
+                                    @foreach (var member in Model.AssignedMembers)
+                                    {
+                                        <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
+                                            @member.FullName
+                                        </option>
+                                    }
+                                </select>
+                                <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
 
-                    }
-                </div>
+                            }
+
+                            else if (task.Status == "Pending")
+                            {
+
+                                <i class="fas fa-square task-icon"
+                                   data-id="@task.TaskID"
+                                   data-status="Pending"
+                                   onclick="toggleTaskStatus(this)"></i>
+                                <div class="task-details">@task.Description</div>
+                                <td>
+                                    <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                        <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                        <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
+                                    </select>
+                                </td>
+                                <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+
+                            }
+                        }
+                    </div>
                 }
             }
             // Calculate the percentage of Done tasks only if there are tasks
@@ -749,58 +860,56 @@
             Status: <span class="@statusClass">@Model.Status</span>
         </div>
 
-
-
         <div class="assigned-users">
             <h6><strong>Người Làm</strong></h6>
-            @foreach (var member in Model.AssignedMembers)
-            {
-                <div class="user">
-                    <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="User">
-                    <span class="user-name">@member.FullName <br /> <span style="color:forestgreen; font-weight:bold">@member.Role</span>  </span>
-
-                </div>
-            }
-            </div>
-
-        
-
-
-            <div class="creator">
-                <h6><strong>Người Tạo</strong></h6>
-                <div class="user">
-                    <img src="@Url.Content("~/Content/images/member-img/" + Model.Creator.ImageMember)" alt="User">
-                    <span class="user-name">@Model.Creator.FullName  <br /><span style="color:red; font-weight:bold">@Model.Creator.Role</span></span>
-                </div>
-            </div>
-            <br />
-            <h4><strong><center>Thao Tác</center></strong></h4>
-            <div class="task-controls">
-                <button class="button" id="button-member">
-                    Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="icon"></span>
-                </button>
-                <button class="btn-discuss">
-                    Thảo Luận <img src="discuss-icon.png" alt="Discuss">
-                </button>
-                <button class="btn-edit">
-                    Edit Task <img src="edit-icon.png" alt="Edit">
-                </button>
-
-                <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
-                    <input type="hidden" name="taskId" value="@Model.TaskID" />
-                    @foreach (var member in Model.AssignedMembers)
-                    {
-                        <input type="hidden" name="memberId" value="@member.MemberID" />
-                    }
-                    <button class="btn-delete" type="submit">
-                        Delete Task <img src="delete-icon.png" alt="Delete">
-                    </button>
-                </form>
+            <div class="user-list">
+                @foreach (var member in Model.AssignedMembers)
+                {
+                    <div class="user">
+                        <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="User">
+                        <span class="user-name">
+                            @member.FullName <br />
+                            <span style="color:forestgreen; font-weight:bold">@member.Role</span>
+                        </span>
+                    </div>
+                }
             </div>
         </div>
-</div>
 
+
+        <div class="creator">
+            <h6><strong>Người Tạo</strong></h6>
+            <div class="user">
+                <img src="@Url.Content("~/Content/images/member-img/" + Model.Creator.ImageMember)" alt="User">
+                <span class="user-name">@Model.Creator.FullName  <br /><span style="color:red; font-weight:bold">@Model.Creator.Role</span></span>
+            </div>
+        </div>
+        <br />
+        <h4><strong><center>Thao Tác</center></strong></h4>
+        <div class="task-controls">
+            <button class="button" id="button-member">
+                Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="icon"></span>
+            </button>
+            <button class="btn-discuss" onclick="window.location.href='@Url.Action("GroupChat", "Home", new { projectId = Model.ProjectID })'">
+                Thảo Luận <img src="discuss-icon.png" alt="Discuss">
+            </button>
+
+
+            <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
+                <input type="hidden" name="taskId" value="@Model.TaskID" />
+                @foreach (var member in Model.AssignedMembers)
+                {
+                    <input type="hidden" name="memberId" value="@member.MemberID" />
+                }
+                <button class="btn-delete" type="submit">
+                    Delete Task <img src="delete-icon.png" alt="Delete">
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
 <div class="overlay" id="overlay">
     <div class="blind-container-1">
         <h2>Add Members To Task</h2>
@@ -810,12 +919,8 @@
             <div class="panel">
                 <h3>Members in Project</h3>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search Name Members...">
+                    <input type="text" id="projectSearchInput" placeholder="Search Name Members..." onkeyup="filterMembers()">
                     <button>🔍</button>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="toggle-members">
-                        <label for="toggle-members"></label>
-                    </div>
                 </div>
                 @foreach (var member in Model.ProjectMembers)
                 {
@@ -823,7 +928,7 @@
                         <li>
                             <div class="avatar">
                                 <!-- Display the member's image if available -->
-                                <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)"  class="avatar-img" />
+                                <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" class="avatar-img" />
                             </div>
                             <div class="info">
                                 <p>@member.FullName</p>
@@ -831,36 +936,26 @@
                             </div>
                             <button class="add-button"
                                     data-memberid="@member.MemberID"
-                                    data-taskid="@Model.TaskID" 
+                                    data-taskid="@Model.TaskID"
                                     data-assignedbyid="@Model.Creator.MemberID"
-                                    onclick="assignEmployee(this)">➕
+                                    onclick="assignEmployee(this)">
+                                ➕
                             </button>
                         </li>
-                     </ul>
-                  }
-                      
-                        <div class="pagination">
-                            <button>◀</button>
-                            <button class="active">1</button>
-                            <button>2</button>
-                            <button>3</button>
-                            <button>▶</button>
-                        </div>
-                </div>
+                    </ul>
+                }
+
+
+            </div>
 
             <!-- Members In Project -->
             <div class="panel">
                 <h3>Members In Task</h3>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search Name Members...">
+                    <input type="text" id="taskSearchInput" placeholder="Search Name Members..." onkeyup="filterTaskMembers()">
                     <button>🔍</button>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="toggle-project-members">
-                        <label for="toggle-project-members"></label>
-                    </div>
                 </div>
                 <ul class="member-list">
-                   
                     @foreach (var member in Model.AssignedMembers)
                     {
                         <li>
@@ -872,66 +967,112 @@
                                 <p>@member.FullName</p>
                                 <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
                             </div>
-                            <i class="fas fa-times delete-icon" onclick="deleteTaskAssignment('@Model.TaskID', '@member.MemberID')"></i>
+
+                            @* Chỉ hiển thị nút xóa nếu số lượng thành viên > 1 *@
+                            @if (Model.AssignedMembers.Count() > 1)
+                            {
+                                <i class="fas fa-times delete-icon" onclick="deleteTaskAssignment('@Model.TaskID', '@member.MemberID')"></i>
+                            }
                         </li>
                     }
                 </ul>
-                    <div class="pagination">
-                        <button>◀</button>
-                        <button class="active">1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>▶</button>
-                    </div>
-                </div>
+            </div>
+            <style>
+                .member-list {
+                    max-height: 300px; /* Chiều cao tối đa của danh sách, điều chỉnh theo nhu cầu */
+                    overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung vượt quá chiều cao */
+                    padding: 0;
+                    margin: 0;
+                    list-style-type: none;
+                }
+
+                    .member-list li {
+                        padding: 10px;
+                        border-bottom: 1px solid #ccc; /* Thêm đường viền dưới mỗi item để dễ nhìn */
+                    }
+
+                .avatar-img {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                }
+
+                .delete-icon {
+                    cursor: pointer;
+                    color: red;
+                }
+            </style>
         </div>
     </div>
 </div>
-</body>
-
 
 <!-- Thêm jQuery từ CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    function updateTaskStatus(selectElement) {
+        // Lấy TaskID từ thuộc tính data-task-id
+        var taskId = selectElement.getAttribute("data-task-id");
+        var newStatus = selectElement.value; // Lấy trạng thái mới từ combo box
 
-    function toggleTaskStatus(element) {
-        var taskId = element.dataset.id;
-        var taskStatus = element.dataset.status;
+        // Gửi yêu cầu AJAX đến server
+        fetch('/Home/UpdateStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': $('input[name="__RequestVerificationToken"]').val() // Nếu sử dụng AntiForgeryToken
+            },
+            body: JSON.stringify({
+                taskId: taskId,
+                status: newStatus
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Status updated successfully!');
+                    location.reload(); // Tải lại trang hiện tại
+                } else {
+                    alert('Failed to update status.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating status:', error);
+            });
+    }
 
-        console.log("Task ID: " + taskId);
-        console.log("Task Status: " + taskStatus);
 
+    // Kiểm tra sự kiện onchange trong dropdown
+    function updateAssignedMember(selectElement) {
+        console.log("Dropdown value changed");  // Kiểm tra khi dropdown thay đổi
+
+        var taskAssignmentId = selectElement.getAttribute('data-assignment-id'); // ID của TaskAssignment
+        var memberId = selectElement.value; // ID của thành viên mới được chọn
+
+        console.log(`TaskAssignmentID: ${taskAssignmentId}, MemberID: ${memberId}`); // Kiểm tra giá trị
+
+        // Gửi thông tin tới server để cập nhật TaskAssignment
         $.ajax({
-            url: '/Home/ToggleStatus',  // URL tới Action method trong Controller
+            url: '/Home/UpdateAssignedMember',
             type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="__RequestVerificationToken"]').val()
+            },
             data: {
-                taskId: taskId,          // Tham số TaskID
-                status: taskStatus       // Tham số Status
+                taskAssignmentId: taskAssignmentId,
+                memberId: memberId
             },
             success: function (response) {
-                console.log(response);  // In response ra console để kiểm tra dữ liệu
-
                 if (response.success) {
-                    alert('Task status updated successfully!');
-                    location.reload(); // Tải lại trang hiện tại
-                    // Cập nhật trạng thái của task trên giao diện mà không tải lại trang
-                    // Nếu bạn muốn thay đổi giao diện sau khi cập nhật
-                    var taskElement = document.querySelector('[data-id="' + taskId + '"]');
-                    if (taskElement) {
-                        taskElement.dataset.status = response.newStatus;
-                        // Cập nhật giao diện (ví dụ thay đổi icon trạng thái task)
-                        taskElement.classList.toggle('fa-check', response.newStatus === 'Done');
-                        taskElement.classList.toggle('fa-square', response.newStatus === 'Pending');
-                    }
+                    alert('Assigned member updated successfully!');
                 } else {
-                    alert('Error: ' + response.message);  // Hiển thị lỗi nếu có
+                    alert('Failed to update assigned member.');
                 }
             },
-            error: function (xhr, status, error) {
-                alert('An error occurred: ' + error);  // Nếu có lỗi trong AJAX
+            error: function (error) {
+                console.error('Error:', error);
             }
         });
+
     }
 
     function createSubTask() {
@@ -940,7 +1081,7 @@
             TaskName: document.getElementById('taskName').value,
             Description: document.getElementById('taskDescription').value,
             ProjectID: document.getElementById('projectId').value,
-            ParentTaskID: parseInt(document.getElementById('parentTaskId').value) 
+            ParentTaskID: parseInt(document.getElementById('parentTaskId').value)
         };
         console.log(subTask.TaskID)
         console.log(subTask.TaskName)
@@ -999,7 +1140,7 @@
         var memberId = $(button).data('memberid');
         var taskId = $(button).data('taskid');
         var assignedByID = $(button).data('assignedbyid');
-      
+
         // AJAX request to assign the employee to the task
         $.ajax({
             url: '/Home/AssignEmployee',  // The backend action URL
@@ -1043,6 +1184,7 @@
             });
         }
     }
+
     document.getElementById('button-member').addEventListener('click', function () {
         var overlay = document.getElementById('overlay');
         overlay.style.visibility = 'visible'; // Hiển thị overlay
@@ -1052,5 +1194,31 @@
         var overlay = document.getElementById('overlay');
         overlay.style.visibility = 'hidden'; // Hiển thị overlay
     });
+
+
+    // Lọc thành viên trong dự án
+    function filterMembers() {
+        const input = document.getElementById('projectSearchInput').value.toLowerCase();
+        const members = document.querySelectorAll('.panel:first-of-type .member-list li'); // Chọn danh sách đầu tiên
+
+        members.forEach(member => {
+            const name = member.querySelector('.info p').textContent.toLowerCase();
+            member.style.display = name.includes(input) ? '' : 'none'; // Ẩn/hiện thành viên
+        });
+    }
+
+    // Lọc thành viên trong task
+    function filterTaskMembers() {
+        const input = document.getElementById('taskSearchInput').value.toLowerCase();
+        const taskMembers = document.querySelectorAll('.panel:last-of-type .member-list li'); // Chọn danh sách thứ hai
+
+        taskMembers.forEach(taskMember => {
+            const name = taskMember.querySelector('.info p').textContent.toLowerCase();
+            taskMember.style.display = name.includes(input) ? '' : 'none'; // Ẩn/hiện task member
+        });
+    }
+
+
+
 
 </script>

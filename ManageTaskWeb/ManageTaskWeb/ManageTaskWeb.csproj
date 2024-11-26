@@ -145,6 +145,7 @@
       <DependentUpon>QLCV.dbml</DependentUpon>
     </Compile>
     <Compile Include="Models\SubTask.cs" />
+    <Compile Include="Models\TaskAssignmentViewModel.cs" />
     <Compile Include="Models\TaskLogViewModel.cs" />
     <Compile Include="Models\TaskViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

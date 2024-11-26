@@ -14,5 +14,6 @@ namespace ManageTaskWeb.Models
         public string Status { get; set; }
         public string Role { get; set; }
         public string ImageMember { get; set; }
+
     }
 }
