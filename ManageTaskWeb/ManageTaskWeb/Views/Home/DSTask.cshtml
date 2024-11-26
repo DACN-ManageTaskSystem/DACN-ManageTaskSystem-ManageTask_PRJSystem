@@ -23,6 +23,23 @@
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
             <i class="fas fa-plus-circle"></i> Add New Task
         </button>
+        @{
+            string projectid = null;
+
+            var firstItem = Model.FirstOrDefault(); // Lấy phần tử đầu tiên trong danh sách
+            if (firstItem != null && firstItem.ProjectID != null)
+            {
+                projectid = firstItem.ProjectID.ToString();
+            }
+            else
+            {
+                projectid = "0"; // Giá trị mặc định nếu null
+            }
+        }
+        <button class="btn btn-primary" onclick="window.location.href='/Home/TienDoTask?projectID=@projectid'">
+            <i class="fas fa-plus-circle"></i> Bảng Tiến Độ
+        </button>
+
     </div>
 </div>
 <div class="search-bar">

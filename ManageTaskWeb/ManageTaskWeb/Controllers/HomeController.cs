@@ -73,6 +73,7 @@ namespace ManageTaskWeb.Controllers
 
         #region LOGIN - LOGOUT - CHANGE PASSWORD - FORGOT PASSWORD
         //DangNhap-GET
+        //DangNhap-GET
         public ActionResult DangNhap()
         {
 
@@ -83,8 +84,7 @@ namespace ManageTaskWeb.Controllers
         [HttpPost]
         public ActionResult DangNhap(string username, string password)
         {
-
-            var member = data.Members.FirstOrDefault(m => m.MemberID == username);
+            var member = data.Members.FirstOrDefault(m => m.MemberID == username );
 
             if (member == null)
             {
@@ -150,6 +150,9 @@ namespace ManageTaskWeb.Controllers
             // Chuyển hướng về trang đăng nhập
             return RedirectToAction("DangNhap");
         }
+
+       
+       
 
         //Hien thi View Doi MK
         public ActionResult ChangePassword()
@@ -238,7 +241,6 @@ namespace ManageTaskWeb.Controllers
                 var member = data.Members.FirstOrDefault(m =>
                     m.MemberID == memberID &&
                     m.Email == email);
-
                 if (member == null)
                 {
                     ViewBag.IsError = true;
@@ -1316,33 +1318,45 @@ namespace ManageTaskWeb.Controllers
 
             }
         }
-        //Toggle status
+
         [HttpPost]
-        public ActionResult ToggleStatus(int taskId, string status)
+        public ActionResult UpdateStatus(int taskId, string status)
         {
-            try
+            using (var context = new QLCVDataContext())
             {
-                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                // Tìm task theo TaskID
+                var task = context.Tasks.FirstOrDefault(t => t.TaskID == taskId);
                 if (task == null)
                 {
                     return Json(new { success = false, message = "Task not found." });
                 }
 
-                // Kiểm tra và thay đổi trạng thái
-                string newStatus = status == "Done" ? "Pending" : "Done"; // Chuyển trạng thái
-                task.Status = newStatus;
+                // Cập nhật trạng thái
+                task.Status = status;
+                context.SubmitChanges();
 
-                // Lưu thay đổi vào cơ sở dữ liệu
-                data.SubmitChanges();
-
-                // Trả về kết quả cùng với trạng thái mới
-                return Json(new { success = true, newStatus = newStatus });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
+                return Json(new { success = true });
             }
         }
+        [HttpPost]
+        public ActionResult UpdateAssignedMember(int taskAssignmentId, string memberId)
+        {
+        
+
+            using (var context = new QLCVDataContext())
+            {
+                var taskAssignment = context.TaskAssignments.FirstOrDefault(ta => ta.TaskAssignmentID == taskAssignmentId);
+                if (taskAssignment != null)
+                {
+                    taskAssignment.MemberID = memberId;  // Cập nhật MemberID
+                    context.SubmitChanges();  // Lưu thay đổi vào cơ sở dữ liệu
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false });
+            }
+        }
+
+
 
         #endregion
 
@@ -1369,7 +1383,18 @@ namespace ManageTaskWeb.Controllers
 
                 if (task == null)
                     return HttpNotFound();  // Nếu không tìm thấy task trong CSDL, trả về lỗi Not Found
-
+                var subTaskAssignments = context.TaskAssignments
+                                       .Where(ta => context.Tasks.Any(t => t.ParentTaskID == taskIdInt && t.TaskID == ta.TaskID))
+                                       .Select(ta => new TaskAssignmentViewModel
+                                       {
+                                           TaskAssignmentID = ta.TaskAssignmentID,
+                                           TaskID = ta.TaskID,
+                                           MemberID = ta.MemberID,
+                                           AssignedBy = ta.AssignedBy,
+                                           AssignedDate = ta.AssignedDate,
+                                           Status = ta.Status,
+                                           Note = ta.Note
+                                       }).ToList();
                 var creator = task.TaskAssignments
                         .Where(ta => ta.AssignedBy != null)
                         .Join(context.Members,
@@ -1413,6 +1438,7 @@ namespace ManageTaskWeb.Controllers
                     EndDate = task.EndDate ?? DateTime.MinValue,
                     Priority = task.Priority ?? 0,
                     Status = task.Status,
+                    TaskAssignment = subTaskAssignments, // Danh sách TaskAssignment
                     AssignedMembers = (from ta in task.TaskAssignments
                                        join member in context.Members on ta.MemberID equals member.MemberID
                                        select new MemberViewModel
@@ -1421,6 +1447,7 @@ namespace ManageTaskWeb.Controllers
                                            FullName = member.FullName,
                                            Role = member.Role,
                                            ImageMember = member.ImageMember
+
                                        }).ToList(),
                     ProjectMembers = (from pm in data.ProjectMembers
                                       join m in data.Members on pm.MemberID equals m.MemberID
@@ -1440,6 +1467,7 @@ namespace ManageTaskWeb.Controllers
                 return View(viewModel);
             }
         }
+
         //Xoa task
         [HttpPost]
         public ActionResult DeleteTaskByMember(string memberId, int taskId)
@@ -1452,19 +1480,12 @@ namespace ManageTaskWeb.Controllers
                 {
                     return HttpNotFound("Task not found.");
                 }
-
-                // Kiểm tra nếu có MemberID tồn tại trong TaskAssignments hoặc TaskLogs
-                var hasAssignmentsWithMember = context.TaskAssignments
-                    .Any(ta => ta.TaskID == taskId && ta.MemberID == memberId);
-
-                var hasLogsWithMember = context.TaskLogs
-                    .Any(tl => tl.TaskID == taskId);
-
-                if (hasAssignmentsWithMember || hasLogsWithMember)
+                var hasSubTasks = context.Tasks.Any(t => t.ParentTaskID == taskId);
+                if (hasSubTasks)
                 {
-                    return Content("Cannot delete the task because there are members assigned or logs exist for this task.");
+                    // Nếu có task con, không cho phép xóa và trả về thông báo lỗi
+                    return RedirectToAction("DetailTask", new { notificationMessage = "Cannot delete task because it has sub-tasks.", notificationType = "error" });
                 }
-
                 // Xóa tất cả TaskAssignments liên quan đến TaskID
                 var taskAssignments = context.TaskAssignments
                     .Where(ta => ta.TaskID == taskId)
@@ -1634,6 +1655,8 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+       
 
         #endregion
 
@@ -1934,6 +1957,8 @@ namespace ManageTaskWeb.Controllers
                     Status = "Offline",
                     Password = encryptedPassword, // Lưu mật khẩu đã mã hóa
                     ImageMember = ImageMember, // Lưu tên file ảnh
+                    ExpiryTime = null
+
                 };
 
                 // Thêm member vào database
@@ -2032,7 +2057,6 @@ namespace ManageTaskWeb.Controllers
             {
                 string memberId = Session["MemberID"]?.ToString();
                 var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
-
                 if (member == null)
                 {
                     throw new Exception("Không tìm thấy thông tin thành viên.");
@@ -2110,10 +2134,28 @@ namespace ManageTaskWeb.Controllers
         #endregion
 
         public ActionResult TienDoTask()
+        #region TienDO
+        public ActionResult TienDoTask(string projectID)
         {
-            return View();
-        }
+            var taskLogs = data.TaskLogs
+                .Join(data.Tasks,
+                      tl => tl.TaskID,
+                      t => t.TaskID,
+                      (tl, t) => new { tl, t })
+                .Where(joined => joined.t.ProjectID == projectID) // Lọc theo projectID
+                .Select(joined => new TaskLogViewModel
+                {
+                    LogID = joined.tl.LogID,
+                    TaskID = joined.tl.TaskID,
+                    TaskName = joined.t.TaskName, // Thêm thông tin từ bảng Task
+                    Status = joined.tl.Status,
+                    LogDate = joined.tl.LogDate,
+                    Note = joined.tl.Note,
+                })
+                .ToList();
 
+            return View(taskLogs);
+        }
         #region REPORT
         //Load view 
         public ActionResult BaoCaoThongKe()

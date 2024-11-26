@@ -7,6 +7,9 @@ namespace ManageTaskWeb.Models
 {
     public class TaskViewModel
     {
+        public int TaskAssignmentID { get; set; }
+
+        public int Id { get; set; }
         public int TaskID { get; set; }
         public int? ParentTaskID { get; set; }
         public string TaskName { get; set; }
@@ -19,6 +22,8 @@ namespace ManageTaskWeb.Models
 
 
         public List<TaskViewModel> ListTasks { get; set; }
+        public List<TaskAssignmentViewModel> TaskAssignment { get; set; }
+
         public List<MemberViewModel> AssignedMembers { get; set; }
         public List<MemberViewModel> ProjectMembers { get; set; }
 
