@@ -2,88 +2,126 @@
     ViewBag.Title = "Thông tin tài khoản";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+@model List<ManageTaskWeb.Models.Members>
+
 <link href="@Url.Content("~/Content/css/member.css?v=1")" rel="stylesheet" />
 
-
-    <div class="member-page">
-        <div class="header">
-            <div>
-                <a href="/Home/TrangChu"><i class="fas fa-home"></i> Member </a> > <a href="#">Thông tin tài khoản</a>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="sidebar">
-                <a class="active" href="#">
-                    <span class="green"></span> Thông tin tài khoản
-                </a>
-                <a href="#">
-                    <span class="yellow"></span> Your Task
-                </a>
-                <a href="#">
-                    <span class="blue"></span> Your Project
-                </a>
-                <a href="#">
-                    <span class="red"></span> Đặt lại mật khẩu
-                </a>
-                <a href="/Home/Logout">
-                    <span class="red"></span> Đăng xuất
-                </a>
-            </div>
-            <div class="content">
-                <h2>Thông tin tài khoản</h2>
-                <div class="profile-pic">
-                    <img alt="User profile picture" height="150" src="~/Content/images/member-img/@Session["ImageMember"]   " width="150" />
-                    <button>Chọn ảnh</button>
-                    <p>Dung lượng file tối đa 1 MB Định dạng: .JPG, .PNG</p>
-                </div>
-                <div class="form-group">
-                    <label>Họ và tên</label><span>:</span>
-                    <input type="text" class="form-control" placeholder="Nhập họ và tên" />
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại</label><span>:</span>
-                    <input type="text" class="form-control" placeholder="Nhập số điện thoại" />
-                </div>
-                <div class="form-group">
-                    <label>Giới tính</label><span>:</span>
-                    <select class="form-control" aria-label="Giới tính">
-                        <option value="">Giới tính</option>
-                        <option value="male">Nam</option>
-                        <option value="female">Nữ</option>
-                        <option value="other">Khác</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Email</label><span>:</span>
-                    <input type="email" class="form-control" placeholder="Nhập email" />
-                </div>
-                <div class="form-group">
-                    <label>Ngày sinh</label><span>:</span>
-                    <input type="date" class="form-control" value="2000-01-01" />
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <div class="form-group">
-                    <label>Địa chỉ</label><span>:</span>
-                    <input type="text" class="form-control" placeholder="Nhập địa chỉ" />
-                </div>
-                <div class="form-group">
-                    <label>Nghề nghiệp</label><span>:</span>
-                    <input type="text" class="form-control" placeholder="Nhập nghề nghiệp" />
-                </div>
-                <div class="update-button text-center">
-                    <button class="btn btn-warning">Cập nhật</button>
-                </div>
-                <div class="update-message" style="display:none; color: green;">
-                    Cập nhật thành công!
-                </div>
-            </div>
+<div class="member-page">
+    <div class="header">
+        <div>
+            <a href="/Home/TrangChu"><i class="fas fa-home"></i> Member </a> > <a href="#">Thông tin tài khoản</a>
         </div>
     </div>
 
-    <script>
-        document.querySelector('.update-button button').addEventListener('click', function () {
-            document.querySelector('.update-message').style.display = 'block';
-        });
-    </script>
+    <div class="container">
+        <div class="sidebar">
+            <a class="active" href="#">
+                <span class="green"></span> Thông tin tài khoản
+            </a>
+            <a href="#">
+                <span class="yellow"></span> Your Task
+            </a>
+            <a href="#">
+                <span class="blue"></span> Your Project
+            </a>
+            <a href="#">
+                <span class="red"></span> Đặt lại mật khẩu
+            </a>
+            <a href="/Home/Logout">
+                <span class="red"></span> Đăng xuất
+            </a>
+        </div>
+        <div class="content">
+            <h2>Thông tin tài khoản</h2>
+            <div class="profile-pic">
+                <!-- Hiển thị ảnh hiện tại -->
+                <img alt="User profile picture" id="currentImage" height="150" src="~/Content/images/member-img/@Session["ImageMember"]" width="150" />
+                <button type="button" onclick="document.getElementById('imageInputAdd').click()">Chọn ảnh</button>
+                <input type="file" id="imageInputAdd" name="ImageFile" style="display: none;" onchange="previewImage()" />
+                <p>Dung lượng file tối đa 1 MB | Định dạng: .JPG, .PNG</p>
+            </div>
+
+            <form method="POST" action="/Home/EditProfile" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" name="FullName" value="@Session["FullName"]" />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="Email" value="@Session["Email"]" />
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" class="form-control" name="Phone" value="@Session["Phone"]" />
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select class="form-control" name="Role">
+                        <option value="Manager">Manager</option>
+                        <option value="Developer">Developer</option>
+                        <option value="Tester">Tester</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="passwordEdit">Password</label>
+                    <input type="password" class="form-control" id="passwordEdit" name="Password"/>
+                </div>
+                <div class="form-group">
+                    <label>Hire Date</label>
+                    <input type="date" class="form-control" id="hireDateEdit" name="HireDate" value="@(Session["HireDate"] != null ? DateTime.Parse(Session["HireDate"].ToString()).ToString("yyyy-MM-dd") : "")" required>
+                </div>
+                <div class="update-button text-center">
+                    <button type="submit" class="btn btn-warning">Cập nhật</button>
+                </div>
+            </form>
+
+            <script>
+                document.querySelector('.update-button button').addEventListener('click', function () {
+                    document.querySelector('.update-message').style.display = 'block';
+                });
+
+                document.querySelector('form').addEventListener('submit', function (e) {
+                    e.preventDefault(); // Ngăn chặn reload
+
+                    const formData = new FormData(this);
+
+                    fetch('/Home/EditProfile', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert("Cập nhật thành công!");
+                            } else {
+                                alert("Cập nhật thất bại: " + data.message);
+                            }
+                        })
+                        .catch(err => console.error("Lỗi khi cập nhật thông tin:", err));
+                });
+
+                function previewImage() {
+                    const fileInput = document.getElementById('imageInputAdd');
+                    const previewImage = document.getElementById('currentImage');
+                    const file = fileInput.files[0];
+
+                    if (file) {
+                        const validExtensions = ['jpg', 'jpeg', 'png'];
+                        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                        if (!validExtensions.includes(fileExtension)) {
+                            alert("Hãy chọn file hình ảnh định dạng .JPG, .JPEG hoặc .PNG.");
+                            fileInput.value = ""; // Reset input nếu file không hợp lệ
+                        } else {
+                            previewImage.src = URL.createObjectURL(file);
+
+                            // Giải phóng bộ nhớ sau khi tải
+                            previewImage.onload = () => URL.revokeObjectURL(previewImage.src);
+                        }
+                    }
+                }
+            </script>
+        </div>
+
 
