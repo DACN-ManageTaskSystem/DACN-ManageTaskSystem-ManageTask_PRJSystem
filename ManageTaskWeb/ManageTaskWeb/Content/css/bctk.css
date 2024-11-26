@@ -53,7 +53,9 @@
 }
 /* Thêm class mới để kiểm soát chiều cao */
 chart-container {
-    height: 300px; /* hoặc giá trị phù hợp khác */
+        position: relative;
+    height: 400px;
+    width: 100%; /* hoặc giá trị phù hợp khác */
 }
  .chart-body {
     height: 100%;

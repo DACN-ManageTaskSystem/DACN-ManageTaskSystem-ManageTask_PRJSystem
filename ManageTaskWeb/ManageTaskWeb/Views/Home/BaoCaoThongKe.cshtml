@@ -112,8 +112,15 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
-                <div class="card-body chart-body chart-container" id="taskDistributionBody" style="display: none;">
-                    <canvas id="taskDistribution"></canvas>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <select class="form-control" id="taskDistProjectFilter">
+                            <option value="">Tất cả dự án</option>
+                        </select>
+                    </div>
+                    <div class="chart-body chart-container" id="taskDistributionBody" style="display: none;">
+                        <canvas id="taskDistribution"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -125,8 +132,15 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
-                <div class="card-body chart-body chart-container" id="taskDistributionByAssignerBody" style="display: none;">
-                    <canvas id="taskDistributionByAssigner"></canvas>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <select class="form-control" id="taskDistByAssignerProjectFilter">
+                            <option value="">Tất cả dự án</option>
+                        </select>
+                    </div>
+                    <div class="chart-body chart-container" id="taskDistributionByAssignerBody" style="display: none;">
+                        <canvas id="taskDistributionByAssigner"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -180,6 +194,26 @@ $(document).ready(function() {
     // Load filter options
     loadFilterOptions();
     
+    // Populate project dropdowns
+    $.get('/Home/GetFilterOptions', function(response) {
+        if (response.success) {
+            let projectOptions = '<option value="">Tất cả dự án</option>';
+            response.projects.forEach(function(project) {
+                projectOptions += `<option value="${project.ProjectID}">${project.ProjectName}</option>`;
+            });
+            $('#taskDistProjectFilter, #taskDistByAssignerProjectFilter').html(projectOptions);
+        }
+    });
+
+    // Bind change events for project filters
+    $('#taskDistProjectFilter').change(function() {
+        updateTaskDistributionChart($(this).val());
+    });
+
+    $('#taskDistByAssignerProjectFilter').change(function() {
+        updateTaskDistributionByAssignerChart($(this).val());
+    });
+
     // Initial load of report data
     loadReportData();
 
@@ -521,6 +555,111 @@ function toggleChart(chartId) {
         bodyElement.style.display = 'none';
         iconElement.classList.remove('rotated');
     }
+}
+
+function updateTaskDistributionChart(projectId) {
+    const filters = {
+        projectId: projectId,
+        memberId: $('#memberFilter').val(),
+        startDate: $('#startDate').val(),
+        endDate: $('#endDate').val()
+    };
+
+    $.get('/Home/GetReportData', filters)
+        .done(function(response) {
+            if (response.success) {
+                if (taskDistributionChart) {
+                    taskDistributionChart.destroy();
+                }
+                const taskCtx = document.getElementById('taskDistribution').getContext('2d');
+                taskDistributionChart = new Chart(taskCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: response.taskDistribution.map(t => t.memberName),
+                        datasets: [{
+                            data: response.taskDistribution.map(t => t.taskCount),
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Số lượng công việc của mỗi thành viên'
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        });
+}
+
+function updateTaskDistributionByAssignerChart(projectId) {
+    const filters = {
+        projectId: projectId,
+        memberId: $('#memberFilter').val(),
+        startDate: $('#startDate').val(),
+        endDate: $('#endDate').val()
+    };
+
+    $.get('/Home/GetReportData', filters)
+        .done(function(response) {
+            if (response.success) {
+                // Cập nhật biểu đồ phân bổ công việc theo người giao
+                if (taskDistributionByAssignerChart) {
+                    taskDistributionByAssignerChart.destroy();
+                }
+                const assignerCtx = document.getElementById('taskDistributionByAssigner').getContext('2d');
+                taskDistributionByAssignerChart = new Chart(assignerCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: response.taskDistributionByAssigner.map(t => t.memberName),
+                        datasets: [{
+                            data: response.taskDistributionByAssigner.map(t => t.taskCount),
+                            backgroundColor: [
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(201, 203, 207, 0.2)',
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(201, 203, 207, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Số lượng task đã giao'
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        });
 }
 </script>
 

@@ -121,10 +121,10 @@ namespace ManageTaskWeb.Controllers
             Session["Phone"] = member.Phone;
             Session["ImageMember"] = member.ImageMember;
 
-                if (member.ExpiryTime.HasValue)
-                {
-                    return RedirectToAction("ChangePassword");
-                }
+            if (member.ExpiryTime.HasValue)
+            {
+                return RedirectToAction("ChangePassword");
+            }
             // Chuyển hướng về trang chủ sau khi đăng nhập thành công
             return RedirectToAction("TrangChu");
         }
@@ -600,7 +600,7 @@ namespace ManageTaskWeb.Controllers
                                {
                                    ProjectID = p.ProjectID,
                                    ProjectName = p.ProjectName,
-                                   Description =p.Description,
+                                   Description = p.Description,
                                    StartDate = p.StartDate,
                                    EndDate = p.EndDate,
                                    Status = p.Status,
@@ -719,7 +719,7 @@ namespace ManageTaskWeb.Controllers
 
                     // Tạo tên file duy nhất
                     imageFileName = $"project_{Guid.NewGuid()}{extension}";
-                    
+
                     // Lưu file
                     string path = Server.MapPath("~/Content/images/project-img/");
                     Directory.CreateDirectory(path);
@@ -738,7 +738,8 @@ namespace ManageTaskWeb.Controllers
                     Priority = Priority,
                     Status = Status,
                     ImageProject = imageFileName,
-                    deleteTime = null
+                    deleteTime = null,
+                    createBy = Session["MemberID"].ToString(),
                 };
 
                 // Validate dữ liệu
@@ -1064,7 +1065,7 @@ namespace ManageTaskWeb.Controllers
             {
                 // Lấy danh sách thành viên chưa tham gia project
                 var nonMembers = data.Members
-                    .Where(m =>!data.ProjectMembers.Any(pm =>
+                    .Where(m => !data.ProjectMembers.Any(pm =>
                               pm.ProjectID == projectId &&
                               pm.MemberID == m.MemberID &&
                               pm.Status == "Accepted"))
@@ -1225,10 +1226,10 @@ namespace ManageTaskWeb.Controllers
         {
             var role = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
-            var project = data.Projects.FirstOrDefault(p=>p.ProjectID == projectId);
-                
-                ViewBag.ProjectStartDate = project.StartDate;
-                ViewBag.ProjectEndDate = project.EndDate;
+            var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+
+            ViewBag.ProjectStartDate = project.StartDate;
+            ViewBag.ProjectEndDate = project.EndDate;
             // Kiểm tra nếu là Manager hoặc Admin, lấy tất cả task
             if (role == "Manager" || role == "Admin")
             {
@@ -1266,7 +1267,8 @@ namespace ManageTaskWeb.Controllers
                     Priority = Priority,
                     Status = Status,
                     ProjectID = ProjectID,
-                    ParentTaskID = ParentTaskID // Set ParentTaskID, can be null
+                    ParentTaskID = ParentTaskID,
+                    createBy = Session["MemberID"].ToString(),
                 };
 
                 // Insert the task into the database
@@ -2045,30 +2047,34 @@ namespace ManageTaskWeb.Controllers
             {
                 var projects = data.Projects
                     .Where(p => p.deleteTime == null)
-                    .Select(p => new { 
-                        ProjectID = p.ProjectID, 
-                        ProjectName = p.ProjectName 
+                    .Select(p => new
+                    {
+                        ProjectID = p.ProjectID,
+                        ProjectName = p.ProjectName
                     })
                     .ToList();
 
                 var members = data.Members
-                    .Select(m => new { 
-                        MemberID = m.MemberID, 
-                        FullName = m.FullName 
+                    .Select(m => new
+                    {
+                        MemberID = m.MemberID,
+                        FullName = m.FullName
                     })
                     .ToList();
 
-                return Json(new { 
-                    success = true, 
-                    projects = projects, 
-                    members = members 
+                return Json(new
+                {
+                    success = true,
+                    projects = projects,
+                    members = members
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { 
-                    success = false, 
-                    message = ex.Message 
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -2081,7 +2087,7 @@ namespace ManageTaskWeb.Controllers
             {
                 // Query cơ bản cho tasks
                 var tasksQuery = data.Tasks.AsQueryable();
-                
+
                 // Áp dụng các bộ lọc
                 if (!string.IsNullOrEmpty(projectId))
                 {
@@ -2109,7 +2115,8 @@ namespace ManageTaskWeb.Controllers
                 // Dữ liệu cho biểu đồ
                 var projectProgress = data.Projects
                     .Where(p => p.deleteTime == null)
-                    .Select(p => new {
+                    .Select(p => new
+                    {
                         projectName = p.ProjectName,
                         totalTasks = p.Tasks.Count(),
                         completedTasks = p.Tasks.Count(t => t.Status == "Completed")
@@ -2117,39 +2124,63 @@ namespace ManageTaskWeb.Controllers
                     .ToList();
 
                 var taskDistribution = data.TaskAssignments
-   .GroupBy(ta => new { ta.MemberID, ta.Member.FullName })  // Group theo MemberID và FullName
-   .Select(g => new {
-       memberName = g.Key.FullName,
-       memberId = g.Key.MemberID,
-       taskCount = g.Count()
-   })
-   .ToList();
+    .Where(ta => ta.Status != "Assigned"
+                && (string.IsNullOrEmpty(projectId) || ta.Task.ProjectID == projectId))
+    .GroupBy(ta => ta.MemberID) // Chỉ nhóm theo MemberID
+    .Select(g => new
+    {
+        memberId = g.Key, // Lấy MemberID từ nhóm
+        memberName = data.Members // Truy xuất tên thành viên từ bảng Members dựa trên MemberID
+                     .Where(m => m.MemberID == g.Key)
+                     .Select(m => m.FullName)
+                     .FirstOrDefault(),
+        taskCount = g.Count() // Đếm số lượng task
+    })
+    .ToList();
+
+
+
+
+
+                // Cập nhật query cho taskDistributionByAssigner
+                var taskDistributionByAssigner = data.TaskAssignments
+    .Where(ta => ta.AssignedBy != null && ta.Status != "Assigned" &&
+                ta.Task.Status != "Completed" &&
+                (string.IsNullOrEmpty(projectId) || ta.Task.ProjectID == projectId))
+    .GroupBy(ta => new
+    {
+        AssignerId = ta.AssignedBy,
+        AssignerName = data.Members
+                            .Where(m => m.MemberID == ta.AssignedBy)
+                            .Select(m => m.FullName)
+                            .FirstOrDefault()
+    })
+    .Select(g => new
+    {
+        memberName = g.Key.AssignerName,
+        memberId = g.Key.AssignerId,
+        taskCount = g.Count()
+    })
+    .ToList();
+
 
                 // Chi tiết báo cáo
                 var detailedReport = tasksQuery
-                    .Select(t => new {
+                    .Select(t => new
+                    {
                         projectName = t.Project.ProjectName,
                         taskName = t.TaskName,
                         assignedTo = t.TaskAssignments.Select(ta => ta.Member.FullName).FirstOrDefault(),
                         status = t.Status,
                         startDate = t.StartDate,
                         endDate = t.EndDate,
-                        progress = t.Status == "Completed" ? 100 : 
+                        progress = t.Status == "Completed" ? 100 :
                                   t.Status == "In Progress" ? 50 : 0
                     })
                     .ToList();
 
-                var taskDistributionByAssigner = data.TaskAssignments
-                    .Where(ta => ta.AssignedBy != null)  // Chỉ lấy các task có người giao
-                    .GroupBy(ta => new { ta.AssignedBy, ta.Member.FullName })
-                    .Select(g => new {
-                        memberName = g.Key.FullName,
-                        memberId = g.Key.AssignedBy,
-                        taskCount = g.Count()
-                    })
-                    .ToList();
-
-                return Json(new {
+                return Json(new
+                {
                     success = true,
                     totalProjects,
                     completedTasks,
@@ -2163,9 +2194,10 @@ namespace ManageTaskWeb.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { 
-                    success = false, 
-                    message = ex.Message 
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -2237,9 +2269,10 @@ namespace ManageTaskWeb.Controllers
 
                 data.SubmitChanges();
 
-                return Json(new { 
-                    success = true, 
-                    message = $"Successfully transferred task from {fromMember.FullName} to {toMember.FullName}" 
+                return Json(new
+                {
+                    success = true,
+                    message = $"Successfully transferred task from {fromMember.FullName} to {toMember.FullName}"
                 });
             }
             catch (Exception ex)
