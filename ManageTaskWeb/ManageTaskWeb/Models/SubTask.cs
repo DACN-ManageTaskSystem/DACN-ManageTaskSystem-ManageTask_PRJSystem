@@ -10,8 +10,12 @@ namespace ManageTaskWeb.Models
         public string TaskName { get; set; }
         public string Status { get; set; } = "Pending"; // Mặc định là Pending
         public string Description { get; set; }
+        public string createBy { get; set; }
         public string ProjectID { get; set; }
         public int ParentTaskID { get; set; }
+
+        public string MemberID { get; set; }
+
     
     }
 

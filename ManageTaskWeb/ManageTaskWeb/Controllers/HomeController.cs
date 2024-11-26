@@ -1322,7 +1322,7 @@ namespace ManageTaskWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateStatus(int taskId, string status)
+        public ActionResult UpdateStatus(int taskId, string status, int taskId_Main)
         {
             using (var context = new QLCVDataContext())
             {
@@ -1336,6 +1336,44 @@ namespace ManageTaskWeb.Controllers
                 // Cập nhật trạng thái
                 task.Status = status;
                 context.SubmitChanges();
+
+                var subTasks = context.Tasks.Where(t => t.ParentTaskID == taskId_Main).ToList();
+                var a = "Pending";
+                if (subTasks == null || subTasks.Count == 0)
+                {
+                    a = "Pending"; // Không có subtasks => Pending
+                }
+                else
+                {
+                    // Tính số lượng subtask đã hoàn thành
+                    int doneCount = subTasks.Count(st => st.Status == "Done");
+                    int totalCount = subTasks.Count;
+
+                    // Cập nhật trạng thái task chính
+                    if (doneCount == totalCount)
+                    {
+                        a = "Completed";
+                    }
+                    else if (doneCount > 0)
+                    {
+                        a = "InProgress";
+                    }
+                    else
+                    {
+                        a = "Pending";
+                    }
+                }
+
+                var taskmain = context.Tasks.FirstOrDefault(t => t.TaskID == taskId_Main);
+                if (task == null)
+                {
+                    return Json(new { success = false, message = "Task not found." });
+                }
+
+                // Cập nhật trạng thái
+                taskmain.Status = a;
+                context.SubmitChanges();
+
 
                 return Json(new { success = true });
             }
@@ -1414,7 +1452,7 @@ namespace ManageTaskWeb.Controllers
                 // Lấy danh sách các task từ cơ sở dữ liệu (có thể là các task cùng dự án hoặc các task khác có cùng ParentID, tùy yêu cầu của bạn)
                 var listTasks = context.Tasks
                       .AsNoTracking()
-                      .Where(t => t.ProjectID == task.ProjectID || t.ParentTaskID == task.ParentTaskID)
+                      .Where(t =>  t.ParentTaskID == int.Parse(taskId))
                       .Select(t => new TaskViewModel
                       {
                           ProjectID = t.ProjectID,
@@ -1473,7 +1511,7 @@ namespace ManageTaskWeb.Controllers
 
         //Xoa task
         [HttpPost]
-        public ActionResult DeleteTaskByMember(string memberId, int taskId)
+        public ActionResult DeleteTaskByMember(int taskId)
         {
             using (var context = new QLCVDataContext())
             {
@@ -1483,12 +1521,15 @@ namespace ManageTaskWeb.Controllers
                 {
                     return HttpNotFound("Task not found.");
                 }
-                var hasSubTasks = context.Tasks.Any(t => t.ParentTaskID == taskId);
-                if (hasSubTasks)
+
+                // Kiểm tra nếu có bất kỳ task nào có ParentTaskID = taskId
+                var subTasks = context.Tasks.Where(t => t.ParentTaskID == taskId).ToList();
+                if (subTasks.Any())
                 {
-                    // Nếu có task con, không cho phép xóa và trả về thông báo lỗi
-                    return RedirectToAction("DetailTask", new { notificationMessage = "Cannot delete task because it has sub-tasks.", notificationType = "error" });
+                    // Nếu có các task con (subTasks), không xóa task chính này
+                    return Json(new { success = false, message = "Cannot delete task because it has sub-tasks." }, JsonRequestBehavior.AllowGet);
                 }
+
                 // Xóa tất cả TaskAssignments liên quan đến TaskID
                 var taskAssignments = context.TaskAssignments
                     .Where(ta => ta.TaskID == taskId)
@@ -1509,18 +1550,18 @@ namespace ManageTaskWeb.Controllers
                     context.TaskLogs.DeleteOnSubmit(log);
                 }
 
-                // Xóa Task
+                // Xóa Task chính
                 context.Tasks.DeleteOnSubmit(task);
 
                 // Lưu thay đổi
                 context.SubmitChanges();
 
-                return RedirectToAction("DSTask", new { notificationMessage = "task delete successfully!", notificationType = "success" }); // Điều hướng về danh sách Task
+                return RedirectToAction("DSTask", new { projectId = task.ProjectID,notificationMessage = "Task deleted successfully!", notificationType = "success" });
             }
         }
 
-        // Them Subtask
-        [HttpPost]
+    // Them Subtask
+    [HttpPost]
         public ActionResult CreateSubTask(SubTask subTask)
         {
             try
@@ -1538,11 +1579,26 @@ namespace ManageTaskWeb.Controllers
                         Description = subTask.Description,
                         ProjectID = subTask.ProjectID,
                         ParentTaskID = subTask.ParentTaskID, // Gán ID Task cha (nếu có)
+                        createBy = subTask.createBy,
                         StartDate = DateTime.Now
                     };
 
                     // Lưu vào cơ sở dữ liệu
                     data.Tasks.InsertOnSubmit(newTask);
+                    data.SubmitChanges();
+
+                    int newTaskId = newTask.TaskID;
+
+                    // Thêm vào bảng TaskAssignment
+                    var taskAssignment = new TaskAssignment
+                    {
+                        TaskID = newTaskId, // Gán TaskID mới
+                        MemberID = subTask.MemberID, // Ví dụ gán memberId từ subTask (có thể nhận từ front-end)
+                        AssignedBy = subTask.createBy,
+                        AssignedDate = DateTime.Now,
+                        Status = subTask.Status
+                    };
+                    data.TaskAssignments.InsertOnSubmit(taskAssignment);
                     data.SubmitChanges();
 
                     return Json(new { success = true, taskId = newTask.TaskID });
@@ -1570,17 +1626,25 @@ namespace ManageTaskWeb.Controllers
                     return Json(new { success = false, message = "Task not found." });
                 }
 
+                // Xóa các bản ghi trong TaskAssignment có liên quan đến Task này
+                var taskAssignments = data.TaskAssignments.Where(ta => ta.TaskID == taskId).ToList();
+                if (taskAssignments.Any())
+                {
+                    data.TaskAssignments.DeleteAllOnSubmit(taskAssignments);
+                }
+
                 // Xóa Task khỏi cơ sở dữ liệu
                 data.Tasks.DeleteOnSubmit(task);
                 data.SubmitChanges();
 
-                return Json(new { success = true, message = "Task deleted successfully." });
+                return Json(new { success = true, message = "Task and related assignments deleted successfully." });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
 
         // Addmember to task
         public ActionResult AssignEmployee(string memberId, int taskId, string assignedByID)
