@@ -2129,11 +2129,8 @@ namespace ManageTaskWeb.Controllers
                 return RedirectToAction("TTCaNhan", new { notificationMessage = "Đã xảy ra lỗi khi cập nhật!", notificationType = "error" });
             }
         }
-
-
         #endregion
 
-        public ActionResult TienDoTask()
         #region TienDO
         public ActionResult TienDoTask(string projectID)
         {
@@ -2156,6 +2153,9 @@ namespace ManageTaskWeb.Controllers
 
             return View(taskLogs);
         }
+
+        #endregion
+
         #region REPORT
         //Load view 
         public ActionResult BaoCaoThongKe()

@@ -82,11 +82,14 @@
                                                 data-priority="@project.Priority"
                                                 data-status="@project.Status"
                                                 data-image="@project.ImageProject">
-                                            <i class="fas fa-pencil-alt"></i>
+                                            <i class="fas fa-pencil-alt" style="color:#ece14b"></i>
                                         </button>
                                     }
                                     <a href="@Url.Action("DSTask", "Home", new { projectId = project.ProjectID })" class="btn btn-outline-dark project-btn">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-eye" style="color:#ff6dfc"></i>
+                                    </a>
+                                    <a href="@Url.Action("TienDoTask", "Home", new { projectId = project.ProjectID })" class="btn btn-outline-dark project-btn">
+                                        <i class="fa-solid fa-chart-line" style="color:#53e98f"></i>
                                     </a>
                                 </div>
                             </td>
