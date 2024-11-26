@@ -57,6 +57,12 @@
             <i class="fas fa-search"></i>
         </div>
         <style>
+        .memberofproject-add-member-btn{
+            border: 1px solid #32bb42;
+        }
+        .memberofproject-add-member-btn:hover{
+            background-color: #a9dba0;
+        }
             /* Button chứa văn bản và chấm đỏ */
             .request-icon-wrapper {
                 position: relative;
@@ -64,7 +70,7 @@
                 align-items: center;
                 justify-content: center; /* Văn bản nằm giữa */
                 background-color: #f9f9f9;
-                border: 1px solid #ccc;
+                border: 1px solid #e50000;
                 border-radius: 5px;
                 padding: 10px 50px;
                 cursor: pointer;
@@ -75,7 +81,7 @@
                 /* Văn bản trong nút */
                 .request-icon-wrapper .button-text {
                     font-size: 14px;
-                    font-weight: 500;
+                    font-weight: 700;
                     color: #333;
                 }
 
@@ -94,7 +100,7 @@
 
                 /* Hiệu ứng hover */
                 .request-icon-wrapper:hover {
-                    background-color: #e6e6e6;
+                    background-color: #fb6161;
                     border-color: #999;
                 }
         </style>
@@ -108,61 +114,54 @@
     <div class="memberofproject-members-container">
         <div class="memberofproject-member-list">
             <table>
-                <thead >
+                <thead>
                     <tr>
-                        <th style="font-weight:bold ">Staff</th>
-                        <th style="font-weight:bold ">Hire Date</th>
-                        <th style="font-weight:bold ">Status</th>
-                        <th style="font-weight:bold ">Role</th>
+                        <th style="font-weight:bold">Staff</th>
+                        <th style="font-weight:bold">Hire Date</th>
+                        <th style="font-weight:bold">Status</th>
+                        <th style="font-weight:bold">Role</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach (var member in Model)
-                    {
-                        <tr class="member-row"
-                            data-name="@member.FullName"
-                            data-email="@member.Email"
-                            data-phone="@member.Phone"
-                            data-role="@member.Role"
-                            data-status="@member.Status"
-                            
-                            data-hiredate="@(member.HireDate.HasValue ? member.HireDate.Value.ToString("dd/MM/yyyy") : "No date available")"
+            </table>
+            <div class="table-scroll">
+                <table>
+                    <tbody>
+                        @foreach (var member in Model)
+                        {
+                            <tr class="member-row"
+                                data-name="@member.FullName"
+                                data-email="@member.Email"
+                                data-phone="@member.Phone"
+                                data-role="@member.Role"
+                                data-status="@member.Status"
+                                
+                                data-hiredate="@(member.HireDate.HasValue ? member.HireDate.Value.ToString("dd/MM/yyyy") : "No date available")"
 >
 
-                            <td>
-                                <div class="memberofproject-member-info">
-                                    <img src="~/Content/images/member-img/@member.ImageMember" alt="Staff" />
-                                    <span>@member.FullName</span>
-                                </div>
-                            </td>
-                            <td>@(member.HireDate.HasValue ? member.HireDate.Value.ToString("dd/MM/yyyy") : "No date available")</td>
-                            <td>
-                                <span class="memberofproject-status-badge @(member.Status == "Active" ? "status-online" : "status-inactive")">
-                                    @member.Status
-                                </span>
-                            </td>
-                            <td>
-                                <span class="memberofproject-status-badge @(member.Role == "Manager" ? "status-online" : "status-inactive")">
-                                    @member.Role
-                                </span>
-                            </td>
-                        </tr>
-                    }
-
-                    <style>
-                        .status-online {
-                            font-weight: bolder;
-                            color: green;
+                                <td>
+                                    <div class="memberofproject-member-info">
+                                        <img src="~/Content/images/member-img/@member.ImageMember" alt="Staff" />
+                                        <span>@member.FullName</span>
+                                    </div>
+                                </td>
+                                <td>@(member.HireDate.HasValue ? member.HireDate.Value.ToString("dd/MM/yyyy") : "No date available")</td>
+                                <td>
+                                    <span class="memberofproject-status-badge @(member.Status == "Active" ? "status-online" : "status-inactive")">
+                                        @member.Status
+                                    </span>
+                                </td>
+                                <td>
+    <span class="memberofproject-status-badge @(member.Role == "Admin" ? "status-admin" : 
+                                               member.Role == "Manager" ? "status-online" : 
+                                               "status-hr")">
+        @member.Role
+    </span>
+</td>
+                            </tr>
                         }
-
-                        .status-inactive {
-                            font-weight: bolder;
-                            color: gray; /* Hoặc bất kỳ màu nào phù hợp với trạng thái khác */
-                        }
-                    </style>
-                    <!-- More rows as necessary -->
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
 
@@ -191,11 +190,6 @@
             <div class="memberofproject-detail-row">
                 <span class="memberofproject-detail-label">Status:</span>
                 <span id="memberStatus">--</span>
-            </div>
-            <div class="memberofproject-action-buttons">
-                <button class="memberofproject-action-btn memberofproject-btn-view">View detail</button>
-                <button class="memberofproject-action-btn memberofproject-btn-edit">Edit</button>
-                <button class="memberofproject-action-btn memberofproject-btn-delete">Delete</button>
             </div>
         </div>
     </div>
@@ -261,6 +255,23 @@
 </div>
 
 <style>
+
+.status-admin {
+    background-color: #f09d9d !important; /* Màu đỏ cho Admin */
+}
+
+.status-online {
+    background-color: #94e297 !important; /* Màu xanh cho Manager */
+}
+
+    .status-hr {
+        background-color: #8fd9fa !important; /* Màu xám cho các role khác */
+    }
+
+.status-inactive {
+    background-color: #c7c7c7 !important; /* Màu xám cho các role khác */
+}
+
     .pagination {
         display: flex;
         gap: 5px;
@@ -289,6 +300,46 @@
 
     .pagination button:hover:not(:disabled) {
         background: #e9ecef;
+    }
+
+    .memberofproject-member-list {
+        max-height: 400px; /* Chiều cao tối đa cho container */
+    }
+
+    .table-scroll {
+        max-height: 320px; /* Chiều cao cho phần tbody có thể cuộn */
+        overflow-y: auto;
+    }
+
+    .memberofproject-member-list table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    /* Giữ header cố định */
+    .memberofproject-member-list thead {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 1;
+    }
+
+    /* Tùy chỉnh thanh cuộn */
+    .table-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .table-scroll::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .table-scroll::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .table-scroll::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 </style>
 <script>
@@ -522,7 +573,7 @@
                                 <p>${member.FullName}</p>
                                 <span class="role ${member.Role.toLowerCase()}">${member.Role}</span>
                             </div>
-                            <button class="remove-button" onclick="removeMemberFromProject('${member.MemberId}')">✖</button>
+                            <button class="remove-button" onclick="removeMemberFromProject('${member.MemberId}')"><i class="fa-regular fa-trash-can" style="color:red;"></i></button>
                         `;
                         projectMembersList.appendChild(li);
                     });

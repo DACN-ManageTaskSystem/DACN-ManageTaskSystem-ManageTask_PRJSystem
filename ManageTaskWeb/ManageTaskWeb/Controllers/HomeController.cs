@@ -2138,10 +2138,6 @@ namespace ManageTaskWeb.Controllers
     })
     .ToList();
 
-
-
-
-
                 // Cập nhật query cho taskDistributionByAssigner
                 var taskDistributionByAssigner = data.TaskAssignments
     .Where(ta => ta.AssignedBy != null && ta.Status != "Assigned" &&

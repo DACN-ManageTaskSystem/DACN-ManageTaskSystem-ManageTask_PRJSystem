@@ -130,7 +130,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -158,6 +157,7 @@
     <Content Include="Content\css\bctk.css" />
     <Content Include="Content\css\tiendotask.css" />
     <Content Include="Content\css\task.css" />
+    <Content Include="Content\images\error.png" />
     <Content Include="Content\images\hinh1.png" />
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\member-img\jane_smith.jpg" />

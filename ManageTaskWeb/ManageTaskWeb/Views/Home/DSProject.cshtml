@@ -67,11 +67,11 @@
                         <tr class="project-row" data-status="@project.Status">
                             <td><input type="checkbox" class="project-checkbox" data-project-id="@project.ProjectID"></td>
                             <td>
-                                <img src="~/Content/images/project-img/@project.ImageProject" alt="Project Image" width="80">
+                                <img src="~/Content/images/project-img/@project.ImageProject" alt="Project Image" width="96">
                                 <div class="action-buttons">
                                     @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
                                     {
-                                        <button class="btn btn-outline-secondary edit-project-btn"
+                                        <button class="btn btn-outline-secondary edit-project-btn project-btn"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editProjectModal"
                                                 data-project-id="@project.ProjectID"
@@ -82,11 +82,11 @@
                                                 data-priority="@project.Priority"
                                                 data-status="@project.Status"
                                                 data-image="@project.ImageProject">
-                                            <i class="fas fa-pencil-alt"></i> <span>Edit Project</span>
+                                            <i class="fas fa-pencil-alt"></i>
                                         </button>
                                     }
-                                    <a href="@Url.Action("DSTask", "Home", new { projectId = project.ProjectID })" class="btn btn-outline-dark">
-                                        <i class="fas fa-eye"></i><span>View Task</span>
+                                    <a href="@Url.Action("DSTask", "Home", new { projectId = project.ProjectID })" class="btn btn-outline-dark project-btn">
+                                        <i class="fas fa-eye"></i>
                                     </a>
                                 </div>
                             </td>
@@ -98,10 +98,11 @@
                             </td>
                             <td>@project.StartDate.ToString("dd/MM/yyyy")</td>
                             <td>@project.EndDate.ToString("dd/MM/yyyy")</td>
-                            <td>
+                            <td onclick="window.location='@Url.Action("MembersOfProject", "Home", new { projectId = project.ProjectID })'" 
+                                class="member-cell" 
+                                title="Click to view members">
                                 <div class="avatar-group">
-                                    <a href="@Url.Action("MembersOfProject", "Home", new { projectId = project.ProjectID })">
-                                        <button>abc</button>
+                                    <div class="avatar-group-inner">
                                         @for (int i = 0; i < Math.Min(3, project.Members.Count); i++)
                                         {
                                             var member = project.Members[i];
@@ -112,7 +113,7 @@
                                         {
                                             <span>+@(project.MemberCount - 3)</span>
                                         }
-                                    </a>
+                                    </div>
                                 </div>
                             </td>
 

@@ -38,10 +38,11 @@
         padding: 5px 10px;
         width: 150px
     }
-
-        .action-buttons .btn i {
-            padding-right: 5px;
-        }
+    .action-buttons .project-btn {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        width: 46px
+    }
 
 .search-bar {
     display: flex;
@@ -506,3 +507,24 @@ textarea {
 .sortable.desc i:before {
     content: "\f0dd";  /* Font Awesome sort-down icon */
 }
+
+.avatar-group-inner {
+
+    display: flex;
+    align-items: center;
+}
+
+.member-cell {
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.member-cell:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.member-cell .avatar-group {
+    padding: 8px;
+}
+
