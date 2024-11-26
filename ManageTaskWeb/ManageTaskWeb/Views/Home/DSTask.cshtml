@@ -94,6 +94,7 @@
                             data-task-id="@task.TaskID"
                             data-task-name="@task.TaskName"
                             data-description="@task.Description"
+                            data-drive-link="@task.DriveLink"
                             data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
                             data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
                             data-priority="@task.Priority"
@@ -149,6 +150,7 @@
                             data-task-id="@task.TaskID"
                             data-task-name="@task.TaskName"
                             data-description="@task.Description"
+                            data-drive-link="@task.DriveLink"
                             data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
                             data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
                             data-priority="@task.Priority"
@@ -204,6 +206,7 @@
                             data-task-id="@task.TaskID"
                             data-task-name="@task.TaskName"
                             data-description="@task.Description"
+                            data-drive-link="@task.DriveLink"
                             data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
                             data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
                             data-priority="@task.Priority"
@@ -259,6 +262,7 @@
                             data-task-id="@task.TaskID"
                             data-task-name="@task.TaskName"
                             data-description="@task.Description"
+                            data-drive-link="@task.DriveLink"
                             data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
                             data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
                             data-priority="@task.Priority"
@@ -290,6 +294,9 @@
 
                             <label for="description">Description</label>
                             <textarea class="form-control" name="Description" id="description" placeholder="Enter description..."></textarea>
+
+                            <label for="driveLink">Drive Link</label>
+                            <input type="text" class="form-control" name="DriveLink" id="driveLink" placeholder="Enter drive link...">
 
                             <label for="projectId">Project ID *</label>
                             <input type="text" class="form-control" name="ProjectID" id="projectId" value="@projectId" readonly>
@@ -439,6 +446,7 @@
             const taskId = this.getAttribute('data-task-id');
             const taskName = this.getAttribute('data-task-name');
             const taskDescription = this.getAttribute('data-description');
+            const driveLink = this.getAttribute('data-drive-link');
             const startDate = this.getAttribute('data-start-date');
             const endDate = this.getAttribute('data-end-date');
             const taskPriority = this.getAttribute('data-priority');
@@ -447,6 +455,7 @@
             document.getElementById('editTaskID').value = taskId;
             document.getElementById('editTaskName').value = taskName;
             document.getElementById('editDescription').value = taskDescription;
+            document.getElementById('editDriveLink').value = driveLink;
             document.getElementById('editStartDate').value = startDate;
             document.getElementById('editEndDate').value = endDate;
             document.getElementById('editPriority').value = taskPriority;

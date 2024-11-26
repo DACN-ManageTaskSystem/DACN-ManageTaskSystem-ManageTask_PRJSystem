@@ -14,6 +14,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
+using System.Web.Configuration;
 
 namespace ManageTaskWeb.Controllers
 {
@@ -1255,7 +1256,7 @@ namespace ManageTaskWeb.Controllers
         }
         //Them Task
         [HttpPost]
-        public ActionResult AddTask(string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string ProjectID, int? ParentTaskID = null)
+        public ActionResult AddTask(string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string ProjectID,string DriveLink, int? ParentTaskID = null)
         {
             try
             {
@@ -1269,6 +1270,7 @@ namespace ManageTaskWeb.Controllers
                     Priority = Priority,
                     Status = Status,
                     ProjectID = ProjectID,
+                    DriveLink = DriveLink,
                     ParentTaskID = ParentTaskID,
                     createBy = Session["MemberID"].ToString(),
                 };
@@ -1289,7 +1291,7 @@ namespace ManageTaskWeb.Controllers
         }
         //Edit task 
         [HttpPost]
-        public ActionResult EditTask(int TaskID, string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, int? ParentTaskID = null)
+        public ActionResult EditTask(int TaskID, string TaskName, string Description, DateTime? StartDate, DateTime? EndDate, int Priority, string Status, string DriveLink,int? ParentTaskID = null)
         {
             try
             {
@@ -1307,7 +1309,7 @@ namespace ManageTaskWeb.Controllers
                 task.Priority = Priority;
                 task.Status = Status;
                 task.ParentTaskID = ParentTaskID; // Update ParentTaskID, can be null
-
+                task.DriveLink = DriveLink;
                 data.SubmitChanges();
 
                 return RedirectToAction("DSTask", new { projectId = task.ProjectID, notificationMessage = "Task updated successfully!", notificationType = "success" });
@@ -1434,6 +1436,7 @@ namespace ManageTaskWeb.Controllers
                     TaskID = task.TaskID,
                     TaskName = task.TaskName,
                     Description = task.Description,
+                    DriveLink = task.DriveLink,
                     StartDate = task.StartDate ?? DateTime.MinValue,
                     EndDate = task.EndDate ?? DateTime.MinValue,
                     Priority = task.Priority ?? 0,
@@ -1811,87 +1814,51 @@ namespace ManageTaskWeb.Controllers
         #region MEMBER
         //MEMBER - START
         //Load DS member
-        public ActionResult DSMember(string searchQuery, string role, string status)
+        public ActionResult DSMember(string searchQuery, string role, string status, int page = 1, int pageSize = 3)
         {
-            var roleSession = Session["Role"]?.ToString();
-            var memberId = Session["MemberID"]?.ToString();
-            List<Members> members;
+            // Lấy dữ liệu từ database (giả sử bạn dùng Entity Framework)
+            var members = data.Members.AsQueryable();
 
-            // Lọc ban đầu
-            var query = data.Members.AsQueryable();
-
-            // Tìm kiếm theo tên hoặc email
+            // Lọc theo từ khóa tìm kiếm
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                query = query.Where(m => m.FullName.Contains(searchQuery) || m.Email.Contains(searchQuery));
+                members = members.Where(m => m.FullName.Contains(searchQuery) || m.Email.Contains(searchQuery));
             }
 
             // Lọc theo vai trò
             if (!string.IsNullOrEmpty(role))
             {
-                query = query.Where(m => m.Role == role);
+                members = members.Where(m => m.Role == role);
             }
 
             // Lọc theo trạng thái
             if (!string.IsNullOrEmpty(status))
             {
                 bool isActive = status == "true";
-                query = query.Where(m => m.Status == (isActive ? "Active" : "Offline"));
+                members = members.Where(m => m.Status == "Active");
             }
 
-            // Kiểm tra quyền truy cập
-            if (roleSession == "Manager" || roleSession == "Admin")
-            {
-                members = query
-                    .Select(m => new Members
-                    {
-                        MemberID = m.MemberID,
-                        FullName = m.FullName,
-                        Email = m.Email,
-                        Phone = m.Phone,
-                        Role = m.Role,
-                        HireDate = m.HireDate,
-                        ImageMember = m.ImageMember,
-                        Status = m.Status,
-                        MemberCount = data.TaskAssignments
-                            .Where(a => a.MemberID == m.MemberID)
-                            .Select(a => a.TaskID)
-                            .Distinct()
-                            .Count()
-                    })
-                    .ToList();
-            }
-            else
-            {
-                members = data.TaskAssignments
-                    .Where(a => a.AssignedBy == memberId)
-                    .Select(a => a.Member)
-                    .Distinct()
-                    .Select(m => new Members
-                    {
-                        MemberID = m.MemberID,
-                        FullName = m.FullName,
-                        Email = m.Email,
-                        Phone = m.Phone,
-                        Role = m.Role,
-                        HireDate = m.HireDate,
-                        ImageMember = m.ImageMember,
-                        Status = m.Status,
-                        MemberCount = data.TaskAssignments
-                            .Where(a => a.MemberID == m.MemberID)
-                            .Select(a => a.TaskID)
-                            .Distinct()
-                            .Count()
-                    })
-                    .ToList();
-            }
+            // Tính tổng số bản ghi
+            int totalRecords = members.Count();
 
+            // Phân trang
+            var pagedMembers = members
+                .OrderBy(m => m.MemberID)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Truyền dữ liệu qua ViewBag để hiển thị trong View
             ViewBag.SearchQuery = searchQuery;
             ViewBag.Role = role;
             ViewBag.Status = status;
+            ViewBag.TotalRecords = totalRecords;
+            ViewBag.PageSize = pageSize;
+            ViewBag.CurrentPage = page;
 
-            return View(members);
+            return View(pagedMembers);
         }
+
         // Hàm tạo ID thành viên duy nhất
         public string GenerateMemberID()
         {
