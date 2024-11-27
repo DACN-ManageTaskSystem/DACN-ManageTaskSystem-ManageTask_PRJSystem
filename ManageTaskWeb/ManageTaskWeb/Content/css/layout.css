@@ -438,3 +438,17 @@ nav label:hover {
 .notification-unread {
     background-color: #FFFFFF;
 }
+
+
+.text-danger {
+    color: #dc3545;
+}
+
+.lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}

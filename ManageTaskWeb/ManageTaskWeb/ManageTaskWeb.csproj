@@ -143,6 +143,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>QLCV.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\RoleAuthorizationAttribute.cs" />
     <Compile Include="Models\SubTask.cs" />
     <Compile Include="Models\TaskAssignmentViewModel.cs" />
     <Compile Include="Models\TaskLogViewModel.cs" />
@@ -159,6 +160,7 @@
     <Content Include="Content\css\bctk.css" />
     <Content Include="Content\css\tiendotask.css" />
     <Content Include="Content\css\task.css" />
+    <Content Include="Content\images\drive-icon.png" />
     <Content Include="Content\images\error.png" />
     <Content Include="Content\images\hinh1.png" />
     <Content Include="Content\images\logo.png" />
@@ -272,6 +274,7 @@
     <Content Include="Views\Home\TienDoTask.cshtml" />
     <Content Include="Views\Home\ForgotPassword.cshtml" />
     <Content Include="Views\Home\BaoCaoThongKe.cshtml" />
+    <Content Include="Views\Home\Unauthorized.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

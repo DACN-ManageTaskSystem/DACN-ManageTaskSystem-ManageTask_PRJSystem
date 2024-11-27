@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Net;
 using System.Net.Mail;
-using System.Net;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Web.Configuration;
@@ -21,6 +20,16 @@ namespace ManageTaskWeb.Controllers
     public class HomeController : Controller
     {
         QLCVDataContext data = new QLCVDataContext();
+        public ActionResult Unauthorized()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public ActionResult Help()
+        {
+            return View();
+        }
         //TrangChu
         public ActionResult TrangChu()
         {
@@ -120,6 +129,8 @@ namespace ManageTaskWeb.Controllers
             Session["Role"] = member.Role;
             Session["Email"] = member.Email;
             Session["Phone"] = member.Phone;
+            Session["Address"] = member.Address;
+            Session["DateOfBirth"] = member.DateOfBirth;
             Session["ImageMember"] = member.ImageMember;
 
             if (member.ExpiryTime.HasValue)
@@ -589,6 +600,7 @@ namespace ManageTaskWeb.Controllers
         #region PROJECT
         //PROJECT - START
         //Danh sach project
+        [RoleAuthorization("Admin", "Manager", "Developer")]
         public ActionResult DSProject(string statusFilter = "All")
         {
             var role = Session["Role"]?.ToString();
@@ -1898,6 +1910,7 @@ namespace ManageTaskWeb.Controllers
         #region MEMBER
         //MEMBER - START
         //Load DS member
+        [RoleAuthorization("Admin", "HR")]
         public ActionResult DSMember(string searchQuery, string role, string status, int page = 1, int pageSize = 3)
         {
             // Lấy dữ liệu từ database (giả sử bạn dùng Entity Framework)
@@ -2102,82 +2115,83 @@ namespace ManageTaskWeb.Controllers
             }
         }
         [HttpPost]
-        public ActionResult EditProfile(string FullName, string Email, string Phone, string Role, string Password, string HireDate, HttpPostedFileBase ImageFile)
+        public JsonResult EditProfile(string FullName, DateTime? BirthDate, string Email, string Phone, string Address, HttpPostedFileBase ImageFile)
         {
             try
             {
-                string memberId = Session["MemberID"]?.ToString();
+                var memberId = Session["MemberID"]?.ToString();
+                if (string.IsNullOrEmpty(memberId))
+                {
+                    return Json(new { success = false, message = "Không tìm thấy thông tin phiên đăng nhập" });
+                }
+
                 var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
                 if (member == null)
                 {
-                    throw new Exception("Không tìm thấy thông tin thành viên.");
+                    return Json(new { success = false, message = "Không tìm thấy thông tin thành viên" });
                 }
 
-                // Xử lý ảnh nếu người dùng tải lên ảnh mới
-                if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    string fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
-                    string extension = Path.GetExtension(ImageFile.FileName).ToLower();
-                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-
-                    if (!allowedExtensions.Contains(extension))
-                    {
-                        throw new Exception("Chỉ chấp nhận định dạng file .JPG, .JPEG, .PNG.");
-                    }
-
-                    if (ImageFile.ContentLength > 1 * 1024 * 1024)
-                    {
-                        throw new Exception("Dung lượng file vượt quá giới hạn 1 MB.");
-                    }
-
-                    string uniqueFileName = fileName + "_" + Guid.NewGuid() + extension;
-                    string path = Server.MapPath("~/Content/images/member-img/");
-                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
-                    string imagePath = Path.Combine(path, uniqueFileName);
-                    ImageFile.SaveAs(imagePath);
-
-                    member.ImageMember = uniqueFileName;
-                    Session["ImageMember"] = uniqueFileName; // Cập nhật session
-                }
-
-                // Cập nhật thông tin cá nhân
+                // Cập nhật thông tin cơ bản
                 member.FullName = FullName;
+                member.DateOfBirth = BirthDate;
                 member.Email = Email;
                 member.Phone = Phone;
-                member.Role = Role;
+                member.Address = Address;
 
-                // Nếu có thay đổi mật khẩu, mã hóa và lưu mật khẩu mới
-                if (!string.IsNullOrEmpty(Password))
+                // Xử lý upload ảnh nếu có
+                if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    member.Password = EncryptPassword(Password, "your-secret-key"); // Mã hóa mật khẩu
+                    // Kiểm tra kích thước file (1MB = 1048576 bytes)
+                    if (ImageFile.ContentLength > 1048576)
+                    {
+                        return Json(new { success = false, message = "Kích thước file không được vượt quá 1MB" });
+                    }
+
+                    // Kiểm tra định dạng file
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                    var fileExtension = Path.GetExtension(ImageFile.FileName).ToLower();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        return Json(new { success = false, message = "Chỉ chấp nhận file định dạng .JPG, .PNG" });
+                    }
+
+                    // Xóa ảnh cũ nếu có
+                    if (!string.IsNullOrEmpty(member.ImageMember))
+                    {
+                        var oldImagePath = Path.Combine(Server.MapPath("~/Content/images/member-img"), member.ImageMember);
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    // Lưu file mới
+                    var fileName = $"member_{Guid.NewGuid()}{fileExtension}";
+                    var path = Path.Combine(Server.MapPath("~/Content/images/member-img"), fileName);
+                    ImageFile.SaveAs(path);
+
+                    // Cập nhật tên file ảnh trong database
+                    member.ImageMember = fileName;
                 }
 
-                // Xử lý ngày thuê
-                if (!string.IsNullOrEmpty(HireDate) && DateTime.TryParse(HireDate, out DateTime parsedHireDate))
-                {
-                    member.HireDate = parsedHireDate;
-                    Session["HireDate"] = parsedHireDate.ToString("yyyy-MM-dd");
-                }
-                else
-                {
-                    Session["HireDate"] = null;
-                }
-
-                // Lưu thay đổi
                 data.SubmitChanges();
 
                 // Cập nhật Session
-                Session["FullName"] = FullName;
-                Session["Email"] = Email;
-                Session["Phone"] = Phone;
-                Session["Role"] = Role;
+                Session["FullName"] = member.FullName;
+                Session["DateOfBirth"] = member.DateOfBirth;
+                Session["Email"] = member.Email;
+                Session["Phone"] = member.Phone;
+                Session["Address"] = member.Address;
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    Session["ImageMember"] = member.ImageMember;
+                }
 
-                return RedirectToAction("TTCaNhan", new { notificationMessage = "Cập nhật thành công!", notificationType = "success" });
+                return Json(new { success = true, message = "Cập nhật thông tin thành công" });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return RedirectToAction("TTCaNhan", new { notificationMessage = "Đã xảy ra lỗi khi cập nhật!", notificationType = "error" });
+                return Json(new { success = false, message = "Lỗi khi cập nhật: " + ex.Message });
             }
         }
         #endregion
@@ -2209,6 +2223,7 @@ namespace ManageTaskWeb.Controllers
 
         #region REPORT
         //Load view 
+        [RoleAuthorization("Admin", "Manager", "HR")]
         public ActionResult BaoCaoThongKe()
         {
             return View();
@@ -2263,7 +2278,7 @@ namespace ManageTaskWeb.Controllers
                 // Query cơ bản cho tasks
                 var tasksQuery = data.Tasks.AsQueryable();
 
-                // Áp dụng các bộ lọc
+                // Áp dụng các bộ l��c
                 if (!string.IsNullOrEmpty(projectId))
                 {
                     tasksQuery = tasksQuery.Where(t => t.ProjectID == projectId);
@@ -2378,80 +2393,124 @@ namespace ManageTaskWeb.Controllers
 
         #region tranfer
         [HttpPost]
-        public JsonResult TransferTask(string fromMemberId, string toMemberId, int taskId)
+        public JsonResult TransferTask(string fromMemberId, string toMemberId, int[] taskIds)
         {
             try
             {
-                // Kiểm tra members tồn tại
+                // Debug logging
+                System.Diagnostics.Debug.WriteLine($"Received transfer request: From={fromMemberId}, To={toMemberId}, Tasks={string.Join(",", taskIds ?? new int[0])}");
+
+                // Validate input parameters
+                if (string.IsNullOrEmpty(fromMemberId) || string.IsNullOrEmpty(toMemberId))
+                {
+                    return Json(new { success = false, message = "Member IDs cannot be empty." });
+                }
+
+                if (taskIds == null || taskIds.Length == 0)
+                {
+                    return Json(new { success = false, message = "No tasks selected for transfer." });
+                }
+
                 var fromMember = data.Members.FirstOrDefault(m => m.MemberID == fromMemberId);
                 var toMember = data.Members.FirstOrDefault(m => m.MemberID == toMemberId);
-                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
 
-                if (fromMember == null || toMember == null || task == null)
+                if (fromMember == null || toMember == null)
                 {
-                    return Json(new { success = false, message = "Invalid member or task." });
+                    return Json(new { success = false, message = "Invalid members." });
                 }
 
-                // Lấy task assignment hiện tại
-                var currentAssignment = data.TaskAssignments
-                    .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == fromMemberId);
+                var transferredTasks = new List<string>();
+                var notifications = new List<Notification>();
 
-                if (currentAssignment == null)
+                foreach (var taskId in taskIds)
                 {
-                    return Json(new { success = false, message = "Task assignment not found." });
+                    var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                    if (task == null) continue;
+
+                    var currentAssignment = data.TaskAssignments
+                        .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == fromMemberId);
+
+                    if (currentAssignment == null) continue;
+
+                    var newAssignment = new TaskAssignment
+                    {
+                        TaskID = taskId,
+                        MemberID = toMemberId,
+                        AssignedBy = Session["MemberID"]?.ToString(),
+                        AssignedDate = DateTime.Now,
+                        Status = "Assigned",
+                        Note = $"Transferred from {fromMember.FullName}"
+                    };
+
+                    // Tạo thông báo cho người bị xóa task
+                    notifications.Add(new Notification
+                    {
+                        MemberID = fromMemberId,
+                        Content = $"Task '{task.Description ?? $"Task {taskId}"}' has been transferred to {toMember.FullName}",
+                        NotificationDate = DateTime.Now,
+                        IsRead = false,
+                        NotificationType = "TaskTransferred"
+                    });
+
+                    // Tạo thông báo cho người được nhận task
+                    notifications.Add(new Notification
+                    {
+                        MemberID = toMemberId,
+                        Content = $"You have been assigned task '{task.Description ?? $"Task {taskId}"}' transferred from {fromMember.FullName}",
+                        NotificationDate = DateTime.Now,
+                        IsRead = false,
+                        NotificationType = "TaskReceived"
+                    });
+
+                    transferredTasks.Add(task.Description ?? $"Task {taskId}");
+                    data.TaskAssignments.InsertOnSubmit(newAssignment);
+                    data.TaskAssignments.DeleteOnSubmit(currentAssignment);
                 }
 
-                // Tạo assignment mới cho member mới
-                var newAssignment = new TaskAssignment
+                if (transferredTasks.Count == 0)
                 {
-                    TaskID = taskId,
-                    MemberID = toMemberId,
-                    AssignedBy = currentAssignment.AssignedBy,
-                    AssignedDate = DateTime.Now,
-                    Status = "Assigned",
-                    Note = $"Transferred from {fromMember.FullName}"
-                };
+                    return Json(new { success = false, message = "No tasks were eligible for transfer." });
+                }
 
-                // Thêm assignment mới và xóa assignment cũ
-                data.TaskAssignments.InsertOnSubmit(newAssignment);
-                data.TaskAssignments.DeleteOnSubmit(currentAssignment);
-
-                // Tạo thông báo cho cả hai members
-                var notificationToReceiver = new Notification
-                {
-                    MemberID = toMemberId,
-                    Content = $"You have received task '{task.TaskName}' transferred from {fromMember.FullName}",
-                    NotificationDate = DateTime.Now,
-                    NotificationType = "TaskTransferred",
-                    IsRead = false
-                };
-
-                var notificationToSender = new Notification
-                {
-                    MemberID = fromMemberId,
-                    Content = $"Your task '{task.TaskName}' has been transferred to {toMember.FullName}",
-                    NotificationDate = DateTime.Now,
-                    NotificationType = "TaskTransferred",
-                    IsRead = false
-                };
-
-                data.Notifications.InsertOnSubmit(notificationToReceiver);
-                data.Notifications.InsertOnSubmit(notificationToSender);
-
+                // Thêm tất cả các thông báo vào database
+                data.Notifications.InsertAllOnSubmit(notifications);
+                
                 data.SubmitChanges();
 
-                return Json(new
-                {
-                    success = true,
-                    message = $"Successfully transferred task from {fromMember.FullName} to {toMember.FullName}"
+                var tasksMessage = string.Join(", ", transferredTasks);
+                return Json(new { 
+                    success = true, 
+                    message = $"Successfully transferred tasks ({tasksMessage}) from {fromMember.FullName} to {toMember.FullName}" 
                 });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return Json(new { success = false, message = $"Error during transfer: {ex.Message}" });
             }
         }
+        [HttpGet]
+        public JsonResult GetMemberSubtasks(int parentTaskId, string memberId)
+        {
+            try
+            {
+                var tasks = data.Tasks
+                    .Where(t => t.ParentTaskID == parentTaskId)
+                    .Where(t => t.TaskAssignments.Any(ta => ta.MemberID == memberId))
+                    .Select(t => new
+                    {
+                        t.TaskID,
+                        t.Description,
+                        t.Status
+                    })
+                    .ToList();
 
+                return Json(new { success = true, tasks = tasks }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
         #endregion
     }
 }

@@ -33,19 +33,39 @@
             </div>
 
             <div class="menu">
-                @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
-                {
-                    <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
-                    <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
-                    <a href="/Home/BaoCaoThongKe"><i class="fas fa-users"></i> Report</a>
-                    <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                @{
+                    var userRole = Session["Role"].ToString();
                 }
-                else
+                
+                @switch (userRole)
                 {
-                    <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
-                    <a href="#"><i class="fas fa-question-circle"></i>Help</a>
+                    case "Admin":
+                        <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                        <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
+                        <a href="/Home/BaoCaoThongKe"><i class="fas fa-chart-bar"></i> Report</a>
+                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        break;
+                        
+                    case "Manager":
+                        <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                        <a href="/Home/BaoCaoThongKe"><i class="fas fa-chart-bar"></i> Report</a>
+                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        break;
+                        
+                    case "HR":
+                        <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
+                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        break;
+                        
+                    case "Developer":
+                        <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
+                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        break;
+                        
+                    default:
+                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        break;
                 }
-
             </div>
 
             <div class="icons">
