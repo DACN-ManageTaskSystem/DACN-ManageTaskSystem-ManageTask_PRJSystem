@@ -17,7 +17,7 @@ body {
 }
 header {
     width: 100%;
-    padding: 1em;
+    padding: 5px;
 }
 main {
     flex: 1;
@@ -396,7 +396,7 @@ nav label:hover {
     position: absolute;
     top: 60px;
     right: 20px;
-    width: 300px;
+    width: 350px;
     max-height: 600px;
     background-color: white;
     border: 1px solid #ccc;
@@ -418,27 +418,51 @@ nav label:hover {
 
 .notifications-list .title {
     font-weight: bold;
+    margin-bottom: 0px;
+    padding: 5px;
 }
 
 .notifications-list .time {
     font-size: 12px;
     color: #888;
+    padding: 5px;
+    margin-bottom: 0px;
 }
 
 .notifications-list .status {
     font-size: 12px;
     font-style: italic;
     color: green;
+    padding: 5px;
 }
 
 .notification-read {
-    background-color: #acb0b5;
+    background-color: #f8f9fa;
 }
 
 .notification-unread {
-    background-color: #FFFFFF;
+    background-color: #e3f2fd;
+}
+.notification-button {
+    position: relative;
 }
 
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 
 .text-danger {
     color: #dc3545;

@@ -71,7 +71,10 @@
             <div class="icons">
                 @if (Session["FullName"] != null)
                 {
-                    <a class="notification-button" onclick="toggleNotifications()"><i class="fas fa-bell"></i></a>
+                    <a class="notification-button" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </a>
 
                     <!-- User Avatar & Dropdown Menu -->
                     <div class="dropdown">
@@ -220,6 +223,21 @@
                 return;
             }
 
+            // Cập nhật UI ngay lập tức
+            const notification = event.currentTarget;
+            const statusDiv = notification.querySelector('.status');
+            
+            // Toggle classes ngay lập tức
+            notification.classList.toggle('notification-read');
+            notification.classList.toggle('notification-unread');
+            
+            // Cập nhật status text ngay lập tức
+            statusDiv.textContent = currentIsRead ? 'Unread' : 'Read';
+            
+            // Cập nhật số thông báo ngay lập tức
+            updateNotificationBadge();
+
+            // Gửi request đến server
             fetch('/Home/ToggleNotificationStatus', {
                 method: 'POST',
                 headers: {
@@ -233,22 +251,24 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    const notification = event.currentTarget;
-                    const statusDiv = notification.querySelector('.status');
-                    
-                    // Toggle classes
+                    // Cập nhật onclick handler với trạng thái mới
+                    notification.setAttribute('onclick', `toggleReadStatus(event, ${notificationId}, ${!currentIsRead})`);
+                } else {
+                    // Nếu có lỗi, hoàn tác các thay đổi UI
                     notification.classList.toggle('notification-read');
                     notification.classList.toggle('notification-unread');
-                    
-                    // Update status text
-                    statusDiv.textContent = currentIsRead ? 'Unread' : 'Read';
-                    
-                    // Update the onclick handler with new status
-                    notification.setAttribute('onclick', `toggleReadStatus(event, ${notificationId}, ${!currentIsRead})`);
-                    toggleNotifications();
+                    statusDiv.textContent = currentIsRead ? 'Read' : 'Unread';
+                    updateNotificationBadge();
                 }
             })
-            .catch(error => console.error('Error toggling notification status:', error));
+            .catch(error => {
+                console.error('Error toggling notification status:', error);
+                // Hoàn tác các thay đổi UI nếu có lỗi
+                notification.classList.toggle('notification-read');
+                notification.classList.toggle('notification-unread');
+                statusDiv.textContent = currentIsRead ? 'Read' : 'Unread';
+                updateNotificationBadge();
+            });
         }
 
         function acceptJoinRequest(notificationId) {
@@ -380,6 +400,30 @@
                 document.body.classList.remove('dark-mode');
                 localStorage.setItem('darkMode', 'disabled');
             }
+        });
+
+        // Hàm để cập nhật số thông báo chưa đọc
+        function updateNotificationBadge() {
+            fetch('/Home/GetNotifications')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.notifications) {
+                        const unreadCount = data.notifications.filter(n => !n.IsRead).length;
+                        const badge = document.getElementById('notificationBadge');
+                        if (unreadCount > 0) {
+                            badge.style.display = 'flex';
+                            badge.textContent = unreadCount;
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching notifications:', error));
+        }
+
+        // Gọi hàm khi trang web được tải
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNotificationBadge();
         });
     </script>
 </body>

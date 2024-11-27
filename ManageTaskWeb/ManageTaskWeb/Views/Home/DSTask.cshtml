@@ -84,8 +84,8 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
-                    <p>@task.TaskName</p>
+                <div class="task-info" >
+                    <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration:underline;">@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <button class="btn btn-outline-secondary edit-task-btn"
@@ -140,8 +140,8 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
-                    <p>@task.TaskName</p>
+                <div class="task-info" >
+                    <p  onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;" >@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <button class="btn btn-outline-secondary edit-task-btn"
@@ -196,8 +196,8 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
-                    <p>@task.TaskName</p>
+                <div class="task-info" >
+                    <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <button class="btn btn-outline-secondary edit-task-btn"
@@ -252,8 +252,8 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info" onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer;">
-                    <p>@task.TaskName</p>
+                <div class="task-info" >
+                    <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <button class="btn btn-outline-secondary edit-task-btn"
