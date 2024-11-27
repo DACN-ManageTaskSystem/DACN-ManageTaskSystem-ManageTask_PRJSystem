@@ -9,7 +9,7 @@
 <div class="breadcrumb">
     <span>Home</span> <div class="arrow-right"></div>
     <span>Tasks</span> <div class="arrow-right"></div>
-    <span>ToDoList</span>
+    <span>DetailTask</span>
 </div>
 <div class="container">
     <div div="left-container">
@@ -58,22 +58,22 @@
         </div>
 
         <div class="attachment-section">
-    <img src="~/Content/images/drive-icon.png" alt="Google Drive" class="attachment-icon">
-    <div class="attachment-details">
-        @if (!string.IsNullOrEmpty(Model.DriveLink))
-        {
-            <a href="@Model.DriveLink" target="_blank" class="drive-link">
-                <p><strong>Tài liệu của Task</strong></p>
-                <p>Nhấn để xem tài liệu</p>
-            </a>
-        }
-        else
-        {
-            <p><strong>Tài liệu của Task</strong></p>
-            <p>Chưa có tài liệu</p>
-        }
-    </div>
-</div>
+            <img src="~/Content/images/drive-icon.png" alt="Google Drive" class="attachment-icon">
+            <div class="attachment-details">
+                @if (!string.IsNullOrEmpty(Model.DriveLink))
+                {
+                    <a href="@Model.DriveLink" target="_blank" class="drive-link">
+                        <p><strong>Tài liệu của Task</strong></p>
+                        <p>Nhấn để xem tài liệu</p>
+                    </a>
+                }
+                else
+                {
+                    <p><strong>Tài liệu của Task</strong></p>
+                    <p>Chưa có tài liệu</p>
+                }
+            </div>
+        </div>
 
         @{
             // Initialize counters for Done and Pending tasks
@@ -101,44 +101,51 @@
                     <div class="task-container">
                         @foreach (var assignment in Model.TaskAssignment)
                         {
-                            if (task.Status == "Done")
+                            if (assignment.TaskID == task.TaskID)
                             {
+                                if (task.Status == "Done")
+                                {
 
-                                <div class="task-details">@task.Description</div>
-                                <td>
-                                    <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
-                                        <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
-                                        <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
+                                    <div class="task-details">@task.Description</div>
+                                    <td>
+                                        <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                            <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                            <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
+                                        </select>
+                                    </td>
+                                    <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
+                                        @foreach (var member in Model.AssignedMembers)
+                                        {
+                                            <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
+                                                @member.FullName
+                                            </option>
+                                        }
                                     </select>
-                                </td>
-                                <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
-                                    @foreach (var member in Model.AssignedMembers)
-                                    {
-                                        <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
-                                            @member.FullName
-                                        </option>
-                                    }
-                                </select>
-                                <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+                                    <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
 
-                            }
+                                }
 
-                            else if (task.Status == "Pending")
-                            {
+                                else if (task.Status == "Pending")
+                                {
 
-                                <i class="fas fa-square task-icon"
-                                   data-id="@task.TaskID"
-                                   data-status="Pending"
-                                   onclick="toggleTaskStatus(this)"></i>
-                                <div class="task-details">@task.Description</div>
-                                <td>
-                                    <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
-                                        <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
-                                        <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
+                                    <div class="task-details">@task.Description</div>
+                                    <td>
+                                        <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                            <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                            <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
+                                        </select>
+                                    </td>
+                                    <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
+                                        @foreach (var member in Model.AssignedMembers)
+                                        {
+                                            <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
+                                                @member.FullName
+                                            </option>
+                                        }
                                     </select>
-                                </td>
-                                <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+                                    <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
 
+                                }
                             }
                         }
                     </div>
@@ -160,16 +167,33 @@
         <div class="input-section">
             <i class="fas fa-clipboard-list"></i>
 
-            <!-- Set taskName and projectId from Model -->
+            <!-- Nhập mô tả task -->
             <input type="text" id="taskDescription" class="input-field" placeholder="Enter Task Description">
-
-            <!-- Hidden taskID (Generated as current timestamp) -->
+            <select style="width:30%;" id="assignedMember" class="form-control">
+                @foreach (var assignment in Model.TaskAssignment)
+                {
+                    foreach (var member in Model.AssignedMembers)
+                    {
+                        <option value="@member.MemberID"
+                                @(member.MemberID == assignment.MemberID ? "selected" : "")>
+                            @member.FullName
+                        </option>
+                    }
+                    break; <!-- Dừng vòng lặp bên ngoài để chỉ lấy assignment đầu tiên -->
+                }
+            </select>
+            <!-- Các input ẩn -->
             <input type="hidden" id="taskName" value="@Model.TaskName">
             <input type="hidden" id="projectId" value="@Model.ProjectID">
-            <input type="hidden" id="taskID" value="@(int.Parse(DateTime.Now.ToString("MMddHHmmss")))" />
+            <input type="hidden" id="createbyId" value="@Model.Creator.MemberID">
             <input type="hidden" id="parentTaskId" value="@Model.TaskID">
+            &nbsp;&nbsp;
+            <!-- Biểu tượng gửi và sự kiện onclick -->
             <i class="fas fa-paper-plane send-icon" onclick="createSubTask()"></i>
         </div>
+
+        <!-- Input ẩn để lưu MemberID đã chọn -->
+        <input type="hidden" id="selectedMemberID" value="@Model.TaskAssignment.FirstOrDefault()?.MemberID" />
 
         <!-- Footer Section -->
         <hr>
@@ -198,7 +222,7 @@
                 Model.Status = "Pending";  // Nếu doneCount == 0, trạng thái là Pending
             }
 
-            // Gán lớp CSS cho trạng thái
+            // Gán lớp CSS cho trạng thái sau khi cập nhật Model.Status
             var statusClass = "";
             switch (Model.Status)
             {
@@ -216,10 +240,10 @@
                     break;
             }
         }
-
         <div class="status ">
             Status: <span class="@statusClass">@Model.Status</span>
         </div>
+
 
         <div class="assigned-users">
             <h6><strong>Người Làm</strong></h6>
@@ -252,24 +276,95 @@
                 Add/Delete Member   &nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="icon"></span>
             </button>
-             <button class="btn-transfer" onclick="showTransferPopup()">
+            <button class="btn-transfer" onclick="showTransferPopup()">
                 Transfer Task <img src="transfer-icon.png" alt="Transfer">
             </button>
             <button class="btn-discuss" onclick="window.location.href='@Url.Action("GroupChat", "Home", new { projectId = Model.ProjectID })'">
                 Thảo Luận <img src="discuss-icon.png" alt="Discuss">
             </button>
+            
 
 
-            <form action="@Url.Action("DeleteTaskByMember", "Home")" method="post">
+
+            <!-- Nút xóa task -->
+            <form action="/Home/DeleteTaskByMember" method="post" id="deleteForm">
                 <input type="hidden" name="taskId" value="@Model.TaskID" />
-                @foreach (var member in Model.AssignedMembers)
-                {
-                    <input type="hidden" name="memberId" value="@member.MemberID" />
-                }
-                <button class="btn-delete" type="submit">
+                <button class="btn-delete" type="submit" onclick="showDeleteWarning(event)">
                     Delete Task <img src="delete-icon.png" alt="Delete">
                 </button>
             </form>
+
+            <!-- Modal thông báo xác nhận xóa -->
+            <div id="deleteWarningModal" class="modal">
+                <div class="modal-content">
+=                    <h2>Are you sure you want to delete this task?</h2>
+                    <p>This action will also remove all related Task Assignments and Task Logs.</p>
+                    <div style="display:flex; margin:auto">
+                        <button id="confirmDelete" class="btn btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+                        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    </div>
+                    
+                </div>
+            </div>
+            <style>
+                /* Modal background */
+                .modal {
+                    display: none; /* Hidden by default */
+                    position: fixed; /* Stay in place */
+                    z-index: 1; /* Sit on top */
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: auto; /* Enable scroll if needed */
+                    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+                    padding-top: 60px;
+                }
+
+                /* Modal content */
+                .modal-content {
+                    background-color: white;
+                    margin: 5% auto;
+                    padding: 20px;
+                    border: 1px solid #888;
+                    width: 50%; /* Could be more or less, depending on screen size */
+                    text-align: center;
+                }
+
+                /* Close button */
+                .close {
+                    color: #aaa;
+                    float: right;
+                    font-size: 28px;
+                    font-weight: bold;
+                }
+
+                    .close:hover,
+                    .close:focus {
+                        color: black;
+                        text-decoration: none;
+                        cursor: pointer;
+                    }
+
+                /* Button styles */
+                .btn-delete, .btn-danger, .btn-secondary {
+                    padding: 10px 20px;
+                    margin: 5px;
+                    font-size: 16px;
+                    cursor: pointer;
+                }
+
+                .btn-danger {
+                    background-color: #d9534f;
+                    color: white;
+                }
+
+                .btn-secondary {
+                    background-color: #6c757d;
+                    color: white;
+                }
+
+            </style>
         </div>
     </div>
 </div>
@@ -552,6 +647,7 @@
         var taskId = selectElement.getAttribute("data-task-id");
         var newStatus = selectElement.value; // Lấy trạng thái mới từ combo box
 
+        var taskId_Main = '@Model.TaskID';  // Use the actual TaskID from your model
         // Gửi yêu cầu AJAX đến server
         fetch('/Home/UpdateStatus', {
             method: 'POST',
@@ -561,13 +657,14 @@
             },
             body: JSON.stringify({
                 taskId: taskId,
-                status: newStatus
+                status: newStatus,
+                taskId_Main:taskId_Main,
             })
         })
             .then(response => {
                 if (response.ok) {
                     alert('Status updated successfully!');
-                    location.reload(); // Tải lại trang hiện tại
+                     location.reload(); // Tải lại trang hiện tại
                 } else {
                     alert('Failed to update status.');
                 }
@@ -611,46 +708,52 @@
         });
 
     }
+    // Lắng nghe sự kiện 'change' trên phần tử select
 
-    function createSubTask() {
-        // Thu thập dữ liệu từ các trường
-        var subTask = {
-            TaskName: document.getElementById('taskName').value,
-            Description: document.getElementById('taskDescription').value,
-            ProjectID: document.getElementById('projectId').value,
-            ParentTaskID: parseInt(document.getElementById('parentTaskId').value)
-        };
-        console.log(subTask.TaskID)
-        console.log(subTask.TaskName)
-        console.log(subTask.Description)
-        console.log(subTask.ProjectID)
-        console.log(subTask.ParentTaskID)
-        // Kiểm tra dữ liệu đầu vào trước khi gửi
-        if (!subTask.TaskName || !subTask.ProjectID) {
-            alert("Task Name and Project ID are required.");
-            return;
-        }
+function createSubTask() {
+    // Lấy giá trị được chọn từ select (ID của Member)
+    var selectedMemberID = document.getElementById('assignedMember').value;
 
-        // Gửi yêu cầu AJAX
-        $.ajax({
-            url: '/Home/CreateSubTask',
-            type: 'POST',
-            data: JSON.stringify(subTask),
-            contentType: 'application/json; charset=utf-8',
-            success: function (response) {
-                if (response.success) {
-                    alert('SubTask created successfully!');
-                    location.reload(); // Reload lại trang sau khi tạo thành công
-                } else {
-                    alert('Error: ' + response.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                alert('An error occurred: ' + error);
-            }
-        });
+    // Thu thập dữ liệu từ các trường
+    var subTask = {
+        TaskName: document.getElementById('taskName').value,
+        Description: document.getElementById('taskDescription').value,  // Lấy giá trị mô tả
+        ProjectID: document.getElementById('projectId').value,
+        ParentTaskID: parseInt(document.getElementById('parentTaskId').value),
+        CreateBy: document.getElementById('createbyId').value,  // Lấy giá trị creator ID
+        MemberID: selectedMemberID  // Lấy giá trị từ select
+    };
 
+ 
+    // Kiểm tra dữ liệu đầu vào
+    if (!subTask.TaskName || !subTask.ProjectID || !subTask.Description || !subTask.MemberID) {
+        alert("Please fill in all required fields.");
+        return;
     }
+
+    // Gửi yêu cầu AJAX
+    $.ajax({
+        url: '/Home/CreateSubTask',  // Đảm bảo URL này đúng
+        type: 'POST',
+        data: JSON.stringify(subTask),  // Gửi dữ liệu dưới dạng JSON
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            if (response.success) {
+                alert('SubTask created successfully!');
+                location.reload();  // Reload lại trang sau khi tạo thành công
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            alert('An error occurred: ' + error);
+        }
+    });
+}
+
+
+
+
     function deleteSubTask(taskId) {
         if (confirm("Are you sure you want to delete this task?")) {
             $.ajax({
@@ -815,6 +918,25 @@
             taskMember.style.display = name.includes(input) ? '' : 'none'; // Ẩn/hiện task member
         });
     }
+    // Hiển thị modal khi người dùng nhấn vào nút xóa
+function showDeleteWarning(event) {
+    event.preventDefault(); // Ngừng form submit ngay lập tức
+    var modal = document.getElementById('deleteWarningModal');
+    modal.style.display = 'block';
+}
+
+// Đóng modal khi người dùng nhấn vào dấu "x"
+function closeModal() {
+    var modal = document.getElementById('deleteWarningModal');
+    modal.style.display = 'none';
+}
+
+// Xác nhận xóa và gửi form
+function confirmDelete() {
+    // Xử lý xác nhận xóa
+    var form = document.getElementById('deleteForm');
+    form.submit(); // Gửi form để xóa Task
+}
 
     function showTransferPopup() {
         document.getElementById('transferTaskOverlay').style.display = 'flex';
