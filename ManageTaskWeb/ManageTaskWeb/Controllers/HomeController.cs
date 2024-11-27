@@ -1278,7 +1278,18 @@ namespace ManageTaskWeb.Controllers
                 // Insert the task into the database
                 data.Tasks.InsertOnSubmit(task);
                 data.SubmitChanges();
+                var taskAssignment = new TaskAssignment
+                {
+                    TaskID = task.TaskID,  // Gán TaskID của task mới tạo
+                    MemberID = task.createBy,  // Gán MemberID từ session (người tạo task)
+                    AssignedBy = task.createBy,  // Người giao nhiệm vụ là người tạo task
+                    AssignedDate = DateTime.Now,  // Ngày giao nhiệm vụ là ngày hiện tại
+                    Status = "Pending"  // Trạng thái mặc định là "Pending"
+                };
 
+                // Insert TaskAssignment vào database
+                data.TaskAssignments.InsertOnSubmit(taskAssignment);
+                data.SubmitChanges();
                 // Redirect with success message
                 return RedirectToAction("DSTask", new { projectId = ProjectID, notificationMessage = "Task added successfully!", notificationType = "success" });
             }
@@ -1626,8 +1637,16 @@ namespace ManageTaskWeb.Controllers
                     return Json(new { success = false, message = "Task not found." });
                 }
 
-                // Xóa các bản ghi trong TaskAssignment có liên quan đến Task này
+                // Lấy danh sách các TaskAssignment liên quan đến Task
                 var taskAssignments = data.TaskAssignments.Where(ta => ta.TaskID == taskId).ToList();
+
+                // Kiểm tra xem tất cả TaskAssignments có MemberID = 0 hay không
+                if (taskAssignments.Any(ta => ta.MemberID != "0"))
+                {
+                    return Json(new { success = false, message = "Cannot delete Có member trong Task Assignment." });
+                }
+
+                // Nếu tất cả các TaskAssignment có MemberID = 0, xóa chúng
                 if (taskAssignments.Any())
                 {
                     data.TaskAssignments.DeleteAllOnSubmit(taskAssignments);
@@ -1644,6 +1663,7 @@ namespace ManageTaskWeb.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
 
 
         // Addmember to task

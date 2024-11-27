@@ -217,15 +217,16 @@
     }
 
     .arrow-right {
-        display: inline-block; /* Keeps the div inline */
+        display: inline-block; /* Đảm bảo phần tử nằm trên cùng dòng nếu cần */
         width: 10px;
         height: 10px;
-        border: 2px solid #1E3A8A; /* Dark blue color */
-        border-left: none;
-        border-top: none;
-        transform: rotate(45deg);
-        margin: 2px 15px 2px 15px; /* Adjust as needed */
+        border: 2px solid #1E3A8A; /* Màu xanh đậm */
+        border-left: none; /* Loại bỏ đường viền bên trái */
+        border-top: none; /* Loại bỏ đường viền trên */
+        transform: rotate(45deg); /* Xoay để mũi tên hướng phải */
+        margin: 2px 15px; /* Điều chỉnh khoảng cách theo thiết kế */
     }
+
 
     .container {
         display: flex;
@@ -835,57 +836,61 @@
                     {
                         doneCount++;
                     }
-                    <div class="task-container">
-                        @foreach (var assignment in Model.TaskAssignment)
+                <div class="task-container">
+                    @foreach (var assignment in Model.TaskAssignment)
+                    {
+                        if (assignment.TaskID == task.TaskID)
                         {
-                            if (assignment.TaskID == task.TaskID)
+                            if (task.Status == "Done")
                             {
-                                if (task.Status == "Done")
-                                {
 
-                                    <div class="task-details">@task.Description</div>
-                                    <td>
-                                        <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
-                                            <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
-                                            <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
-                                        </select>
-                                    </td>
-                                    <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
-                                        @foreach (var member in Model.AssignedMembers)
-                                        {
-                                            <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
-                                                @member.FullName
-                                            </option>
-                                        }
+                                <div class="task-details">@task.Description</div>
+                                <td>
+                                    <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                        <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                        <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
                                     </select>
-                                    <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+                                </td>
+                                <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
+                                    @foreach (var member in Model.AssignedMembers)
+                                    {
+                                        <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
+                                            @member.FullName
+                                        </option>
+                                    }
+                                </select>
+                                <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
 
-                                }
+                            }
 
-                                else if (task.Status == "Pending")
-                                {
+                            else if (task.Status == "Pending")
+                            {
 
-                                    <div class="task-details">@task.Description</div>
-                                    <td>
-                                        <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
-                                            <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
-                                            <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
-                                        </select>
-                                    </td>
-                                    <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
-                                        @foreach (var member in Model.AssignedMembers)
-                                        {
-                                            <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
-                                                @member.FullName
-                                            </option>
-                                        }
+                                <div class="task-details">@task.Description</div>
+                                <td>
+                                    <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                        <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                        <option value="Done" @(task.Status == "Done" ? "selected" : "")>Done</option>
                                     </select>
-                                    <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
+                                </td>
+                                
+                <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
+                    @foreach (var member in Model.AssignedMembers)
+                    {
+                        <option value="0" @(assignment.MemberID == "0" ? "selected" : "")>
+                            Không có thành viên
+                        </option>
+                        <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
+                            @member.FullName
+                        </option>
+                    }
+                </select>
+                                <i class="fas fa-times delete-icon" onclick="deleteSubTask(@task.TaskID)"></i>
 
-                                }
                             }
                         }
-                    </div>
+                    }
+                </div>
                 }
             }
             // Calculate the percentage of Done tasks only if there are tasks
@@ -906,18 +911,7 @@
 
             <!-- Nhập mô tả task -->
             <input type="text" id="taskDescription" class="input-field" placeholder="Enter Task Description">
-            <select style="width:30%;" id="assignedMember" class="form-control">
-                @foreach (var assignment in Model.TaskAssignment)
-                {
-                    foreach (var member in Model.AssignedMembers)
-                    {
-                        <option value="@member.MemberID"
-                                @(member.MemberID == assignment.MemberID ? "selected" : "")>
-                            @member.FullName
-                        </option>
-                    }
-                    break; <!-- Dừng vòng lặp bên ngoài để chỉ lấy assignment đầu tiên -->
-                }
+          
             </select>
             <!-- Các input ẩn -->
             <input type="hidden" id="taskName" value="@Model.TaskName">
@@ -1332,7 +1326,6 @@
 
 function createSubTask() {
     // Lấy giá trị được chọn từ select (ID của Member)
-    var selectedMemberID = document.getElementById('assignedMember').value;
 
     // Thu thập dữ liệu từ các trường
     var subTask = {
@@ -1341,9 +1334,8 @@ function createSubTask() {
         ProjectID: document.getElementById('projectId').value,
         ParentTaskID: parseInt(document.getElementById('parentTaskId').value),
         CreateBy: document.getElementById('createbyId').value,  // Lấy giá trị creator ID
-        MemberID: selectedMemberID  // Lấy giá trị từ select
+        MemberID: "0"  // Lấy giá trị từ select
     };
-
  
     // Kiểm tra dữ liệu đầu vào
     if (!subTask.TaskName || !subTask.ProjectID || !subTask.Description || !subTask.MemberID) {

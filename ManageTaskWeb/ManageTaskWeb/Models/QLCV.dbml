@@ -1,16 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="QLCViec3" Class="QLCVDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Table Name="dbo.Interactions" Member="Interactions">
-    <Type Name="Interaction">
-      <Column Name="InteractionID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ProjectID" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
-      <Column Name="MemberID" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
-      <Column Name="InteractionDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Message" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="IsPinned" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Association Name="Member_Interaction" Member="Member" ThisKey="MemberID" OtherKey="MemberID" Type="Member" IsForeignKey="true" />
-      <Association Name="Project_Interaction" Member="Project" ThisKey="ProjectID" OtherKey="ProjectID" Type="Project" IsForeignKey="true" />
-    </Type>
-  </Table>
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="TM3" Class="QLCVDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="dbo.Members" Member="Members">
     <Type Name="Member">
       <Column Name="MemberID" Type="System.String" DbType="NVarChar(14) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -21,15 +9,16 @@
       <Column Name="HireDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="Status" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="Password" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="deleteTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="ImageMember" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-      <Association Name="Member_Interaction" Member="Interactions" ThisKey="MemberID" OtherKey="MemberID" Type="Interaction" />
+      <Column Name="ExpiryTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="DateOfBirth" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Address" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Association Name="Member_Notification" Member="Notifications" ThisKey="MemberID" OtherKey="MemberID" Type="Notification" />
       <Association Name="Member_ProjectMember" Member="ProjectMembers" ThisKey="MemberID" OtherKey="MemberID" Type="ProjectMember" />
       <Association Name="Member_Report" Member="Reports" ThisKey="MemberID" OtherKey="GeneratedBy" Type="Report" />
       <Association Name="Member_TaskAssignment" Member="TaskAssignments" ThisKey="MemberID" OtherKey="AssignedBy" Type="TaskAssignment" />
       <Association Name="Member_TaskAssignment1" Member="TaskAssignments1" ThisKey="MemberID" OtherKey="MemberID" Type="TaskAssignment" />
-      <Association Name="Member_TaskLog" Member="TaskLogs" ThisKey="MemberID" OtherKey="MemberID" Type="TaskLog" />
+      <Association Name="Member_Interaction" Member="Interactions" ThisKey="MemberID" OtherKey="MemberID" Type="Interaction" />
     </Type>
   </Table>
   <Table Name="dbo.Notifications" Member="Notifications">
@@ -51,7 +40,6 @@
       <Column Name="MemberID" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
       <Column Name="JoinDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="Status" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Reason" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Association Name="Member_ProjectMember" Member="Member" ThisKey="MemberID" OtherKey="MemberID" Type="Member" IsForeignKey="true" />
       <Association Name="Project_ProjectMember" Member="Project" ThisKey="ProjectID" OtherKey="ProjectID" Type="Project" IsForeignKey="true" />
     </Type>
@@ -67,10 +55,11 @@
       <Column Name="deleteTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="ImageProject" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="Priority" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="Project_Interaction" Member="Interactions" ThisKey="ProjectID" OtherKey="ProjectID" Type="Interaction" />
+      <Column Name="createBy" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Association Name="Project_ProjectMember" Member="ProjectMembers" ThisKey="ProjectID" OtherKey="ProjectID" Type="ProjectMember" />
       <Association Name="Project_Report" Member="Reports" ThisKey="ProjectID" OtherKey="ProjectID" Type="Report" />
       <Association Name="Project_Task" Member="Tasks" ThisKey="ProjectID" OtherKey="ProjectID" Type="Task" />
+      <Association Name="Project_Interaction" Member="Interactions" ThisKey="ProjectID" OtherKey="ProjectID" Type="Interaction" />
     </Type>
   </Table>
   <Table Name="dbo.Reports" Member="Reports">
@@ -102,11 +91,9 @@
     <Type Name="TaskLog">
       <Column Name="LogID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="TaskID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="MemberID" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
       <Column Name="Status" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="LogDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="Note" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Association Name="Member_TaskLog" Member="Member" ThisKey="MemberID" OtherKey="MemberID" Type="Member" IsForeignKey="true" />
       <Association Name="Task_TaskLog" Member="Task" ThisKey="TaskID" OtherKey="TaskID" Type="Task" IsForeignKey="true" />
     </Type>
   </Table>
@@ -117,15 +104,29 @@
       <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="ProjectID" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
       <Column Name="ParentTaskID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DriveLink" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="StartDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="EndDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="Priority" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Status" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="createBy" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Association Name="Task_TaskAssignment" Member="TaskAssignments" ThisKey="TaskID" OtherKey="TaskID" Type="TaskAssignment" />
       <Association Name="Task_TaskLog" Member="TaskLogs" ThisKey="TaskID" OtherKey="TaskID" Type="TaskLog" />
       <Association Name="Task_Task" Member="Tasks" ThisKey="TaskID" OtherKey="ParentTaskID" Type="Task" />
       <Association Name="Task_Task" Member="Task1" ThisKey="ParentTaskID" OtherKey="TaskID" Type="Task" IsForeignKey="true" />
       <Association Name="Project_Task" Member="Project" ThisKey="ProjectID" OtherKey="ProjectID" Type="Project" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Interactions" Member="Interactions">
+    <Type Name="Interaction">
+      <Column Name="InteractionID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProjectID" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
+      <Column Name="MemberID" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
+      <Column Name="InteractionDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Message" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="IsPinned" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="Member_Interaction" Member="Member" ThisKey="MemberID" OtherKey="MemberID" Type="Member" IsForeignKey="true" />
+      <Association Name="Project_Interaction" Member="Project" ThisKey="ProjectID" OtherKey="ProjectID" Type="Project" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
