@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Net;
 using System.Net.Mail;
-using System.Net;
 using System.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Web.Configuration;
@@ -21,6 +20,16 @@ namespace ManageTaskWeb.Controllers
     public class HomeController : Controller
     {
         QLCVDataContext data = new QLCVDataContext();
+        public ActionResult Unauthorized()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public ActionResult Help()
+        {
+            return View();
+        }
         //TrangChu
         public ActionResult TrangChu()
         {
@@ -591,6 +600,7 @@ namespace ManageTaskWeb.Controllers
         #region PROJECT
         //PROJECT - START
         //Danh sach project
+        [RoleAuthorization("Admin", "Manager", "Developer")]
         public ActionResult DSProject(string statusFilter = "All")
         {
             var role = Session["Role"]?.ToString();
@@ -1880,6 +1890,7 @@ namespace ManageTaskWeb.Controllers
         #region MEMBER
         //MEMBER - START
         //Load DS member
+        [RoleAuthorization("Admin", "HR")]
         public ActionResult DSMember(string searchQuery, string role, string status, int page = 1, int pageSize = 3)
         {
             // Lấy dữ liệu từ database (giả sử bạn dùng Entity Framework)
@@ -2192,6 +2203,7 @@ namespace ManageTaskWeb.Controllers
 
         #region REPORT
         //Load view 
+        [RoleAuthorization("Admin", "Manager", "HR")]
         public ActionResult BaoCaoThongKe()
         {
             return View();
