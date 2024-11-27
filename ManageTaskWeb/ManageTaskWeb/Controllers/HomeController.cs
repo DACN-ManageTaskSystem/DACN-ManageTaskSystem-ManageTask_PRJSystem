@@ -120,6 +120,8 @@ namespace ManageTaskWeb.Controllers
             Session["Role"] = member.Role;
             Session["Email"] = member.Email;
             Session["Phone"] = member.Phone;
+            Session["Address"] = member.Address;
+            Session["DateOfBirth"] = member.DateOfBirth;
             Session["ImageMember"] = member.ImageMember;
 
             if (member.ExpiryTime.HasValue)
@@ -2018,82 +2020,83 @@ namespace ManageTaskWeb.Controllers
             }
         }
         [HttpPost]
-        public ActionResult EditProfile(string FullName, string Email, string Phone, string Role, string Password, string HireDate, HttpPostedFileBase ImageFile)
+        public JsonResult EditProfile(string FullName, DateTime? BirthDate, string Email, string Phone, string Address, HttpPostedFileBase ImageFile)
         {
             try
             {
-                string memberId = Session["MemberID"]?.ToString();
+                var memberId = Session["MemberID"]?.ToString();
+                if (string.IsNullOrEmpty(memberId))
+                {
+                    return Json(new { success = false, message = "Không tìm thấy thông tin phiên đăng nhập" });
+                }
+
                 var member = data.Members.FirstOrDefault(m => m.MemberID == memberId);
                 if (member == null)
                 {
-                    throw new Exception("Không tìm thấy thông tin thành viên.");
+                    return Json(new { success = false, message = "Không tìm thấy thông tin thành viên" });
                 }
 
-                // Xử lý ảnh nếu người dùng tải lên ảnh mới
-                if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    string fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
-                    string extension = Path.GetExtension(ImageFile.FileName).ToLower();
-                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-
-                    if (!allowedExtensions.Contains(extension))
-                    {
-                        throw new Exception("Chỉ chấp nhận định dạng file .JPG, .JPEG, .PNG.");
-                    }
-
-                    if (ImageFile.ContentLength > 1 * 1024 * 1024)
-                    {
-                        throw new Exception("Dung lượng file vượt quá giới hạn 1 MB.");
-                    }
-
-                    string uniqueFileName = fileName + "_" + Guid.NewGuid() + extension;
-                    string path = Server.MapPath("~/Content/images/member-img/");
-                    Directory.CreateDirectory(path); // Tạo thư mục nếu chưa có
-                    string imagePath = Path.Combine(path, uniqueFileName);
-                    ImageFile.SaveAs(imagePath);
-
-                    member.ImageMember = uniqueFileName;
-                    Session["ImageMember"] = uniqueFileName; // Cập nhật session
-                }
-
-                // Cập nhật thông tin cá nhân
+                // Cập nhật thông tin cơ bản
                 member.FullName = FullName;
+                member.DateOfBirth = BirthDate;
                 member.Email = Email;
                 member.Phone = Phone;
-                member.Role = Role;
+                member.Address = Address;
 
-                // Nếu có thay đổi mật khẩu, mã hóa và lưu mật khẩu mới
-                if (!string.IsNullOrEmpty(Password))
+                // Xử lý upload ảnh nếu có
+                if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    member.Password = EncryptPassword(Password, "your-secret-key"); // Mã hóa mật khẩu
+                    // Kiểm tra kích thước file (1MB = 1048576 bytes)
+                    if (ImageFile.ContentLength > 1048576)
+                    {
+                        return Json(new { success = false, message = "Kích thước file không được vượt quá 1MB" });
+                    }
+
+                    // Kiểm tra định dạng file
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                    var fileExtension = Path.GetExtension(ImageFile.FileName).ToLower();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        return Json(new { success = false, message = "Chỉ chấp nhận file định dạng .JPG, .PNG" });
+                    }
+
+                    // Xóa ảnh cũ nếu có
+                    if (!string.IsNullOrEmpty(member.ImageMember))
+                    {
+                        var oldImagePath = Path.Combine(Server.MapPath("~/Content/images/member-img"), member.ImageMember);
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    // Lưu file mới
+                    var fileName = $"member_{Guid.NewGuid()}{fileExtension}";
+                    var path = Path.Combine(Server.MapPath("~/Content/images/member-img"), fileName);
+                    ImageFile.SaveAs(path);
+
+                    // Cập nhật tên file ảnh trong database
+                    member.ImageMember = fileName;
                 }
 
-                // Xử lý ngày thuê
-                if (!string.IsNullOrEmpty(HireDate) && DateTime.TryParse(HireDate, out DateTime parsedHireDate))
-                {
-                    member.HireDate = parsedHireDate;
-                    Session["HireDate"] = parsedHireDate.ToString("yyyy-MM-dd");
-                }
-                else
-                {
-                    Session["HireDate"] = null;
-                }
-
-                // Lưu thay đổi
                 data.SubmitChanges();
 
                 // Cập nhật Session
-                Session["FullName"] = FullName;
-                Session["Email"] = Email;
-                Session["Phone"] = Phone;
-                Session["Role"] = Role;
+                Session["FullName"] = member.FullName;
+                Session["DateOfBirth"] = member.DateOfBirth;
+                Session["Email"] = member.Email;
+                Session["Phone"] = member.Phone;
+                Session["Address"] = member.Address;
+                if (ImageFile != null && ImageFile.ContentLength > 0)
+                {
+                    Session["ImageMember"] = member.ImageMember;
+                }
 
-                return RedirectToAction("TTCaNhan", new { notificationMessage = "Cập nhật thành công!", notificationType = "success" });
+                return Json(new { success = true, message = "Cập nhật thông tin thành công" });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return RedirectToAction("TTCaNhan", new { notificationMessage = "Đã xảy ra lỗi khi cập nhật!", notificationType = "error" });
+                return Json(new { success = false, message = "Lỗi khi cập nhật: " + ex.Message });
             }
         }
         #endregion
@@ -2179,7 +2182,7 @@ namespace ManageTaskWeb.Controllers
                 // Query cơ bản cho tasks
                 var tasksQuery = data.Tasks.AsQueryable();
 
-                // Áp dụng các bộ lọc
+                // Áp dụng các bộ l��c
                 if (!string.IsNullOrEmpty(projectId))
                 {
                     tasksQuery = tasksQuery.Where(t => t.ProjectID == projectId);
