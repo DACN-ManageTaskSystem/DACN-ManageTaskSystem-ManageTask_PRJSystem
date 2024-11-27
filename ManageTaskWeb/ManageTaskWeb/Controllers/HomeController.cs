@@ -2297,80 +2297,124 @@ namespace ManageTaskWeb.Controllers
 
         #region tranfer
         [HttpPost]
-        public JsonResult TransferTask(string fromMemberId, string toMemberId, int taskId)
+        public JsonResult TransferTask(string fromMemberId, string toMemberId, int[] taskIds)
         {
             try
             {
-                // Kiểm tra members tồn tại
+                // Debug logging
+                System.Diagnostics.Debug.WriteLine($"Received transfer request: From={fromMemberId}, To={toMemberId}, Tasks={string.Join(",", taskIds ?? new int[0])}");
+
+                // Validate input parameters
+                if (string.IsNullOrEmpty(fromMemberId) || string.IsNullOrEmpty(toMemberId))
+                {
+                    return Json(new { success = false, message = "Member IDs cannot be empty." });
+                }
+
+                if (taskIds == null || taskIds.Length == 0)
+                {
+                    return Json(new { success = false, message = "No tasks selected for transfer." });
+                }
+
                 var fromMember = data.Members.FirstOrDefault(m => m.MemberID == fromMemberId);
                 var toMember = data.Members.FirstOrDefault(m => m.MemberID == toMemberId);
-                var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
 
-                if (fromMember == null || toMember == null || task == null)
+                if (fromMember == null || toMember == null)
                 {
-                    return Json(new { success = false, message = "Invalid member or task." });
+                    return Json(new { success = false, message = "Invalid members." });
                 }
 
-                // Lấy task assignment hiện tại
-                var currentAssignment = data.TaskAssignments
-                    .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == fromMemberId);
+                var transferredTasks = new List<string>();
+                var notifications = new List<Notification>();
 
-                if (currentAssignment == null)
+                foreach (var taskId in taskIds)
                 {
-                    return Json(new { success = false, message = "Task assignment not found." });
+                    var task = data.Tasks.FirstOrDefault(t => t.TaskID == taskId);
+                    if (task == null) continue;
+
+                    var currentAssignment = data.TaskAssignments
+                        .FirstOrDefault(ta => ta.TaskID == taskId && ta.MemberID == fromMemberId);
+
+                    if (currentAssignment == null) continue;
+
+                    var newAssignment = new TaskAssignment
+                    {
+                        TaskID = taskId,
+                        MemberID = toMemberId,
+                        AssignedBy = Session["MemberID"]?.ToString(),
+                        AssignedDate = DateTime.Now,
+                        Status = "Assigned",
+                        Note = $"Transferred from {fromMember.FullName}"
+                    };
+
+                    // Tạo thông báo cho người bị xóa task
+                    notifications.Add(new Notification
+                    {
+                        MemberID = fromMemberId,
+                        Content = $"Task '{task.Description ?? $"Task {taskId}"}' has been transferred to {toMember.FullName}",
+                        NotificationDate = DateTime.Now,
+                        IsRead = false,
+                        NotificationType = "TaskTransferred"
+                    });
+
+                    // Tạo thông báo cho người được nhận task
+                    notifications.Add(new Notification
+                    {
+                        MemberID = toMemberId,
+                        Content = $"You have been assigned task '{task.Description ?? $"Task {taskId}"}' transferred from {fromMember.FullName}",
+                        NotificationDate = DateTime.Now,
+                        IsRead = false,
+                        NotificationType = "TaskReceived"
+                    });
+
+                    transferredTasks.Add(task.Description ?? $"Task {taskId}");
+                    data.TaskAssignments.InsertOnSubmit(newAssignment);
+                    data.TaskAssignments.DeleteOnSubmit(currentAssignment);
                 }
 
-                // Tạo assignment mới cho member mới
-                var newAssignment = new TaskAssignment
+                if (transferredTasks.Count == 0)
                 {
-                    TaskID = taskId,
-                    MemberID = toMemberId,
-                    AssignedBy = currentAssignment.AssignedBy,
-                    AssignedDate = DateTime.Now,
-                    Status = "Assigned",
-                    Note = $"Transferred from {fromMember.FullName}"
-                };
+                    return Json(new { success = false, message = "No tasks were eligible for transfer." });
+                }
 
-                // Thêm assignment mới và xóa assignment cũ
-                data.TaskAssignments.InsertOnSubmit(newAssignment);
-                data.TaskAssignments.DeleteOnSubmit(currentAssignment);
-
-                // Tạo thông báo cho cả hai members
-                var notificationToReceiver = new Notification
-                {
-                    MemberID = toMemberId,
-                    Content = $"You have received task '{task.TaskName}' transferred from {fromMember.FullName}",
-                    NotificationDate = DateTime.Now,
-                    NotificationType = "TaskTransferred",
-                    IsRead = false
-                };
-
-                var notificationToSender = new Notification
-                {
-                    MemberID = fromMemberId,
-                    Content = $"Your task '{task.TaskName}' has been transferred to {toMember.FullName}",
-                    NotificationDate = DateTime.Now,
-                    NotificationType = "TaskTransferred",
-                    IsRead = false
-                };
-
-                data.Notifications.InsertOnSubmit(notificationToReceiver);
-                data.Notifications.InsertOnSubmit(notificationToSender);
-
+                // Thêm tất cả các thông báo vào database
+                data.Notifications.InsertAllOnSubmit(notifications);
+                
                 data.SubmitChanges();
 
-                return Json(new
-                {
-                    success = true,
-                    message = $"Successfully transferred task from {fromMember.FullName} to {toMember.FullName}"
+                var tasksMessage = string.Join(", ", transferredTasks);
+                return Json(new { 
+                    success = true, 
+                    message = $"Successfully transferred tasks ({tasksMessage}) from {fromMember.FullName} to {toMember.FullName}" 
                 });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                return Json(new { success = false, message = $"Error during transfer: {ex.Message}" });
             }
         }
+        [HttpGet]
+        public JsonResult GetMemberSubtasks(int parentTaskId, string memberId)
+        {
+            try
+            {
+                var tasks = data.Tasks
+                    .Where(t => t.ParentTaskID == parentTaskId)
+                    .Where(t => t.TaskAssignments.Any(ta => ta.MemberID == memberId))
+                    .Select(t => new
+                    {
+                        t.TaskID,
+                        t.Description,
+                        t.Status
+                    })
+                    .ToList();
 
+                return Json(new { success = true, tasks = tasks }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
         #endregion
     }
 }

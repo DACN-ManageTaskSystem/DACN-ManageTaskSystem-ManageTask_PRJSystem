@@ -1,0 +1,738 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Comfortaa', sans-serif;
+    background-color: #f7f7f7;
+}
+
+.breadcrumb {
+    font-size: 20px;
+    color: #888;
+    margin: 20px 30px;
+    width: 100%;
+    font-weight: bold;
+    padding-left: 100px;
+}
+
+.title {
+    font-size: 22px;
+    color: #d90000;
+    font-weight: bold;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.task-info {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.attachment-section {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.attachment-icon {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+}
+
+.attachment-details {
+    font-size: 14px;
+    color: #333;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+    .progress-bar .progress {
+        height: 12px;
+        background-color: #4caf50;
+        width: 50%;
+    }
+
+.status {
+    font-size: 16px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+}
+
+    .status span {
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: #333;
+        margin-left: 10px;
+    }
+
+.assigned-users, .creator {
+    margin-top: 20px;
+}
+
+    .assigned-users p, .creator p {
+        font-size: 14px;
+        color: #333;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+.user {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+.user-name {
+    font-size: 16px;
+    color: #333;
+}
+
+.task-controls {
+    display: flex;
+    flex-direction: column; /* Arrange buttons in a vertical column */
+    align-items: center; /* Center buttons horizontally */
+    gap: 10px; /* Space between buttons */
+}
+
+
+
+.btn-discuss {
+    background-color: white;
+    color: black;
+    border: 1px solid #007bff; /* Blue border */
+}
+
+    .btn-discuss img {
+        filter: invert(34%) sepia(50%) saturate(2866%) hue-rotate(188deg) brightness(95%) contrast(104%);
+    }
+
+.btn-edit {
+    background-color: #add8e6; /* Light blue */
+    color: black;
+}
+
+    .btn-edit img {
+        filter: invert(21%) sepia(74%) saturate(626%) hue-rotate(155deg) brightness(92%) contrast(91%);
+    }
+
+.btn-delete {
+    background-color: #f8d7da; /* Light red */
+    color: black;
+}
+
+    .btn-delete img {
+        filter: invert(17%) sepia(73%) saturate(3000%) hue-rotate(336deg) brightness(98%) contrast(98%);
+    }
+
+.task-controls button:hover {
+    transform: translateY(-2px); /* Slightly lift the button on hover */
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+.task-controls {
+    display: flex;
+    flex-direction: column; /* Arrange buttons in a vertical column */
+    align-items: center; /* Center buttons horizontally */
+    gap: 10px; /* Space between buttons */
+}
+
+    .task-controls button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Space out text and icon */
+        width: 250px; /* Set button width */
+        padding: 10px 15px;
+        font-size: 16px;
+        font-weight: bold;
+        border: 1px solid transparent;
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px
+    }
+
+        .task-controls button img {
+            margin-left: auto; /* Push icon to the right side */
+        }
+
+.btn-discuss {
+    background-color: white;
+    color: black;
+    border: 1px solid #007bff; /* Blue border */
+}
+
+    .btn-discuss img {
+        filter: invert(34%) sepia(50%) saturate(2866%) hue-rotate(188deg) brightness(95%) contrast(104%);
+    }
+
+.btn-edit {
+    background-color: #add8e6; /* Light blue */
+    color: black;
+}
+
+    .btn-edit img {
+        filter: invert(21%) sepia(74%) saturate(626%) hue-rotate(155deg) brightness(92%) contrast(91%);
+    }
+
+.btn-delete {
+    background-color: #f8d7da; /* Light red */
+    color: black;
+}
+
+    .btn-delete img {
+        filter: invert(17%) sepia(73%) saturate(3000%) hue-rotate(336deg) brightness(98%) contrast(98%);
+    }
+
+.task-controls button:hover {
+    transform: translateY(-2px); /* Slightly lift the button on hover */
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+.arrow-right {
+    display: inline-block; /* Keeps the div inline */
+    width: 10px;
+    height: 10px;
+    border: 2px solid #1E3A8A; /* Dark blue color */
+    border-left: none;
+    border-top: none;
+    transform: rotate(45deg);
+    margin: 2px 15px 2px 15px; /* Adjust as needed */
+}
+
+.container {
+    display: flex;
+    gap: 40px; /* Adds space between columns */
+    width: 90%;
+    height: 90%;
+    margin: 30px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.left-container {
+    flex: 8; /* Left container takes 80% of the space */
+    padding-right: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.right-container {
+    flex: 2; /* Right container takes 20% of the space */
+    padding-left: 20px;
+}
+
+
+.task-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.task-icon {
+    font-size: 24px;
+    color: green;
+    margin-right: 10px;
+}
+
+.task-details {
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+}
+
+.delete-icon {
+    color: #f44336;
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.input-section {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+}
+
+    .input-section i {
+        color: #888;
+        margin-right: 10px;
+        font-size: 18px;
+    }
+
+.input-field {
+    flex: 1;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+.send-icon {
+    font-size: 20px;
+    color: #3b82f6;
+    cursor: pointer;
+}
+
+.footer-task {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+}
+
+    .footer-task i {
+        margin-left: 5px;
+    }
+
+    .footer-task:hover {
+        color: #007bff;
+    }
+
+hr {
+    margin-top: 20px;
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+.date-container {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+    font-family: Arial, sans-serif;
+}
+
+.date-text {
+    margin-right: 10px;
+    line-height: 1.5;
+}
+
+.double-arrow {
+    color: red;
+    font-size: 25px;
+}
+
+.button .icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    border: 2px solid black;
+    border-radius: 2px;
+    position: relative;
+}
+
+    .button .icon::before,
+    .button .icon::after {
+        content: '';
+        position: absolute;
+        background-color: black;
+    }
+
+    .button .icon::before {
+        width: 10px;
+        height: 2px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .button .icon::after {
+        width: 2px;
+        height: 10px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Màu nền bán trong suốt */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* Đảm bảo lớp phủ nằm trên tất cả các phần tử khác */
+    visibility: hidden;
+}
+
+.blind-container-1 {
+    width: 70%;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Đảm bảo hộp container nằm trên overlay */
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+    padding: 10px 50px 10px 50px;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #666;
+}
+
+.member-section {
+    display: flex;
+    gap: 20px;
+}
+
+.panel {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    background: #fafafa;
+}
+
+    .panel h3 {
+        color: #2d5c89;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+    .search-bar input[type="text"] {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .search-bar button {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #666;
+    }
+
+
+
+.member-list {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+    .member-list li {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+.info {
+    flex: 1;
+}
+
+    .info p {
+        font-weight: bold;
+        color: #333;
+    }
+
+.role {
+    font-size: 0.9em;
+    color: #4a90e2;
+}
+
+    .role.project-manager {
+        color: #e74c3c;
+    }
+
+.add-button {
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2d5c89;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+    .pagination button {
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        background-color: #ffffff;
+        cursor: pointer;
+    }
+
+        .pagination button.active {
+            background-color: #2d5c89;
+            color: #ffffff;
+        }
+
+.completed {
+    background-color: lightgreen; /* Màu xanh lá */
+}
+
+.in-progress {
+    background-color: gold; /* Màu xanh dương */
+}
+
+.pending {
+    background-color: orange; /* Màu cam */
+}
+
+.default {
+    background-color: gray; /* Màu mặc định nếu không có trạng thái */
+}
+/* Tùy chỉnh giao diện cho toàn bộ combo box */
+.status-dropdown {
+    width: 100px; /* Chiều rộng của combo box */
+    padding: 8px; /* Đệm bên trong */
+    border: 1px solid #ccc; /* Đường viền */
+    border-radius: 4px; /* Bo tròn góc */
+    font-size: 14px; /* Kích thước chữ */
+    color: #333; /* Màu chữ */
+    background-color: #f9f9f9; /* Màu nền */
+    cursor: pointer; /* Con trỏ chuột khi hover */
+}
+
+.transfer-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.transfer-button:hover {
+    background-color: #45a049;
+}
+
+.member-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.member-item:hover {
+    background-color: #f5f5f5;
+}
+
+#memberSearch {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.btn-transfer {
+background-color: #9c27b0;
+color: white;
+border: none;
+display: flex;
+align-items: center;
+justify-content: space-between;
+width: 250px;
+padding: 10px 15px;
+font-size: 16px;
+font-weight: bold;
+border-radius: 10px;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+cursor: pointer;
+transition: all 0.3s;
+margin-top: 10px;
+}
+
+.btn-transfer:hover {
+transform: translateY(-2px);
+box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-transfer img {
+filter: invert(100%);
+margin-left: auto;
+}
+    /* Hiệu ứng khi hover vào combo box */
+    .status-dropdown:hover {
+        border-color: #007bff; /* Màu đường viền khi hover */
+        background-color: #fff; /* Màu nền khi hover */
+    }
+
+    /* Thay đổi giao diện khi chọn trạng thái */
+    .status-dropdown:focus {
+        outline: none; /* Xóa viền mặc định khi focus */
+        border-color: #007bff; /* Đổi màu đường viền khi focus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Hiệu ứng shadow khi focus */
+    }
+
+    /* Tùy chỉnh màu cho các tùy chọn */
+    .status-dropdown option {
+        color: #333; /* Màu chữ của các tùy chọn */
+        background-color: #fff; /* Màu nền của các tùy chọn */
+    }
+/* Định dạng cơ bản cho combo box */
+.assigned-member-dropdown {
+    width: 150px; /* Combo box chiếm toàn bộ chiều ngang container */
+    padding: 8px; /* Khoảng cách bên trong */
+    border: 1px solid #ccc; /* Đường viền */
+    border-radius: 4px; /* Góc bo tròn */
+    font-size: 14px; /* Kích thước chữ */
+    background-color: #f9f9f9; /* Màu nền */
+    color: #333; /* Màu chữ */
+    cursor: pointer; /* Con trỏ thay đổi thành bàn tay khi hover */
+    transition: all 0.3s ease; /* Hiệu ứng mượt khi thay đổi trạng thái */
+}
+
+    /* Khi combo box được hover */
+    .assigned-member-dropdown:hover {
+        background-color: #e6f7ff; /* Thay đổi màu nền khi hover */
+        border-color: #1890ff; /* Thay đổi màu đường viền */
+    }
+
+    /* Khi combo box được focus (được chọn) */
+    .assigned-member-dropdown:focus {
+        outline: none; /* Xóa khung viền mặc định */
+        border-color: #40a9ff; /* Màu viền khi focus */
+        box-shadow: 0 0 5px rgba(24, 144, 255, 0.5); /* Hiệu ứng đổ bóng */
+    }
+
+    /* Tùy chỉnh mũi tên dropdown */
+    .assigned-member-dropdown::-ms-expand {
+        display: none; /* Ẩn mũi tên mặc định trên IE */
+    }
+
+    .assigned-member-dropdown option {
+        background-color: #ffffff; /* Nền của các lựa chọn */
+        color: #333; /* Màu chữ */
+    }
+
+        /* Tùy chỉnh màu khi chọn một mục */
+        .assigned-member-dropdown option:checked {
+            background-color: #bae7ff; /* Màu nền của mục đã chọn */
+            color: #000; /* Màu chữ */
+        }
+
+.assigned-users {
+    width: 100%; /* Adjust as needed */
+}
+
+.user-list {
+    max-height: 200px; /* Adjust height to fit 3 items */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+    }
+
+.user-name {
+    font-size: 14px;
+    .drive-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.drive-link:hover {
+    color: #1a73e8;  /* Google Drive blue color */
+}
+
+.attachment-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+}
+
+.attachment-section {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 20px 0;
+    transition: background-color 0.3s;
+}
+
+.attachment-section:hover {
+    background-color: #f1f3f4;
+}
+}
