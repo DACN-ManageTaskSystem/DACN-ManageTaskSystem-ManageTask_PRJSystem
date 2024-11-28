@@ -36,6 +36,7 @@
         taskNames.Add(item.TaskName);
     }
     var jsonLogDates = JsonConvert.SerializeObject(logDates); // Chuyển đổi thành JSON
+    <a href="~/Views/Home/TienDoTask.cshtml">~/Views/Home/TienDoTask.cshtml</a>
     var jsonTName = JsonConvert.SerializeObject(taskNames); // Chuyển đổi thành JSON
 
     // Khởi tạo một Dictionary để chứa dữ liệu
@@ -55,7 +56,7 @@
     foreach (var taskID in Model.Select(m => m.TaskID).Distinct())
     {
         // Khởi tạo một danh sách trạng thái cho TaskID, với giá trị mặc định là 0
-        data[taskID.GetValueOrDefault()] = new List<int>(new int[allLogDates.Count+1]);
+        data[taskID.GetValueOrDefault()] = new List<int>(new int[allLogDates.Count + 1]);
         int i = 0;
         int flag = 0;
         foreach (var item in Model)

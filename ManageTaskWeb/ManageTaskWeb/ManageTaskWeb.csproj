@@ -160,6 +160,33 @@
     <Content Include="Content\css\bctk.css" />
     <Content Include="Content\css\tiendotask.css" />
     <Content Include="Content\css\task.css" />
+    <Content Include="Content\css\TrangChu\bootstrap-icons.css" />
+    <Content Include="Content\css\TrangChu\bootstrap.min.css" />
+    <Content Include="Content\css\TrangChu\happy-asian-man-standing-with-arms-crossed-grey-wall.jpg" />
+    <Content Include="Content\css\TrangChu\Image\alexandre-pellaes-6vAjp0pscX0-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\Avatar\n1.jpg" />
+    <Content Include="Content\css\TrangChu\Image\Avatar\n2.jpg" />
+    <Content Include="Content\css\TrangChu\Image\Avatar\n3.jpg" />
+    <Content Include="Content\css\TrangChu\Image\Avatar\t1.jpg" />
+    <Content Include="Content\css\TrangChu\Image\Avatar\t2.jpg" />
+    <Content Include="Content\css\TrangChu\Image\business-woman-making-presentation-office.jpg" />
+    <Content Include="Content\css\TrangChu\Image\clayton-cardinalli-JMoFpdqL3XM-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\fabian-friedrich-JDUVM9_VaZE-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\happy-asian-man-standing-with-arms-crossed-grey-wall.jpg" />
+    <Content Include="Content\css\TrangChu\Image\jakob-dalbjorn-cuKJre3nyYc-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\jason-goodman-bzqU01v-G54-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\jeshoots-com-TWRCH-GaKr4-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\maria-stewart-p4tj0g-_aMM-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\miguel-henriques--8atMWER8bI-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\Image\people-smiling-while-conference-room.jpg" />
+    <Content Include="Content\css\TrangChu\Image\terren-hurst-blgOFmPIlr0-unsplash.jpg" />
+    <Content Include="Content\css\TrangChu\JS\bootstrap.min.js" />
+    <Content Include="Content\css\TrangChu\JS\click-scroll.js" />
+    <Content Include="Content\css\TrangChu\JS\custom.js" />
+    <Content Include="Content\css\TrangChu\JS\jquery.min.js" />
+    <Content Include="Content\css\TrangChu\JS\jquery.sticky.js" />
+    <Content Include="Content\css\TrangChu\templatemo-leadership-event.css" />
+    <Content Include="Content\css\TrangChu\Video\pexels-pavel-danilyuk-8716790.mp4" />
     <Content Include="Content\images\drive-icon.png" />
     <Content Include="Content\images\error.png" />
     <Content Include="Content\images\hinh1.png" />
@@ -231,6 +258,8 @@
       <LastGenOutput>QLCV.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Content\css\TrangChu\bootstrap-icons.woff" />
+    <Content Include="Content\css\TrangChu\bootstrap-icons.woff2" />
     <None Include="Models\QLCV.dbml.layout">
       <DependentUpon>QLCV.dbml</DependentUpon>
     </None>
@@ -278,7 +307,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="assets\" />
     <Folder Include="Content\Javascript\" />
   </ItemGroup>
   <ItemGroup>

@@ -1384,7 +1384,7 @@ namespace ManageTaskWeb.Controllers
                     else
                     {
                         a = "Pending";
-                    }
+                    }                                                                                                                                                                                                                                                                                                             
                 }
 
                 var taskmain = context.Tasks.FirstOrDefault(t => t.TaskID == taskId_Main);
@@ -1392,7 +1392,17 @@ namespace ManageTaskWeb.Controllers
                 {
                     return Json(new { success = false, message = "Task not found." });
                 }
-
+                if (taskmain.Status != a)
+                {
+                    var taskLog = new TaskLog
+                    {
+                        TaskID = taskId_Main,
+                        Status = a,
+                        LogDate = DateTime.Now,
+                        Note = "Change Process"
+                    };
+                    context.TaskLogs.InsertOnSubmit(taskLog);
+                }
                 // Cập nhật trạng thái
                 taskmain.Status = a;
                 context.SubmitChanges();
