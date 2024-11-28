@@ -2552,6 +2552,36 @@ namespace ManageTaskWeb.Controllers
             }
         }
         #endregion
+
+        [HttpPost]
+        public JsonResult CreateReport(string projectId, string generatedBy, string summary)
+        {
+            try
+            {
+                // Kiểm tra generatedBy
+                if (string.IsNullOrEmpty(generatedBy))
+                {
+                    return Json(new { success = false, message = "Member ID is required" });
+                }
+
+                var report = new Report
+                {
+                    ProjectID = projectId,  // Có thể null
+                    GeneratedBy = generatedBy,
+                    ReportDate = DateTime.Now,
+                    Summary = summary
+                };
+
+                data.Reports.InsertOnSubmit(report);
+                data.SubmitChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 

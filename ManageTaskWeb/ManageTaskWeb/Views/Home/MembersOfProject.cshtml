@@ -51,11 +51,7 @@
             <span>+</span> Thêm Thành Viên Mới
         </button>
 
-        <!-- Thanh tìm kiếm nằm giữa -->
-        <div class="memberofproject-search-bar">
-            <input type="text" placeholder="Tìm kiếm theo mã hoặc tên" />
-            <i class="fas fa-search"></i>
-        </div>
+ 
         <style>
         .memberofproject-add-member-btn{
             border: 1px solid #32bb42;
@@ -244,13 +240,7 @@
               
             </li>
         </ul>
-        <div class="pagination">
-            <button>◀</button>
-            <button class="active">1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>▶</button>
-        </div>
+        
     </div>
 </div>
 
@@ -341,6 +331,58 @@
     .table-scroll::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
+
+    /* Add these styles */
+    .request-list {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+    }
+
+    /* Customize scrollbar */
+    .request-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .request-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .request-list::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .request-list::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .member-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+
+    /* Xóa styles cũ cho .avatar và .avatar-green vì không cần thiết nữa */
+    .avatar, .avatar-green, .avatar-yellow {
+        display: none;
+    }
+
+    /* Điều chỉnh layout cho list items */
+    .member-list li {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .request-list li {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+    }
 </style>
 <script>
     function toggleRequest() {
@@ -368,11 +410,10 @@
                     li.setAttribute('data-id', request.NotificationIDs[0]);
 
                     li.innerHTML = `
-                        <div class="avatar avatar-green"></div>
+                        <img src="/Content/images/member-img/${request.ImageMember}" alt="${request.FullName}" class="member-avatar"/>
                         <div class="info">
                             <p>${request.FullName}</p>
                             <span class="role">${request.Role}</span>
-                            <span class="notification-id">Notification ID: ${request.NotificationIDs[0]}</span>
                         </div>
                         <button class="accept-button" data-notificationid="${request.NotificationIDs[0]}">✔ Accept</button>
                         <button class="reject-button" data-notificationid="${request.NotificationIDs[0]}">✖ Reject</button>
@@ -424,16 +465,47 @@
         // Check if input already exists
         if (notificationElement.querySelector('.reject-reason')) return;
 
+        // Hide accept and reject buttons
+        const acceptButton = notificationElement.querySelector('.accept-button');
+        const rejectButton = notificationElement.querySelector('.reject-button');
+        acceptButton.style.display = 'none';
+        rejectButton.style.display = 'none';
+
+        // Create container for new elements
+        const inputContainer = document.createElement('div');
+        inputContainer.classList.add('reject-input-container');
+
+        // Create input field
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = 'Enter reject reason...';
         input.classList.add('reject-reason', 'form-control', 'mt-2');
 
+        // Create buttons container
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.classList.add('buttons-container', 'mt-2');
+        buttonsContainer.style.display = 'flex';
+        buttonsContainer.style.gap = '10px';
+
+        // Create confirm button
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
-        confirmButton.classList.add('btn', 'btn-primary', 'mt-2');
+        confirmButton.classList.add('btn', 'btn-primary');
 
-        confirmButton.addEventListener('click', function () {
+        // Create cancel button
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.classList.add('btn', 'btn-secondary');
+
+        // Add cancel button functionality
+        cancelButton.addEventListener('click', function() {
+            inputContainer.remove();
+            acceptButton.style.display = '';
+            rejectButton.style.display = '';
+        });
+
+        // Add confirm button functionality
+        confirmButton.addEventListener('click', function() {
             const reason = input.value.trim();
             if (!reason) {
                 alert('Please enter a reason.');
@@ -450,22 +522,25 @@
                     reason: reason
                 })
             })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message); // Display server message
-                    if (data.success) {
-                        toggleRequest(); // Reload the request list after rejecting
-                    }
-                })
-                .catch(error => {
-                    console.error('Error rejecting join request:', error);
-                    alert('There was an error while rejecting your request.');
-                });
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    toggleRequest();
+                }
+            })
+            .catch(error => {
+                console.error('Error rejecting join request:', error);
+                alert('There was an error while rejecting your request.');
+            });
         });
 
-        // Add input and confirm button to the UI
-        notificationElement.appendChild(input);
-        notificationElement.appendChild(confirmButton);
+        // Assemble and append elements
+        buttonsContainer.appendChild(confirmButton);
+        buttonsContainer.appendChild(cancelButton);
+        inputContainer.appendChild(input);
+        inputContainer.appendChild(buttonsContainer);
+        notificationElement.appendChild(inputContainer);
     }
 
         document.getElementById('addmember').addEventListener('click', function () {
@@ -529,7 +604,7 @@
                     paginatedItems.forEach(member => {
                         const li = document.createElement('li');
                         li.innerHTML = `
-                            <div class="avatar avatar-green"></div>
+                            <img src="/Content/images/member-img/${member.ImageMember}" alt="${member.FullName}" class="member-avatar"/>
                             <div class="info">
                                 <p>${member.MemberId}</p>
                                 <p>${member.FullName}</p>
@@ -567,13 +642,15 @@
                     paginatedItems.forEach(member => {
                         const li = document.createElement('li');
                         li.innerHTML = `
-                            <div class="avatar avatar-yellow"></div>
+                            <img src="/Content/images/member-img/${member.ImageMember}" alt="${member.FullName}" class="member-avatar"/>
                             <div class="info">
                                 <p>${member.MemberId}</p>
                                 <p>${member.FullName}</p>
                                 <span class="role ${member.Role.toLowerCase()}">${member.Role}</span>
                             </div>
-                            <button class="remove-button" onclick="removeMemberFromProject('${member.MemberId}')"><i class="fa-regular fa-trash-can" style="color:red;"></i></button>
+                            <button class="remove-button" onclick="removeMemberFromProject('${member.MemberId}')">
+                                <i class="fa-regular fa-trash-can" style="color:red;"></i>
+                            </button>
                         `;
                         projectMembersList.appendChild(li);
                     });
