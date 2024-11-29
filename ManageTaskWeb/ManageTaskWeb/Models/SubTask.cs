@@ -15,8 +15,7 @@ namespace ManageTaskWeb.Models
         public int ParentTaskID { get; set; }
 
         public string MemberID { get; set; }
-
-    
+        public DateTime EndDate { get; set; }
     }
 
 }

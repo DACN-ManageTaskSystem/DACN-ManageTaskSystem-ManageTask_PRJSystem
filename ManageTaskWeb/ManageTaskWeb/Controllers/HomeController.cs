@@ -1,4 +1,4 @@
-﻿using ManageTaskWeb.Models;
+using ManageTaskWeb.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -1421,8 +1421,25 @@ namespace ManageTaskWeb.Controllers
         [HttpPost]
         public ActionResult UpdateAssignedMember(int taskAssignmentId, string memberId)
         {
+            var assignmentfind = data.TaskAssignments.FirstOrDefault(t => t.TaskAssignmentID  == taskAssignmentId);
 
 
+            var MemberAssigned = data.Members.FirstOrDefault(t => t.MemberID == assignmentfind.AssignedBy);
+
+            var taskfind = data.Tasks.FirstOrDefault(t => t.TaskID == assignmentfind.TaskID);
+
+            var Project = data.Projects.FirstOrDefault(t => t.ProjectID == taskfind.ProjectID);
+
+            // add thông báo được add vào task 
+            data.Notifications.InsertOnSubmit(new Notification
+            {
+                MemberID = memberId,
+                Content = $"Bạn đã được phân công tham gia vào SubTask '{taskfind.Description}' trong dự án '{Project.ProjectName}' bởi '{MemberAssigned.FullName}'  '{MemberAssigned.Role}' ",
+                NotificationDate = DateTime.Now,
+                IsRead = false,
+                NotificationType = "JoinSubTaskAccepted"
+            });
+            data.SubmitChanges();
             using (var context = new QLCVDataContext())
             {
                 var taskAssignment = context.TaskAssignments.FirstOrDefault(ta => ta.TaskAssignmentID == taskAssignmentId);
@@ -1444,6 +1461,7 @@ namespace ManageTaskWeb.Controllers
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
+            ViewBag.Role = Session["Role"];
 
             if (taskId == null)
                 return HttpNotFound();  // Nếu không có taskId, trả về lỗi Not Found
@@ -1553,6 +1571,24 @@ namespace ManageTaskWeb.Controllers
         [HttpPost]
         public ActionResult DeleteTaskByMember(int taskId)
         {
+            var assignmentfind = data.TaskAssignments.FirstOrDefault(t => t.TaskID == taskId);
+
+            var MemberAssigned = data.Members.FirstOrDefault(t => t.MemberID == assignmentfind.AssignedBy);
+
+            var taskfind = data.Tasks.FirstOrDefault(t => t.TaskID == assignmentfind.TaskID);
+
+            var Project = data.Projects.FirstOrDefault(t => t.ProjectID == taskfind.ProjectID);
+
+            // add thông báo được add vào task 
+            data.Notifications.InsertOnSubmit(new Notification
+            {
+                MemberID = MemberAssigned.MemberID,
+                Content = $"Bạn xóa khỏi  SubTask '{taskfind.Description}' trong dự án '{Project.ProjectName}' bởi '{MemberAssigned.FullName}'  '{MemberAssigned.Role}' ",
+                NotificationDate = DateTime.Now,
+                IsRead = false,
+                NotificationType = "DeleteTask"
+            });
+            data.SubmitChanges();
             using (var context = new QLCVDataContext())
             {
                 // Kiểm tra Task có tồn tại hay không
@@ -1620,7 +1656,8 @@ namespace ManageTaskWeb.Controllers
                         ProjectID = subTask.ProjectID,
                         ParentTaskID = subTask.ParentTaskID, // Gán ID Task cha (nếu có)
                         createBy = subTask.createBy,
-                        StartDate = DateTime.Now
+                        StartDate = DateTime.Now,
+                        EndDate = subTask.EndDate                        
                     };
 
                     // Lưu vào cơ sở dữ liệu
@@ -1734,6 +1771,20 @@ namespace ManageTaskWeb.Controllers
 
                 // Insert new Task Assignment record into the database
                 data.TaskAssignments.InsertOnSubmit(taskAssignment);
+               
+
+                var MemberAssigned  = data.Members.FirstOrDefault(t => t.MemberID== assignedByID);
+                var Project = data.Projects.FirstOrDefault(t => t.ProjectID == task.ProjectID);
+
+                // add thông báo được add vào task 
+                data.Notifications.InsertOnSubmit(new Notification
+                {
+                    MemberID = memberId,
+                    Content = $"Bạn đã được phân công tham gia vào Task '{task.TaskName}' trong dự án '{Project.ProjectName}' bởi '{MemberAssigned.FullName}'  '{MemberAssigned.Role}' ",
+                    NotificationDate = DateTime.Now,
+                    IsRead = false,
+                    NotificationType = "JoinTaskAccepted"
+                });
                 data.SubmitChanges();
 
                 // Return success response
@@ -1758,6 +1809,7 @@ namespace ManageTaskWeb.Controllers
                 {
                     return Json(new { success = false, message = "Task assignment not found." });
                 }
+
 
                 // Remove the task assignment
                 data.TaskAssignments.DeleteOnSubmit(taskAssignment);
@@ -2611,3 +2663,4 @@ namespace ManageTaskWeb.Controllers
     }
 }
 
+    
