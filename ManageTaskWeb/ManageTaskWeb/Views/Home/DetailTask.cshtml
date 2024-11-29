@@ -397,25 +397,28 @@
                 </div>
                 @foreach (var member in Model.ProjectMembers)
                 {
-                    <ul class="member-list">
-                        <li>
-                            <div class="avatar">
-                                <!-- Display the member's image if available -->
-                                <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" class="avatar-img" />
-                            </div>
-                            <div class="info">
-                                <p>@member.FullName</p>
-                                <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
-                            </div>
-                            <button class="add-button"
-                                    data-memberid="@member.MemberID"
-                                    data-taskid="@Model.TaskID"
-                                    data-assignedbyid="@Model.Creator.MemberID"
-                                    onclick="assignEmployee(this)">
-                                ➕
-                            </button>
-                        </li>
-                    </ul>
+                    // Kiểm tra xem member có trong AssignedMembers không
+                    if (!Model.AssignedMembers.Any(am => am.MemberID == member.MemberID))
+                    {
+                        <ul class="member-list">
+                            <li>
+                                <div class="avatar">
+                                    <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" class="avatar-img" />
+                                </div>
+                                <div class="info">
+                                    <p>@member.FullName</p>
+                                    <span class="role @(member.Role == "Manager" ? "project-manager" : "")">@member.Role</span>
+                                </div>
+                                <button class="add-button"
+                                        data-memberid="@member.MemberID"
+                                        data-taskid="@Model.TaskID"
+                                        data-assignedbyid="@Model.Creator.MemberID"
+                                        onclick="assignEmployee(this)">
+                                    ➕
+                                </button>
+                            </li>
+                        </ul>
+                    }
                 }
 
 
