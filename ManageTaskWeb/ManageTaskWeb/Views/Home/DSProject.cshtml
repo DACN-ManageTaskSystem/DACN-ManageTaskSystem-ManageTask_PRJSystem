@@ -39,8 +39,9 @@
         </div>
         <div class="filter">
             <button class="btn btn-outline-secondary" id="btnPending">Pending</button>
-            <button class="btn btn-outline-primary" id="btnInProgress">In Progress</button>
+            <button class="btn btn-outline-warning" id="btnInProgress">In Progress</button>
             <button class="btn btn-outline-success" id="btnCompleted">Completed</button>
+            <button class="btn btn-outline-primary" id="btnOnHold">On Hold</button>
         </div>
 
         <!-- Project Table -->
@@ -130,6 +131,10 @@
                                     @if (project.Status == "Completed")
                                     {
                                         <span class="status-done">Completed</span>
+                                    }
+                                    else if (project.Status == "On Hold")
+                                    {
+                                        <span class="badge bg-primary">On Hold</span>
                                     }
                                     else
                                     {
@@ -296,6 +301,7 @@
                                 <select class="form-select" name="Status" id="editStatusProject">
                                     <option>Pending</option>
                                     <option>In Progress</option>
+                                    <option>On Hold</option>
                                     <option>Completed</option>
                                 </select>
 
@@ -501,6 +507,9 @@ function parseDate(dateStr) {
         });
         document.getElementById("btnCompleted").addEventListener("click", function () {
             toggleFilter("Completed");
+        });
+        document.getElementById("btnOnHold").addEventListener("click", function () {
+            toggleFilter("On Hold");
         });
         function toggleFilter(status) {
             if (currentFilter === status) {

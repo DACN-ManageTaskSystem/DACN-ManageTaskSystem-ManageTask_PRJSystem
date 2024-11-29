@@ -16,7 +16,7 @@
             @if (Model.Project != null)
             {
                 <h1>@Model.Project.ProjectName</h1>
-                <p>Mô tả dự án: @Model.Project.Description</p>
+                <p>Mô tả dự án: @Html.Raw(Model.Project.Description.Replace("\n", "<br>"))</p>
                 <div class="university-logo">
                     <img src="~/Content/images/project-img/@Model.Project.ImageProject" alt="University logo">
                     <div>
@@ -70,7 +70,7 @@
 
             <form id="chatForm" method="post" action="@Url.Action("SendMessage", "Home")">
                 <div class="comment-box">
-                    <input type="text" name="Message" id="messageInput" placeholder="Say Something....." required>
+                    <textarea name="Message" id="messageInput" placeholder="Say Something....." required></textarea>
                     <input type="hidden" name="ProjectID" value="@ViewBag.ProjectID">
                     <button type="submit"><i class="fas fa-paper-plane"></i></button>
                 </div>
@@ -136,11 +136,11 @@
                             {
                                 <span class="pinned-label">Được ghim</span>
                             }
-                            @interaction.Message
+                            @Html.Raw(interaction.Message.Replace("\n", "<br>"))
                             @if (interaction.Message.Length > 100)
                             {
                                 <span class="dots">...</span>
-                                <span class="more-text">@interaction.Message.Substring(100)</span>
+                                <span class="more-text">@Html.Raw(interaction.Message.Substring(100).Replace("\n", "<br>"))</span>
                                 <button class="show-more">Đọc thêm</button>
                             }
                         </p>
@@ -277,6 +277,27 @@
 
     .comment-header h3 {
         margin: 0;
+    }
+
+    .comment-box textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+        min-height: 60px;
+        max-height: 100px;
+        margin-bottom: 10px;
+    }
+
+    .comment-box {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .comment-box button {
+        align-self: flex-end;
     }
 
 </style>
