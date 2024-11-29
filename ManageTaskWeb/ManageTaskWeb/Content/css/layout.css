@@ -107,7 +107,8 @@ nav .menu {
 nav .icons {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 20px; 
+    
 }
 
     nav .icons a {
@@ -120,6 +121,7 @@ nav .icons {
         width: 40px;
         height: 40px;
         border-radius: 50%;
+        object-fit: cover;
     }
 
 /* Hover effects */

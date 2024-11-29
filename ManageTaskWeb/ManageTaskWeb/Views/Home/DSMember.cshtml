@@ -287,7 +287,7 @@
                     <select name="status" id="statusSelect">
                         <option value="">Tất cả trạng thái</option>
                         <option value="true" @(ViewBag.Status == "true" ? "selected" : "")>Active</option>
-                        <option value="false" @(ViewBag.Status == "false" ? "selected" : "")>Offline</option>
+                        
                     </select>
                 </div>
             </form>
@@ -321,7 +321,7 @@
                                     <td>
                                         @if (!string.IsNullOrEmpty(member.ImageMember))
                                         {
-                                            <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="@member.FullName" width="80" height="80" />
+                                            <img src="@Url.Content("~/Content/images/member-img/" + member.ImageMember)" alt="@member.FullName" width="80" height="80" style="object-fit: cover;" />
                                         }
                                         else
                                         {

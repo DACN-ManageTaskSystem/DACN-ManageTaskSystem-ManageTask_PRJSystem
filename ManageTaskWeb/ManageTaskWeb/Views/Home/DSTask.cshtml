@@ -378,8 +378,8 @@
                             <input type="text" class="form-control" name="ProjectID" id="editProjectId" value="@projectId" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label for="editParentTaskId">Parent Task ID</label>
-                            <input type="text" class="form-control" name="ParentTaskID" id="editParentTaskId" placeholder="Enter parent task ID...">
+                            <label for="editDriveLink">Drive Link</label>
+                            <input type="text" class="form-control" name="DriveLink" id="editDriveLink" placeholder="Enter drive link...">
 
                             <label for="editStartDate">Start Date</label>
                             <input type="date" class="form-control" name="StartDate" id="editStartDate" 
@@ -445,16 +445,17 @@
         button.addEventListener('click', function () {
             const taskId = this.getAttribute('data-task-id');
             const taskName = this.getAttribute('data-task-name');
-            const taskDescription = this.getAttribute('data-description');
+            const description = this.getAttribute('data-description');
             const driveLink = this.getAttribute('data-drive-link');
             const startDate = this.getAttribute('data-start-date');
             const endDate = this.getAttribute('data-end-date');
-            const taskPriority = this.getAttribute('data-priority');
-            const taskStatus = this.getAttribute('data-status');
+            const priority = this.getAttribute('data-priority');
+            const status = this.getAttribute('data-status');
 
+            // Cập nhật các trường input
             document.getElementById('editTaskID').value = taskId;
             document.getElementById('editTaskName').value = taskName;
-            document.getElementById('editDescription').value = taskDescription;
+            document.getElementById('editDescription').value = description;
             document.getElementById('editDriveLink').value = driveLink;
             document.getElementById('editStartDate').value = startDate;
             document.getElementById('editEndDate').value = endDate;
