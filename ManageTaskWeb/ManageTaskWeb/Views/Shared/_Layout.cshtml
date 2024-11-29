@@ -43,23 +43,23 @@
                         <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
                         <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
                         <a href="/Home/BaoCaoThongKe"><i class="fas fa-chart-bar"></i> Report</a>
-                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        <a href="#" title="Help"><i class="fas fa-question-circle"></i> Help</a>
                         break;
                         
                     case "Manager":
                         <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
                         <a href="/Home/BaoCaoThongKe"><i class="fas fa-chart-bar"></i> Report</a>
-                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        <a href="#" title="Help"><i class="fas fa-question-circle"></i> Help</a>
                         break;
                         
                     case "HR":
                         <a href="/Home/DSMember"><i class="fas fa-users"></i> Member</a>
-                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        <a href="#" title="Help"><i class="fas fa-question-circle"></i> Help</a>
                         break;
                         
                     case "Developer":
                         <a href="/Home/DSProject"><i class="fas fa-tasks"></i> Projects</a>
-                        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                        <a href="#" title="Help"><i class="fas fa-question-circle"></i> Help</a>
                         break;
                         
                     default:
@@ -159,6 +159,19 @@
 
     <div id="scrollToTopBtn" title="Go to top">
         <i class="fas fa-chevron-up"></i>
+    </div>
+
+    <!-- Chatbot UI -->
+    <div id="chatbot-container" class="chatbot-hidden">
+        <div class="chatbot-header">
+            <span>Help Assistant</span>
+            <button id="close-chatbot"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chatbot-messages"></div>
+        <div class="chatbot-input">
+            <input type="text" id="user-input" placeholder="Type your question...">
+            <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+        </div>
     </div>
 
     <script>
@@ -424,6 +437,112 @@
         // Gọi hàm khi trang web được tải
         document.addEventListener('DOMContentLoaded', function() {
             updateNotificationBadge();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const helpLinks = document.querySelectorAll('a[href="#"][title="Help"]');
+            const closeButton = document.getElementById('close-chatbot');
+            const sendButton = document.getElementById('send-message');
+            const userInput = document.getElementById('user-input');
+            const messagesContainer = document.querySelector('.chatbot-messages');
+            
+            // Get user role from session
+            const userRole = '@Session["Role"]';
+
+            // Show initial welcome message based on role
+            function showWelcomeMessage() {
+                const welcomeMessages = {
+                    'Admin': "Welcome Admin! I can help you with:\n- Managing projects\n- Managing members\n- Viewing reports\n\nWhat would you like to know?",
+                    'Manager': "Welcome Manager! I can help you with:\n- Managing projects\n- Viewing reports\n\nWhat would you like to know?",
+                    'HR': "Welcome HR! I can help you with:\n- Managing members\n\nWhat would you like to know?",
+                    'Developer': "Welcome Developer! I can help you with:\n- Viewing and managing your tasks\n- Project collaboration\n\nWhat would you like to know?"
+                };
+                
+                addMessage('bot', welcomeMessages[userRole] || "Welcome! How can I help you today?");
+            }
+
+            // Toggle chatbot visibility
+            helpLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    chatbotContainer.classList.remove('chatbot-hidden');
+                    if (messagesContainer.children.length === 0) {
+                        showWelcomeMessage();
+                    }
+                    userInput.focus();
+                });
+            });
+
+            closeButton.addEventListener('click', function() {
+                chatbotContainer.classList.add('chatbot-hidden');
+            });
+
+            // Handle sending messages
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message) {
+                    addMessage('user', message);
+                    processUserMessage(message);
+                    userInput.value = '';
+                }
+            }
+
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            function addMessage(sender, text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.innerHTML = text;
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function processUserMessage(message) {
+                // Simple response logic based on keywords and user role
+                const response = getChatbotResponse(message.toLowerCase(), userRole);
+                setTimeout(() => addMessage('bot', response), 500);
+            }
+
+            function getChatbotResponse(message, role) {
+                // Add your chatbot logic here based on role and message
+                const responses = {
+                    'Admin': {
+                        'project': 'To manage projects:\n1. Go to <a href="/Home/DSProject">Projects menu</a>\n2. You can create, edit, or delete projects\n3. Assign members to projects',
+                        'member': 'To manage members:\n1. Go to <a href="/Home/DSMember">Member menu</a>\n2. You can add, edit, or deactivate members\n3. Assign roles to members',
+                        'report': 'To view reports:\n1. Go to <a href="/Home/BaoCaoThongKe">Report menu</a>\n2. View project progress and member performance'
+                    },
+                    'Manager': {
+                        'project': 'To manage projects:\n1. Go to <a href="/Home/DSProject">Projects menu</a>\n2. View your assigned projects\n3. Manage project tasks and members',
+                        'report': 'To view reports:\n1. Go to <a href="/Home/BaoCaoThongKe">Report menu</a>\n2. Monitor project progress'
+                    },
+                    'Developer': {
+                        'project': 'To view your projects:\n1. Go to <a href="/Home/DSProject">Projects menu</a>\n2. View your assigned tasks\n3. Update task progress\n4. Collaborate with team members',
+                        'task': 'To manage your tasks:\n1. Access the project details\n2. View your assigned tasks\n3. Update task status and progress\n4. Add comments or notes',
+                        'deadline': 'To check deadlines:\n1. Go to <a href="/Home/DSProject">Projects menu</a>\n2. View task timelines\n3. Set reminders for upcoming deadlines'
+                    },
+                    'HR': {
+                        'member': 'To manage members:\n1. Go to <a href="/Home/DSMember">Member menu</a>\n2. View all employee profiles\n3. Update member information\n4. Manage roles and permissions',
+                        'employee': 'To handle employee matters:\n1. Access member profiles\n2. Update personal information\n3. Manage account status\n4. Handle role assignments',
+                        'account': 'To manage accounts:\n1. Go to <a href="/Home/DSMember">Member menu</a>\n2. Create new accounts\n3. Reset passwords\n4. Deactivate accounts if needed'
+                    }
+                };
+
+                // Return appropriate response based on role and message content
+                const roleResponses = responses[role] || {};
+                for (const [key, value] of Object.entries(roleResponses)) {
+                    if (message.includes(key)) {
+                        return value;
+                    }
+                }
+
+                return "I'm not sure about that. Please try asking about specific features like projects, tasks, or members. You can also contact the admin at admin@example.com for more assistance.";
+            }
         });
     </script>
 </body>
