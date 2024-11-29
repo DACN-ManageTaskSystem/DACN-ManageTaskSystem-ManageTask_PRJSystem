@@ -1369,7 +1369,7 @@ namespace ManageTaskWeb.Controllers
                 else
                 {
                     // Tính số lượng subtask đã hoàn thành
-                    int doneCount = subTasks.Count(st => st.Status == "Done");
+                    int doneCount = subTasks.Count(st => st.Status == "Completed");
                     int totalCount = subTasks.Count;
 
                     // Cập nhật trạng thái task chính
@@ -1454,6 +1454,7 @@ namespace ManageTaskWeb.Controllers
         //Chi tiet task
         public ActionResult DetailTask(string taskId)
         {
+            ViewBag.MemberID = Session["MemberID"];
             ViewBag.Role = Session["Role"];
 
             if (taskId == null)
