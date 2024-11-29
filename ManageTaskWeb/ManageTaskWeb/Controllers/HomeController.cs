@@ -231,24 +231,24 @@ namespace ManageTaskWeb.Controllers
         {
             try
             {
-                //// Verify reCAPTCHA
-                //var response = Request["g-recaptcha-response"];
-                //string secretKey = ConfigurationManager.AppSettings["reCaptcha:SecretKey"];
-                //var client = new WebClient();
+                // Verify reCAPTCHA
+                var response = Request["g-recaptcha-response"];
+                string secretKey = ConfigurationManager.AppSettings["reCaptcha:SecretKey"];
+                var client = new WebClient();
 
-                //var result = client.DownloadString(string.Format(
-                //    "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}",
-                //    secretKey, response));
+                var result = client.DownloadString(string.Format(
+                    "https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}",
+                    secretKey, response));
 
-                //var obj = JObject.Parse(result);
-                //var status = (bool)obj.SelectToken("success");
+                var obj = JObject.Parse(result);
+                var status = (bool)obj.SelectToken("success");
 
-                //if (!status)
-                //{
-                //    ViewBag.Message = "Please verify that you are not a robot.";
-                //    ViewBag.IsError = true;
-                //    return View();
-                //}
+                if (!status)
+                {
+                    ViewBag.Message = "Please verify that you are not a robot.";
+                    ViewBag.IsError = true;
+                    return View();
+                }
 
                 var member = data.Members.FirstOrDefault(m =>
                     m.MemberID == memberID &&
