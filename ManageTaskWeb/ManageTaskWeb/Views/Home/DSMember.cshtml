@@ -311,12 +311,6 @@
                         {
                             foreach (var member in Model)
                             {
-                                if (member.MemberID == "0")
-                                {
-                                    continue;
-                                }
-                                else {
-
                                 <tr data-id="@member.MemberID">
                                     <td>@member.MemberID</td>
                                     <td>@member.FullName</td>
@@ -343,7 +337,6 @@
                                         <i class="fas fa-trash delete" onclick="deleteMember('@member.MemberID')"></i>
                                     </td>
                                 </tr>
-                                }
                             }
                         }
                         else

@@ -1,4 +1,4 @@
-using ManageTaskWeb.Models;
+﻿using ManageTaskWeb.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -1983,7 +1983,7 @@ namespace ManageTaskWeb.Controllers
         public ActionResult DSMember(string searchQuery, string role, string status, int page = 1, int pageSize = 3)
         {
             // Lấy dữ liệu từ database (giả sử bạn dùng Entity Framework)
-            var members = data.Members.AsQueryable();
+            var members = data.Members.Where(m => m.MemberID != "0").AsQueryable();
 
             // Lọc theo từ khóa tìm kiếm
             if (!string.IsNullOrEmpty(searchQuery))
