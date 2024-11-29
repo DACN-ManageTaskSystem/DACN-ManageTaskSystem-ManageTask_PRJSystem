@@ -99,6 +99,12 @@
                     {
                         doneCount++;
                     }
+                    <style>
+                        .blur{
+                            color:red;
+                           font-weight:bold
+                        }
+                    </style>
                     <div class="task-container">
                         @foreach (var assignment in Model.TaskAssignment)
                         {
@@ -106,14 +112,39 @@
                             {
                                 if (task.Status == "Completed")
                                 {
+                                    if (ViewBag.Role == "Admin" || ViewBag.Role == "Manager")
+                                    {
 
-                                    <div class="task-details">@task.Description</div>
-                                    <td>
-                                        <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
-                                            <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
-                                            <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
-                                        </select>
-                                    </td>
+                                        <div class="task-details">@task.Description</div>
+                                        <td>
+                                            <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                                <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                                <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
+                                            </select>
+                                        </td>
+                                    }
+                                    else if (assignment.MemberID == ViewBag.MemberID)
+                                    {
+                                        <div class="task-details blur">Your Sub Task: @task.Description</div>
+                                        <td>
+                                            <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                                <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                                <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
+                                            </select>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <div class="task-details">@task.Description</div>
+                                        <td>
+                                            <select style="background-color:dimgrey" class="form-control status-dropdown" data-task-id="@task.TaskID">
+                                                <option value="Pending" @(task.Status == "Pending" ? "selected" : "") disabled>Pending</option>
+                                                <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
+                                            </select>
+
+                                        </td>
+                                    }
+
                                     if (ViewBag.Role == "Admin" || ViewBag.Role == "Manager")
                                     {
                                         <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
@@ -123,7 +154,7 @@
                                             @foreach (var member in Model.AssignedMembers)
                                             {
 
-                                                
+
                                                 <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
                                                     @member.FullName
                                                 </option>
@@ -136,13 +167,39 @@
                                 else if (task.Status == "Pending")
                                 {
 
-                                    <div class="task-details">@task.Description</div>
-                                    <td>
-                                        <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
-                                            <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
-                                            <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
-                                        </select>
-                                    </td>
+                                    if (ViewBag.Role == "Admin" || ViewBag.Role == "Manager")
+                                    {
+
+                                        <div class="task-details">@task.Description</div>
+                                        <td>
+                                            <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                                <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                                <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
+                                            </select>
+                                        </td>
+                                    }
+                                    else if (assignment.MemberID == ViewBag.MemberID)
+                                    {
+                                        <div class="task-details blur">Your Sub Task: @task.Description</div>
+                                        <td>
+                                            <select class="form-control status-dropdown" data-task-id="@task.TaskID" onchange="updateTaskStatus(this)">
+                                                <option value="Pending" @(task.Status == "Pending" ? "selected" : "")>Pending</option>
+                                                <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
+                                            </select>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <div class="task-details">@task.Description</div>
+                                        <td>
+                                            <select style="background-color:dimgrey" class="form-control status-dropdown" data-task-id="@task.TaskID">
+                                                <option value="Pending" @(task.Status == "Pending" ? "selected" : "") disabled>Pending</option>
+                                                <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
+                                            </select>
+
+                                        </td>
+                                    }
+
                                     if (ViewBag.Role == "Admin" || ViewBag.Role == "Manager")
                                     {
                                         <select class="form-control assigned-member-dropdown" data-assignment-id="@assignment.TaskAssignmentID" data-member-id="@assignment.MemberID" onchange="updateAssignedMember(this)">
@@ -151,7 +208,7 @@
                                             </option>
                                             @foreach (var member in Model.AssignedMembers)
                                             {
-                                                
+
                                                 <option value="@member.MemberID" @(member.MemberID == assignment.MemberID ? "selected" : "")>
                                                     @member.FullName
                                                 </option>
