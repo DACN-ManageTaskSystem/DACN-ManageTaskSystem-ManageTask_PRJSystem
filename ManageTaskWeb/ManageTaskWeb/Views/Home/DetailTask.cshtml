@@ -467,15 +467,22 @@
 
             </div>
             <style>
-                .member-list {
-                    max-height: 300px; /* Chiều cao tối đa của danh sách, điều chỉnh theo nhu cầu */
+                .panel {
+                    max-height: 600px; /* Chiều cao tối đa của danh sách, điều chỉnh theo nhu cầu */
                     overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung vượt quá chiều cao */
                     padding: 0;
                     margin: 0;
                     list-style-type: none;
                 }
-
-                    .member-list li {
+                    .panel h3 {
+                        padding: 16px;
+                        margin: 0;
+                    }
+                    .panel .search-bar {
+                        padding: 0px 16px 16px 16px;
+                        margin: 0;
+                    }
+                    .panel ul li {
                         padding: 10px;
                         border-bottom: 1px solid #ccc; /* Thêm đường viền dưới mỗi item để dễ nhìn */
                     }

@@ -605,9 +605,7 @@ namespace ManageTaskWeb.Controllers
         {
             var role = Session["Role"]?.ToString();
             List<ProjectExtended> projects;
-
-            // Kiểm tra nếu người dùng là Manager hoặc Admin
-            if (role == "Manager" || role == "Admin")
+            if (role == "Admin")
             {
                 projects = data.Projects
                                .Where(p => statusFilter == "All" || p.Status == statusFilter)
@@ -770,6 +768,16 @@ namespace ManageTaskWeb.Controllers
 
                 // Lưu vào database
                 data.Projects.InsertOnSubmit(project);
+                 var projectMember = new ProjectMember
+                {
+                    ProjectID = project.ProjectID,
+                    MemberID = Session["MemberID"].ToString(),
+                     Status = "Accepted",
+                    JoinDate = DateTime.Now
+                };
+        
+        // Lưu ProjectMember vào database
+        data.ProjectMembers.InsertOnSubmit(projectMember);
                 data.SubmitChanges();
 
                 return RedirectToAction("DSProject", new { notificationMessage = "Thêm dự án mới thành công!", notificationType = "success" });
