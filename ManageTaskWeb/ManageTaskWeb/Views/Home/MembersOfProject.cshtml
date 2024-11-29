@@ -30,19 +30,21 @@
             </div>
         </div>
 
-        @*<div class="memberofproject-owner-status">
+        <div class="memberofproject-owner-status">
             <div class="memberofproject-owner-info">
-                <img src="/api/placeholder/50/50" alt="Owner" />
+                <img src="~/Content/images/member-img/@ViewBag.OwnerImage" alt="Owner" />
                 <div class="memberofproject-owner-details">
-                    <div class="name">Phạm Nguyên Vũ (Owner)</div>
-                    <div class="date">Create at: 11/10/2024</div>
+                    <div class="name">@ViewBag.OwnerName (Owner)</div>
+                    <div class="date">Create at: @ViewBag.Project.StartDate.ToString("dd/MM/yyyy")</div>
                 </div>
             </div>
             <div class="memberofproject-status-section">
                 <div class="memberofproject-status-label">Status</div>
-                <button class="memberofproject-status-button">DONE</button>
+                <button class="memberofproject-status-button @(ViewBag.Project.Status == "Completed" ? "status-completed" : 
+                                                             ViewBag.Project.Status == "On Hold" ? "status-onhold" : 
+                                                             "status-pending")">@ViewBag.Project.Status</button>
             </div>
-        </div>*@
+        </div>
     </div>
 
     <div class="memberofproject-toolbar">
@@ -382,6 +384,26 @@
         display: flex;
         align-items: center;
         padding: 10px;
+    }
+
+    .memberofproject-status-button {
+        padding: 5px 15px;
+        border-radius: 4px;
+        border: none;
+        color: white;
+        font-weight: bold;
+    }
+
+    .status-completed {
+        background-color: #4CAF50; /* Màu xanh lá cho Completed */
+    }
+
+    .status-pending {
+        background-color: #FFC107; /* Màu vàng cho Pending và In Progress */
+    }
+
+    .status-onhold {
+        background-color: #2196F3; /* Màu xanh dương cho On Hold */
     }
 </style>
 <script>

@@ -1001,7 +1001,13 @@ namespace ManageTaskWeb.Controllers
 
             // Lấy thông tin dự án
             var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
-
+            if (project != null)
+                {
+                    var owner = data.Members.FirstOrDefault(m => m.MemberID == project.createBy);
+                ViewBag.OwnerImage = owner != null ? owner.ImageMember : "error.png"; // Thêm ảnh mặc định nếu không có
+                    ViewBag.OwnerName = owner != null ? owner.FullName : project.createBy;
+                }
+    
             var members = data.ProjectMembers
                              .Where(pm => pm.ProjectID == projectId && pm.Status == "Accepted") // Lọc theo Status
 
@@ -1080,7 +1086,8 @@ namespace ManageTaskWeb.Controllers
             {
                 // Lấy danh sách thành viên chưa tham gia project
                 var nonMembers = data.Members
-                    .Where(m => !data.ProjectMembers.Any(pm =>
+                    .Where(m => m.MemberID != "0" &&
+                    !data.ProjectMembers.Any(pm =>
                               pm.ProjectID == projectId &&
                               pm.MemberID == m.MemberID &&
                               pm.Status == "Accepted"))
@@ -2324,9 +2331,9 @@ namespace ManageTaskWeb.Controllers
 
                 // Tính toán số liệu thống kê
                 var totalProjects = data.Projects.Count(p => p.deleteTime == null);
-                var completedTasks = tasksQuery.Count(t => t.Status == "Completed");
-                var inProgressTasks = tasksQuery.Count(t => t.Status == "In Progress");
-                var overdueTasks = tasksQuery.Count(t => t.EndDate < DateTime.Now && t.Status != "Completed");
+                var completedTasks = tasksQuery.Count(t => t.Status == "Completed" && t.ParentTaskID != null);
+                var inProgressTasks = tasksQuery.Count(t => t.Status == "Pending" && t.ParentTaskID != null);
+                var overdueTasks = tasksQuery.Count(t => t.EndDate < DateTime.Now && t.Status != "Completed" && t.ParentTaskID != null);
 
                 // Dữ liệu cho biểu đồ
                 var projectProgress = data.Projects
@@ -2334,13 +2341,16 @@ namespace ManageTaskWeb.Controllers
                     .Select(p => new
                     {
                         projectName = p.ProjectName,
-                        totalTasks = p.Tasks.Count(),
-                        completedTasks = p.Tasks.Count(t => t.Status == "Completed")
+                        totalTasks = p.Tasks.Count(t => t.ParentTaskID != null),
+                        completedTasks = p.Tasks.Count(t => t.ParentTaskID != null && t.Status == "Completed")
                     })
                     .ToList();
 
+
                 var taskDistribution = data.TaskAssignments
                 .Where(ta => ta.Status != "Assigned"
+                            && ta.MemberID != "0"
+                            && ta.MemberID != ta.AssignedBy
                             && (string.IsNullOrEmpty(projectId) || ta.Task.ProjectID == projectId))
                 .GroupBy(ta => ta.MemberID) // Chỉ nhóm theo MemberID
                 .Select(g => new
@@ -2378,42 +2388,42 @@ namespace ManageTaskWeb.Controllers
 
                 // Chi tiết báo cáo
                 var detailedReport = tasksQuery
-    .Select(t => new
-    {
-        projectId = t.Project.ProjectID,
-        projectName = t.Project.ProjectName,
-        parentTaskId = t.ParentTaskID,
-        taskId = t.TaskID,
-        taskName = t.ParentTaskID == null
-            ? t.TaskName // Nếu là Task chính, lấy TaskName
-            : t.Description, // Nếu là Task con, lấy TaskDescription
-        assignedTo = t.ParentTaskID == null
-            ? "Task chính" // Nếu là Task chính
-            : (from ta in t.TaskAssignments
-               join m in data.Members on ta.MemberID equals m.MemberID // Join với bảng Members để lấy FullName
-               where ta.MemberID != null // Chỉ lấy những assignment có MemberID
-               orderby ta.MemberID // Sắp xếp theo MemberID để lấy giá trị nhỏ nhất
-               select m.FullName) // Lấy FullName của Member từ bảng Members
-                .FirstOrDefault() ?? "Chưa phân công", // Nếu không có ai, trả về "Unassigned"
-        status = t.Status,
-        startDate = t.StartDate,
-        endDate = t.EndDate,
-        progress = t.ParentTaskID != null // Nếu là Task con
-            ? (t.Status == "Completed" ? 100 : 0) // Task con: Completed = 100, Pending = 0
-            : (tasksQuery.Where(st => st.ParentTaskID == t.TaskID).Any() // Nếu là Task chính, kiểm tra có Task con không
-                ? (tasksQuery.Where(st => st.ParentTaskID == t.TaskID && st.Status == "Completed").Count() * 100.0 /
-                   tasksQuery.Where(st => st.ParentTaskID == t.TaskID).Count()) // Tính tỷ lệ % Task con đã hoàn thành
-                : 0), // Nếu không có Task con, tiến độ là 0
-        subTaskIds = t.ParentTaskID == null // Chỉ áp dụng cho Task chính
-            ? tasksQuery.Where(st => st.ParentTaskID == t.TaskID)
-                        .Select(st => st.TaskID)
-                        .ToList() // Lấy danh sách các Subtask ID
-            : null // Không có Subtask nếu là Task con
-    })
-    .OrderBy(t => t.projectId) // Sắp xếp theo ProjectID
-    .ThenBy(t => t.parentTaskId == null ? t.taskId : t.parentTaskId) // Task chính trước, Subtask theo ParentTaskID
-    .ThenBy(t => t.taskId) // Sắp xếp tiếp theo TaskID
-    .ToList();
+                .Select(t => new
+                {
+                    projectId = t.Project.ProjectID,
+                    projectName = t.Project.ProjectName,
+                    parentTaskId = t.ParentTaskID,
+                    taskId = t.TaskID,
+                    taskName = t.ParentTaskID == null
+                        ? t.TaskName // Nếu là Task chính, lấy TaskName
+                        : t.Description, // Nếu là Task con, lấy TaskDescription
+                    assignedTo = t.ParentTaskID == null
+                        ? "Task chính" // Nếu là Task chính
+                        : (from ta in t.TaskAssignments
+                           join m in data.Members on ta.MemberID equals m.MemberID // Join với bảng Members để lấy FullName
+                           where ta.MemberID != null && ta.MemberID != "0"// Chỉ lấy những assignment có MemberID
+                           orderby ta.MemberID // Sắp xếp theo MemberID để lấy giá trị nhỏ nhất
+                           select m.FullName) // Lấy FullName của Member từ bảng Members
+                            .FirstOrDefault() ?? "Chưa phân công", // Nếu không có ai, trả về "Unassigned"
+                    status = t.Status,
+                    startDate = t.StartDate,
+                    endDate = t.EndDate,
+                    progress = t.ParentTaskID != null // Nếu là Task con
+                        ? (t.Status == "Completed" ? 100 : 0) // Task con: Completed = 100, Pending = 0
+                        : (tasksQuery.Where(st => st.ParentTaskID == t.TaskID).Any() // Nếu là Task chính, kiểm tra có Task con không
+                            ? (tasksQuery.Where(st => st.ParentTaskID == t.TaskID && st.Status == "Completed").Count() * 100.0 /
+                               tasksQuery.Where(st => st.ParentTaskID == t.TaskID).Count()) // Tính tỷ lệ % Task con đã hoàn thành
+                            : 0), // Nếu không có Task con, tiến độ là 0
+                    subTaskIds = t.ParentTaskID == null // Chỉ áp dụng cho Task chính
+                        ? tasksQuery.Where(st => st.ParentTaskID == t.TaskID)
+                                    .Select(st => st.TaskID)
+                                    .ToList() // Lấy danh sách các Subtask ID
+                        : null // Không có Subtask nếu là Task con
+                })
+                .OrderBy(t => t.projectId) // Sắp xếp theo ProjectID
+                .ThenBy(t => t.parentTaskId == null ? t.taskId : t.parentTaskId) // Task chính trước, Subtask theo ParentTaskID
+                .ThenBy(t => t.taskId) // Sắp xếp tiếp theo TaskID
+                .ToList();
 
 
 
@@ -2442,7 +2452,35 @@ namespace ManageTaskWeb.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+        [HttpPost]
+        public JsonResult CreateReport(string projectId, string generatedBy, string summary)
+        {
+            try
+            {
+                // Kiểm tra generatedBy
+                if (string.IsNullOrEmpty(generatedBy))
+                {
+                    return Json(new { success = false, message = "Member ID is required" });
+                }
 
+                var report = new Report
+                {
+                    ProjectID = projectId,  // Có thể null
+                    GeneratedBy = generatedBy,
+                    ReportDate = DateTime.Now,
+                    Summary = summary
+                };
+
+                data.Reports.InsertOnSubmit(report);
+                data.SubmitChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         #endregion
 
 
@@ -2569,35 +2607,7 @@ namespace ManageTaskWeb.Controllers
         }
         #endregion
 
-        [HttpPost]
-        public JsonResult CreateReport(string projectId, string generatedBy, string summary)
-        {
-            try
-            {
-                // Kiểm tra generatedBy
-                if (string.IsNullOrEmpty(generatedBy))
-                {
-                    return Json(new { success = false, message = "Member ID is required" });
-                }
-
-                var report = new Report
-                {
-                    ProjectID = projectId,  // Có thể null
-                    GeneratedBy = generatedBy,
-                    ReportDate = DateTime.Now,
-                    Summary = summary
-                };
-
-                data.Reports.InsertOnSubmit(report);
-                data.SubmitChanges();
-
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
+       
     }
 }
 
