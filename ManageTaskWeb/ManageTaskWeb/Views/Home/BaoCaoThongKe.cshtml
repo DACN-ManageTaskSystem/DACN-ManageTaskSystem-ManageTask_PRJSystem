@@ -5,7 +5,7 @@
 <link href="@Url.Content("~/Content/css/bctk.css?v=1")" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <div class="container-fluid mt-4">
     <!-- Filter Section -->
     <div class="card mb-4">
@@ -86,69 +86,9 @@
             </div>
         </div>
     </div>
-
-    <!-- Charts Section -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header cursor-pointer" onclick="toggleChart('projectProgress')">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Tiến độ dự án</h5>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                </div>
-                <div class="card-body chart-body chart-container" id="projectProgressBody" style="display: none;">
-                    <canvas id="projectProgress"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header cursor-pointer" onclick="toggleChart('taskDistribution')">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Phân bổ công việc theo thành viên</h5>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="form-group mb-3">
-                        <select class="form-control" id="taskDistProjectFilter">
-                            <option value="">Tất cả dự án</option>
-                        </select>
-                    </div>
-                    <div class="chart-body chart-container" id="taskDistributionBody" style="display: none;">
-                        <canvas id="taskDistribution"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header cursor-pointer" onclick="toggleChart('taskDistributionByAssigner')">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Phân bổ công việc theo người giao</h5>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="form-group mb-3">
-                        <select class="form-control" id="taskDistByAssignerProjectFilter">
-                            <option value="">Tất cả dự án</option>
-                        </select>
-                    </div>
-                    <div class="chart-body chart-container" id="taskDistributionByAssignerBody" style="display: none;">
-                        <canvas id="taskDistributionByAssigner"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Detailed Reports -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card" style="margin-bottom: 30px;">
+        <div class="card-header header-detailed-report d-flex justify-content-between align-items-center cursor-pointer" onclick="toggleChart('detailedReport')">
             <h5 class="mb-0">Chi tiết báo cáo</h5>
             <div>
                 <button class="btn btn-success" id="exportExcel">
@@ -159,7 +99,7 @@
                 </button>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" id="detailedReportBody" style="display: none;">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover" id="reportTable">
                     <thead class="thead-light">
@@ -180,6 +120,66 @@
             </div>
         </div>
     </div>
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header header-project-progress cursor-pointer" onclick="toggleChart('projectProgress')">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Tiến độ dự án</h5>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="card-body chart-body chart-container" id="projectProgressBody" style="display: none;">
+                    <canvas id="projectProgress"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header header-task-distribution cursor-pointer" onclick="toggleChart('taskDistribution')">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Phân bổ công việc theo thành viên</h5>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <select class="form-control" id="taskDistProjectFilter">
+                            <option value="">Tất cả dự án</option>
+                        </select>
+                    </div>
+                    <div class="chart-body chart-container" id="taskDistributionBody" style="display: none;">
+                        <canvas id="taskDistribution"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header header-task-distribution-by-assigner cursor-pointer" onclick="toggleChart('taskDistributionByAssigner')">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Phân bổ công việc theo người giao</h5>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <select class="form-control" id="taskDistByAssignerProjectFilter">
+                            <option value="">Tất cả dự án</option>
+                        </select>
+                    </div>
+                    <div class="chart-body chart-container" id="taskDistributionByAssignerBody" style="display: none;">
+                        <canvas id="taskDistributionByAssigner"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
 </div>
 
 
@@ -418,50 +418,112 @@ function updateCharts(data) {
 function updateDetailedReport(data) {
     const tbody = $('#reportTable tbody');
     tbody.empty();
+    
+    let currentProjectId = null;
+    let currentTaskId = null;
+    
+    data.detailedReport.forEach(function (item) {   
+        // Xác định loại task và class tương ứng
+        const isMainTask = item.parentTaskId === null;
+        const rowClass = isMainTask ? 'main-task' : 'sub-task';
+        
+        // Tạo progress bar
+        const progressColor = getProgressColor(item.progress);
+        const progressBar = `
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" 
+                     style="width: ${item.progress}%; background-color: ${progressColor}"
+                     aria-valuenow="${item.progress}" aria-valuemin="0" aria-valuemax="100">
+                    <span class="progress-text">${Math.round(item.progress)}%</span>
+                </div>
+            </div>`;
 
-    data.detailedReport.forEach(function(item) {
-        tbody.append(`
-            <tr>
+        // Nếu là project mới, thêm dòng phân cách
+        if (currentProjectId !== null && currentProjectId !== item.projectId) {
+            tbody.append('<tr><td colspan="7" style="height: 10px; background-color: #dee2e6;"></td></tr>');
+        }
+        
+        // Tạo dòng HTML
+        const row = `
+            <tr class="${rowClass}">
                 <td>${item.projectName}</td>
                 <td>${item.taskName}</td>
-                <td>${item.assignedTo || 'Unassigned'}</td>
-                <td>${item.status}</td>
+                <td>${item.assignedTo}</td>
+                <td>${getStatusBadge(item.status)}</td>
                 <td>${formatDate(item.startDate)}</td>
                 <td>${formatDate(item.endDate)}</td>
-                <td>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" 
-                             style="width: ${item.progress}%" 
-                             aria-valuenow="${item.progress}" 
-                             aria-valuemin="0" 
-                             aria-valuemax="100">
-                            ${item.progress}%
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        `);
+                <td>${progressBar}</td>
+            </tr>`;
+            
+        tbody.append(row);
+        
+        currentProjectId = item.projectId;
+        if (isMainTask) {
+            currentTaskId = item.taskId;
+        }
     });
 }
 
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString();
+    
+    try {
+        
+        
+        // Nếu dateString có dạng "/Date(1234567890)/"
+        if (typeof dateString === 'string' && dateString.includes('/Date(')) {
+            const timestamp = parseInt(dateString.replace(/[^0-9]/g, ''));
+            const date = new Date(timestamp);
+            if (!isNaN(date.getTime())) {
+                return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+            }
+        }
+        
+        // Xử lý chuỗi dạng "{1/21/2024 12:00:00 AM}"
+        let cleanDateString = dateString;
+        if (typeof dateString === 'string') {
+            cleanDateString = dateString.replace(/[{}]/g, '').split(' ')[0];
+        }
+        
+        
+        const dateParts = cleanDateString.split('/');
+        if (dateParts.length === 3) {
+            // Assuming format is M/D/YYYY
+            const month = parseInt(dateParts[0]);
+            const day = parseInt(dateParts[1]);
+            const year = parseInt(dateParts[2]);
+            
+            const date = new Date(year, month - 1, day);
+            console.log('Parsed date:', date); // Debug log
+            
+            if (!isNaN(date.getTime())) {
+                return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+            }
+        }
+        
+        // Thử parse trực tiếp
+        const date = new Date(cleanDateString);
+        if (!isNaN(date.getTime())) {
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+        }
+        
+        return 'N/A';
+    } catch (error) {
+        console.error('Error formatting date:', error, 'for dateString:', dateString);
+        return 'N/A';
+    }
 }
 
-function exportToExcel() {
+async function exportToExcel() {
     try {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Báo cáo');
+        
         // Lấy dữ liệu từ bảng
         const table = document.getElementById('reportTable');
-        const tableData = [];
-        
-        // Lấy headers từ bảng
         const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
-        
-        // Lấy dữ liệu từ các dòng
         const rows = Array.from(table.querySelectorAll('tbody tr')).map(row => {
             return Array.from(row.querySelectorAll('td')).map(cell => {
-                // Nếu cell chứa progress bar, lấy giá trị phần trăm
                 if (cell.querySelector('.progress')) {
                     return cell.querySelector('.progress-bar').textContent.trim();
                 }
@@ -469,48 +531,99 @@ function exportToExcel() {
             });
         });
 
-        // Tạo workbook mới
-        const wb = XLSX.utils.book_new();
+        // Thêm header công ty
+        worksheet.mergeCells('A1:E1');
+        worksheet.mergeCells('F1:G1');
+        worksheet.mergeCells('A2:E2');
+        worksheet.mergeCells('F2:G2');
+        worksheet.mergeCells('A3:E3');
+        worksheet.mergeCells('F3:G3');
         
-        // Tạo dữ liệu cho worksheet với header tùy chỉnh
-        const wsData = [
-            ['BÁO CÁO CHI TIẾT CÔNG VIỆC'],
-            [`Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}`],
-            [], // Dòng trống
-            headers, // Headers của bảng
-            ...rows  // Dữ liệu các dòng
-        ];
-        
-        // Tạo worksheet
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        
-        // Merge cells cho tiêu đề
-        ws['!merges'] = [
-            { s: { r: 0, c: 0 }, e: { r: 0, c: 6 } }, // Merge dòng tiêu đề
-            { s: { r: 1, c: 0 }, e: { r: 1, c: 6 } }  // Merge dòng ngày xuất
-        ];
-        
-        // Style cho header
-        ws['A1'] = { v: 'BÁO CÁO CHI TIẾT CÔNG VIỆC', t: 's', s: { 
-            font: { bold: true, sz: 16 },
-            alignment: { horizontal: 'center' }
-        }};
-        ws['A2'] = { v: `Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}`, t: 's', s: {
-            font: { sz: 12 },
-            alignment: { horizontal: 'center' }
-        }};
-        
-        // Auto-size columns
-        const cols = ws['!cols'] = [];
-        headers.forEach(() => {
-            cols.push({ wch: 20 }); // Set column width rộng hơn
+        // Thêm dữ liệu header
+        worksheet.getCell('A1').value = 'CÔNG TY TNHH TASKFLOW';
+        worksheet.getCell('F1').value = 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM';
+        worksheet.getCell('A2').value = 'Địa chỉ: Tầng 44, tòa nhà Landmark 81, số 208 Nguyễn Hữu Cảnh,';
+        worksheet.getCell('F2').value = 'Độc lập - Tự do - Hạnh phúc';
+        worksheet.getCell('A3').value = 'Phường 22, Quận Bình Thạnh, Thành phố Hồ Chí Minh';
+        worksheet.getCell('F3').value = '-------------------';
+        worksheet.getCell('A4').value = 'Liên hệ: 0336262699';
+
+        // Thêm tiêu đề báo cáo
+        worksheet.mergeCells('C6:E6');
+        worksheet.getCell('C6').value = 'BÁO CÁO CHI TIẾT CÔNG VIỆC';
+        worksheet.mergeCells('C7:E7');
+        worksheet.getCell('C7').value = `Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}`;
+
+        // Thêm headers bảng
+        const headerRow = worksheet.addRow(headers);
+        headerRow.eachCell((cell) => {
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFE2EFDA' }
+            };
+            cell.border = {
+                top: { style: 'medium' },
+                left: { style: 'medium' },
+                bottom: { style: 'medium' },
+                right: { style: 'medium' }
+            };
+            cell.font = { bold: true };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
         });
-        
-        // Thêm worksheet vào workbook
-        XLSX.utils.book_append_sheet(wb, ws, 'Báo cáo');
-        
+
+        // Thêm dữ liệu và style
+        rows.forEach((rowData, index) => {
+            const row = worksheet.addRow(rowData);
+            const isMainTask = table.rows[index + 1].classList.contains('main-task');
+            
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+                
+                if (isMainTask) {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFF2F2F2' }
+                    };
+                    cell.font = { bold: true };
+                }
+                
+                cell.alignment = { vertical: 'middle' };
+            });
+        });
+
+        // Điều chỉnh độ rộng cột
+        worksheet.columns = [
+            { width: 25 }, // Project
+            { width: 30 }, // Task
+            { width: 20 }, // Assigned To
+            { width: 15 }, // Status
+            { width: 15 }, // Start Date
+            { width: 15 }, // End Date
+            { width: 15 }  // Progress
+        ];
+
+        // Style cho header công ty
+        worksheet.getCell('A1').font = { bold: true, size: 16 };
+        worksheet.getCell('F1').font = { bold: true, size: 14 };
+        worksheet.getCell('C6').font = { bold: true, size: 16 };
+        worksheet.getCell('C6').alignment = { horizontal: 'center' };
+
         // Xuất file
-        XLSX.writeFile(wb, `BaoCaoCongViec_${new Date().toISOString().split('T')[0]}.xlsx`);
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `BaoCaoCongViec_${new Date().toISOString().split('T')[0]}.xlsx`;
+        a.click();
+        window.URL.revokeObjectURL(url);
     } catch (error) {
         console.error('Error exporting to Excel:', error);
         alert('Có lỗi xảy ra khi xuất Excel. Vui lòng thử lại sau.');
@@ -534,7 +647,6 @@ function toggleChart(chartId) {
     const bodyElement = document.getElementById(chartId + 'Body');
     const iconElement = bodyElement.parentElement.querySelector('.fa-chevron-down');
     
-    // Toggle hiển thị
     if (bodyElement.style.display === 'none') {
         bodyElement.style.display = 'block';
         iconElement.classList.add('rotated');
@@ -549,6 +661,9 @@ function toggleChart(chartId) {
                 break;
             case 'taskDistributionByAssigner':
                 if (taskDistributionByAssignerChart) taskDistributionByAssignerChart.resize();
+                break;
+            case 'detailedReport':
+                // Có thể thêm logic cập nhật bảng nếu cần
                 break;
         }
     } else {
@@ -661,8 +776,69 @@ function updateTaskDistributionByAssignerChart(projectId) {
             }
         });
 }
+
+function getProgressColor(progress) {
+    if (progress < 25) return '#dc3545';  // Đỏ
+    if (progress < 50) return '#ffc107';  // Vàng
+    if (progress < 75) return '#17a2b8';  // Xanh dương
+    return '#28a745';                     // Xanh lá
+}
+
+function getStatusBadge(status) {
+    const statusMap = {
+        'Pending': { color: 'warning', text: 'Chưa bắt đầu' },
+        'In Progress': { color: 'primary', text: 'Đang thực hiện' },
+        'Completed': { color: 'success', text: 'Hoàn thành' },
+        'Overdue': { color: 'danger', text: 'Trễ hạn' }
+    };
+    
+    const statusInfo = statusMap[status] || { color: 'secondary', text: status };
+    return `<span class="badge bg-${statusInfo.color}">${statusInfo.text}</span>`;
+}
 </script>
 
 <!-- Add required libraries for export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<style>
+.progress {
+    background-color: #f8f9fa;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.2);
+}
+
+.progress-bar {
+    transition: width .6s ease;
+}
+
+.progress-text {
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+}
+
+.badge {
+    
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+.main-task {
+    background-color: #f8f9fa;  /* Màu xám nhạt cho task chính */
+    font-weight: bold;
+}
+
+.sub-task {
+    background-color: #ffffff;  /* Màu trắng cho subtask */
+    padding-left: 30px;  /* Thụt lề cho subtask */
+}
+
+.sub-task td:first-child {
+    position: relative;
+}
+
+.sub-task td:first-child:before {
+    position: absolute;
+    left: 10px;
+    color: #6c757d;
+}
+</style>

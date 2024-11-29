@@ -52,7 +52,7 @@
     transform: rotate(180deg);
 }
 /* Thêm class mới để kiểm soát chiều cao */
-chart-container {
+.chart-container {
         position: relative;
     height: 400px;
     width: 100%; /* hoặc giá trị phù hợp khác */
@@ -62,3 +62,23 @@ chart-container {
  }
  .chart-body canvas {
     max-height: 250px !important;}
+
+.header-detailed-report {
+    background-color: #f8d7da; /* Màu đỏ nhạt */
+    color: #721c24; /* Màu chữ đỏ đậm */
+}
+
+.header-project-progress {
+    background-color: #d4edda; /* Màu xanh lá nhạt */
+    color: #155724; /* Màu chữ xanh lá đậm */
+}
+
+.header-task-distribution {
+    background-color: #d1ecf1; /* Màu xanh dương nhạt */
+    color: #0c5460; /* Màu chữ xanh dương đậm */
+}
+
+.header-task-distribution-by-assigner {
+    background-color: #fff3cd; /* Màu vàng nhạt */
+    color: #856404; /* Màu chữ vàng đậm */
+}
