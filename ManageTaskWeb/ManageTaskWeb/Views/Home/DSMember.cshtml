@@ -565,9 +565,10 @@
                     document.getElementById("phoneEdit").value = phone;
                     document.getElementById("roleEdit").value = role;
 
-                    // Chuyển đổi hireDate và gán vào ô date
-                    const hireDateFormatted = new Date(hireDate);
-                    const formattedDate = hireDateFormatted.toISOString().split('T')[0];  // Chuyển đổi sang định dạng YYYY-MM-DD
+                    // Fix the date formatting
+                    const hireDateText = row.querySelector("td:nth-child(6)").innerText.trim();
+                    const [day, month, year] = hireDateText.split('/');
+                    const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                     document.getElementById("hireDateEdit").value = formattedDate;
                 }
 
