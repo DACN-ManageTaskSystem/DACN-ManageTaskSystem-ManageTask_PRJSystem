@@ -2019,27 +2019,43 @@ namespace ManageTaskWeb.Controllers
                 // Chuyển đổi HireDate từ string sang DateTime
                 DateTime hireDate = DateTime.Parse(HireDate);
 
+                // Tạo MemberID mới
+                string newMemberId = GetUniqueMemberID();
+
                 // Tạo đối tượng Member mới và lưu thông tin
                 var member = new Member
                 {
-                    MemberID = GetUniqueMemberID(), // Tạo ID duy nhất
+                    MemberID = newMemberId,
                     FullName = FullName,
                     Email = Email,
                     Phone = Phone,
                     Role = Role,
-                    HireDate = hireDate, // Lưu HireDate
+                    HireDate = hireDate,
                     Status = "Offline",
-                    Password = encryptedPassword, // Lưu mật khẩu đã mã hóa
-                    ImageMember = ImageMember, // Lưu tên file ảnh
+                    Password = encryptedPassword,
+                    ImageMember = ImageMember,
                     ExpiryTime = null
-
                 };
 
                 // Thêm member vào database
                 data.Members.InsertOnSubmit(member);
+
+                // Tạo thông báo chào mừng
+                var welcomeNotification = new Notification
+                {
+                    MemberID = newMemberId,
+                    Content = "Chào mừng bạn đến với công ty. Chúc bạn có một hành trình tuyệt vời cùng với chúng tôi",
+                    NotificationDate = DateTime.Now,
+                    IsRead = false,
+                    NotificationType = "Welcome"
+                };
+
+                // Thêm thông báo vào database
+                data.Notifications.InsertOnSubmit(welcomeNotification);
+
+                // Lưu các thay đổi
                 data.SubmitChanges();
 
-                // Chuyển hướng về trang DSMember sau khi thêm thành viên
                 return RedirectToAction("DSMember", "Home");
             }
             catch (Exception ex)
