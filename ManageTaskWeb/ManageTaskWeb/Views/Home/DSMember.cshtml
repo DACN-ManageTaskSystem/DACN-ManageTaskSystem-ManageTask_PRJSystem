@@ -279,9 +279,10 @@
                     <!-- Lọc theo vai trò -->
                     <select name="role" id="roleSelect">
                         <option value="">Tất cả vai trò</option>
+                        <option value="Admin" @(ViewBag.Role == "Admin" ? "selected" : "")>Manager</option>
                         <option value="Manager" @(ViewBag.Role == "Manager" ? "selected" : "")>Manager</option>
                         <option value="Developer" @(ViewBag.Role == "Developer" ? "selected" : "")>Developer</option>
-                        <option value="Tester" @(ViewBag.Role == "Tester" ? "selected" : "")>Tester</option>
+                        <option value="HR" @(ViewBag.Role == "HR" ? "selected" : "")>HR</option>
                     </select>
 
                     <!-- Lọc theo trạng thái -->
@@ -395,9 +396,10 @@
 
                                     <label for="role">Role *</label>
                                     <select class="form-select" name="Role" id="role">
+                                        <option>Admin</option>
                                         <option>Manager</option>
                                         <option>Developer</option>
-                                        <option>Tester</option>
+                                        <option>HR</option>
                                     </select>
                                 </div>
 
@@ -468,9 +470,10 @@
                                         <div class="mb-3">
                                             <label for="roleEdit" class="form-label">Role *</label>
                                             <select class="form-select" id="roleEdit" name="Role" required>
+                                                <option value="Admin">Admin</option>
                                                 <option value="Manager">Manager</option>
                                                 <option value="Developer">Developer</option>
-                                                <option value="Tester">Tester</option>
+                                                <option value="HR">HR</option>
                                             </select>
                                         </div>
                                     </div>
