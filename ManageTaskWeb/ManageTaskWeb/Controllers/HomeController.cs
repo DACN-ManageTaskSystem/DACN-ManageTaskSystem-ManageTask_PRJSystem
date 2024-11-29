@@ -2418,8 +2418,7 @@ namespace ManageTaskWeb.Controllers
 
                 // Cập nhật query cho taskDistributionByAssigner
                 var taskDistributionByAssigner = data.TaskAssignments
-                .Where(ta => ta.AssignedBy != null && ta.Status != "Assigned" &&
-                            ta.Task.Status != "Completed" &&
+                .Where(ta => ta.AssignedBy != null && ta.Status != "Assigned" && ta.Task.ParentTaskID != null &&
                             (string.IsNullOrEmpty(projectId) || ta.Task.ProjectID == projectId))
                 .GroupBy(ta => new
                 {
@@ -2583,7 +2582,7 @@ namespace ManageTaskWeb.Controllers
                         MemberID = toMemberId,
                         AssignedBy = Session["MemberID"]?.ToString(),
                         AssignedDate = DateTime.Now,
-                        Status = "Assigned",
+                        Status = "Pending",
                         Note = $"Transferred from {fromMember.FullName}"
                     };
 
