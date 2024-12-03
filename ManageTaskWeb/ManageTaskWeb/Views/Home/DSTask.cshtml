@@ -20,10 +20,12 @@
         <a href="/Home/TrangChu"><i class="fas fa-home"></i> Home</a> > <a href="#">Tasks</a>
     </div>
     <div class="action-buttons">
+        @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+        {
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-            <i class="fas fa-plus-circle"></i> Add New Task
+            <i class="fas fa-plus-circle"></i> Thêm Task Mới
         </button>
-        @{
+        
             string projectid = null;
 
             var firstItem = Model.FirstOrDefault(); // Lấy phần tử đầu tiên trong danh sách
@@ -35,21 +37,32 @@
             {
                 projectid = "0"; // Giá trị mặc định nếu null
             }
-        }
+        
         <button class="btn btn-primary" onclick="window.location.href='/Home/TienDoTask?projectID=@projectid'">
             <i class="fas fa-plus-circle"></i> Bảng Tiến Độ
         </button>
+        }
+        else
+        {
+            
+            string projectid = null;
 
+            var firstItem = Model.FirstOrDefault(); // Lấy phần tử đầu tiên trong danh sách
+            if (firstItem != null && firstItem.ProjectID != null)
+            {
+                projectid = firstItem.ProjectID.ToString();
+            }
+            else
+            {
+                projectid = "0"; // Giá trị mặc định nếu null
+            }
+        
+            <button class="btn btn-primary" onclick="window.location.href='/Home/TienDoTask?projectID=@projectid'">
+            <i class="fas fa-plus-circle"></i> Bảng Tiến Độ
+        </button>
+        }
     </div>
 </div>
-<div class="search-bar">
-    <input placeholder="Enter Task nameaa...." type="text" />
-    <button>
-        <i class="fas fa-search">
-        </i>
-    </button>
-</div>
-
 <div class="task-board">
     <!-- ON HOLD Column -->
     <div class="task-column">
@@ -88,6 +101,8 @@
                     <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration:underline;">@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                    {
                     <button class="btn btn-outline-secondary edit-task-btn"
                             data-bs-toggle="modal"
                             data-bs-target="#editTaskModal"
@@ -101,6 +116,7 @@
                             data-status="@task.Status">
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
+                    }
                 </div>
             </div>
         }
@@ -144,6 +160,8 @@
                     <p  onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;" >@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                    {
                     <button class="btn btn-outline-secondary edit-task-btn"
                             data-bs-toggle="modal"
                             data-bs-target="#editTaskModal"
@@ -157,6 +175,7 @@
                             data-status="@task.Status">
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
+                    }
                 </div>
             </div>
         }
@@ -200,6 +219,8 @@
                     <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                    {
                     <button class="btn btn-outline-secondary edit-task-btn"
                             data-bs-toggle="modal"
                             data-bs-target="#editTaskModal"
@@ -213,6 +234,7 @@
                             data-status="@task.Status">
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
+                    }
                 </div>
             </div>
         }
@@ -256,6 +278,8 @@
                     <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
                     <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
                     <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                    {
                     <button class="btn btn-outline-secondary edit-task-btn"
                             data-bs-toggle="modal"
                             data-bs-target="#editTaskModal"
@@ -269,6 +293,7 @@
                             data-status="@task.Status">
                         <i class="fas fa-pencil-alt"></i> Edit
                     </button>
+                    }
                 </div>
             </div>
         }

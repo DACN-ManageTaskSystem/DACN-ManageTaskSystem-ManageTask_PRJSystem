@@ -7,12 +7,12 @@
 <link href="@Url.Content("~/Content/css/detailtask.css?v=1")" rel="stylesheet" />
 
 <div class="breadcrumb">
-    <a style="text-decoration:none" href="/Home/TrangChu"><span>Home</span></a>  <div class="arrow-right"></div>
-    <span>Tasks</span> <div class="arrow-right"></div>
+    <a style="text-decoration:none" href="/Home/TrangChu"><span>Home</span></a>  <i class="fa-solid fa-chevron-right" style="margin-left:10px;margin-right:10px; margin-top: 3px;"></i>
+    <span>Tasks</span> <i class="fa-solid fa-chevron-right" style="margin-left:10px;margin-right:10px ;margin-top: 3px;"></i>
     <span>DetailTask</span>
 </div>
 <div class="container">
-    <div div="left-container">
+    <div div="left-container" style="width:70%">
         <div class="title">
             @Model.TaskName
             &nbsp;&nbsp;
@@ -273,7 +273,7 @@
             </script>
         </div>
 
-    <div class="right-container">
+    <div class="right-container" style="width:30%">
         @{
             // Kiểm tra trạng thái và gán giá trị cho Model.Status
             if (doneCount > 0)

@@ -77,15 +77,14 @@
                     </a>
 
                     <!-- User Avatar & Dropdown Menu -->
-                    <div class="dropdown">
+                    <div class="dropdown" >
                         <a href="#" class="dropdown-toggle">
                             <img src="~/Content/images/member-img/@Session["ImageMember"]">
                             <span style="font-size: 18px">@Session["FullName"]</span>
                         </a>
-                        <div class="dropdown-menu">
+                        <div class="dropdown-menu" style="min-width: 30px;">
                             <div style="display: flex; flex-direction: column; padding: 10px">
                                 <a href="/Home/TTCaNhan" style="font-size: 18px;">Edit Profile</a>
-                                <a href="#" style="font-size: 18px;">Settings</a>
                                 <a href="/Home/ChangePassword" style="font-size: 18px;">Change Password</a>
                                 <div style="display: flex; align-items: center; font-size: 18px;">
                                     <label class="label-dark" for="darkModeToggle" style="margin-right: 10px;">Dark Mode</label>
