@@ -52,8 +52,8 @@
                             @priorityText
                         </p>
 
-                        <p>Start: @(Model.Project.StartDate.HasValue ? Model.Project.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
-                        <p>End: @(Model.Project.EndDate.HasValue ? Model.Project.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                        <p>Start: @(Model.Project.StartDate.HasValue ? Model.Project.StartDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                        <p>End: @(Model.Project.EndDate.HasValue ? Model.Project.EndDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
 
                     </div>
                 </div>
