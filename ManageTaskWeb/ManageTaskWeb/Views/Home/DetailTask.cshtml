@@ -1,4 +1,4 @@
-﻿@model ManageTaskWeb.Models.TaskViewModel
+﻿    @model ManageTaskWeb.Models.TaskViewModel
 @{
     ViewBag.Title = "DetailTask";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -18,8 +18,8 @@
             &nbsp;&nbsp;
             <div class="date-container" style="float:right">
                 <div class="date-text">
-                    <p>Start: @(Model.StartDate.HasValue ? Model.StartDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</p>
-                    <p>End: @(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</p>
+                    <p>Start: @(Model.StartDate.HasValue ? Model.StartDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                    <p>End: @(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
                 </div>
                 <div class="double-arrow">
                     Piority:
@@ -101,7 +101,7 @@
                     }
                     <style>
                         .blur{
-                            color:red;
+                           color:red;
                            font-weight:bold
                         }
                     </style>
@@ -137,7 +137,7 @@
                                     {
                                         <div class="task-details">@task.Description</div>
                                         <td>
-                                            <select style="background-color:dimgrey" class="form-control status-dropdown" data-task-id="@task.TaskID">
+                                            <select style="background-color:dimgrey" class="form-control status-dropdown" data-task-id="@task.TaskID" disabled>
                                                 <option value="Pending" @(task.Status == "Pending" ? "selected" : "") disabled>Pending</option>
                                                 <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
                                             </select>
@@ -192,7 +192,7 @@
                                     {
                                         <div class="task-details">@task.Description</div>
                                         <td>
-                                            <select style="background-color:dimgrey" class="form-control status-dropdown" data-task-id="@task.TaskID">
+                                            <select style="background-color:dimgrey" class="form-control status-dropdown" data-task-id="@task.TaskID" disabled>
                                                 <option value="Pending" @(task.Status == "Pending" ? "selected" : "") disabled>Pending</option>
                                                 <option value="Completed" @(task.Status == "Completed" ? "selected" : "")>Completed</option>
                                             </select>

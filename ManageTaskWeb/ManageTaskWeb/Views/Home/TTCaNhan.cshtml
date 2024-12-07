@@ -35,7 +35,6 @@
         <div class="content">
             <h2>Thông tin tài khoản</h2>
             <div class="profile-pic">
-                <!-- Hiển thị ảnh hiện tại -->
                 <img alt="User profile picture" id="currentImage" height="150" src="~/Content/images/member-img/@Session["ImageMember"]" width="150" />
                 <button type="button" onclick="document.getElementById('imageInputAdd').click()">Chọn ảnh</button>
                 <input type="file" id="imageInputAdd" name="ImageFile" style="display: none;" onchange="previewImage()" />
@@ -89,16 +88,16 @@
                         dateFormat: 'dd/mm/yy',
                         changeMonth: true,
                         changeYear: true,
-                        yearRange: "-100:+0", // cho phép chọn năm từ 100 năm trước đến hiện tại
+                        yearRange: "-100:+0", 
                         onSelect: function(dateText, inst) {
-                            // Khi người dùng chọn ngày, cập nhật giá trị cho input hidden
+                            
                             const [day, month, year] = dateText.split('/');
                             const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                             $("#BirthDateHidden").val(isoDate);
                         }
                     });
 
-                    // Cấu hình datepicker để hiển thị tiếng Việt (tùy chọn)
+                    
                     $.datepicker.regional['vi'] = {
                         closeText: 'Đóng',
                         prevText: 'Trước',
@@ -129,12 +128,12 @@
                     e.preventDefault();
 
                     const formData = new FormData(this);
-                    // Đảm bảo giá trị ngày sinh được gửi đúng định dạng
+                    
     const birthDate = document.getElementById('BirthDateHidden').value;
     if (birthDate) {
         formData.set('BirthDate', birthDate);
     }
-                    // Thêm file ảnh vào FormData nếu có
+                    
                     const imageInput = document.getElementById('imageInputAdd');
                     if (imageInput.files.length > 0) {
                         formData.append('ImageFile', imageInput.files[0]);
@@ -148,7 +147,7 @@
                     .then(data => {
                         if (data.success) {
                             alert("Cập nhật thành công!");
-                            window.location.reload(); // Reload trang để hiển thị thông tin mới
+                            window.location.reload(); 
                         } else {
                             alert("Cập nhật thất bại: " + data.message);
                         }
@@ -170,11 +169,11 @@
 
                         if (!validExtensions.includes(fileExtension)) {
                             alert("Hãy chọn file hình ảnh định dạng .JPG, .JPEG hoặc .PNG.");
-                            fileInput.value = ""; // Reset input nếu file không hợp lệ
+                            fileInput.value = ""; 
                         } else {
                             previewImage.src = URL.createObjectURL(file);
 
-                            // Giải phóng bộ nhớ sau khi tải
+                            
                             previewImage.onload = () => URL.revokeObjectURL(previewImage.src);
                         }
                     }

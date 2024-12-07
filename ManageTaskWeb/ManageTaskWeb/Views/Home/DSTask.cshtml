@@ -64,7 +64,7 @@
     </div>
 </div>
 <div class="task-board">
-    <!-- ON HOLD Column -->
+    <!-- PENDING Column -->
     <div class="task-column">
         <h2 style="background-color: rgba(56, 155, 253, 1)">PENDING</h2>
         @foreach (var task in Model.Where(t => t.Status == "Pending").OrderBy(t => t.Priority))
@@ -97,30 +97,30 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info" >
+                <div class="task-info">
                     <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration:underline;">@task.TaskName</p>
-                    <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
-                    <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                    <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                    <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
                     @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
                     {
-                    <button class="btn btn-outline-secondary edit-task-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editTaskModal"
-                            data-task-id="@task.TaskID"
-                            data-task-name="@task.TaskName"
-                            data-description="@task.Description"
-                            data-drive-link="@task.DriveLink"
-                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
-                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
-                            data-priority="@task.Priority"
-                            data-status="@task.Status">
-                        <i class="fas fa-pencil-alt"></i> Edit
-                    </button>
+                        <button class="btn btn-outline-secondary edit-task-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editTaskModal"
+                                data-task-id="@task.TaskID"
+                                data-task-name="@task.TaskName"
+                                data-description="@task.Description"
+                                data-drive-link="@task.DriveLink"
+                                data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                                data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                                data-priority="@task.Priority"
+                                data-status="@task.Status">
+                            <i class="fas fa-pencil-alt"></i> Edit
+                        </button>
                     }
                 </div>
             </div>
         }
-        
+
     </div>
 
     <!-- IN PROGRESS Column -->
@@ -156,38 +156,99 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info" >
-                    <p  onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;" >@task.TaskName</p>
-                    <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
-                    <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
+                <div class="task-info">
+                    <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
+                    <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                    <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
                     @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
                     {
-                    <button class="btn btn-outline-secondary edit-task-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editTaskModal"
-                            data-task-id="@task.TaskID"
-                            data-task-name="@task.TaskName"
-                            data-description="@task.Description"
-                            data-drive-link="@task.DriveLink"
-                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
-                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
-                            data-priority="@task.Priority"
-                            data-status="@task.Status">
-                        <i class="fas fa-pencil-alt"></i> Edit
-                    </button>
+                        <button class="btn btn-outline-secondary edit-task-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editTaskModal"
+                                data-task-id="@task.TaskID"
+                                data-task-name="@task.TaskName"
+                                data-description="@task.Description"
+                                data-drive-link="@task.DriveLink"
+                                data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                                data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                                data-priority="@task.Priority"
+                                data-status="@task.Status">
+                            <i class="fas fa-pencil-alt"></i> Edit
+                        </button>
                     }
                 </div>
             </div>
         }
-        
+
     </div>
 
-    <!-- IN REVIEW Column -->
-    <div class="task-column">
-        <h2 style="background-color: rgba(56, 155, 253, 1)">ON HOLD</h2>
-        @foreach (var task in Model.Where(t => t.Status == "On Hold").OrderBy(t => t.Priority))
-        {
-            <div class="task" style="background-color: @{
+    <!-- ON HOLD Column -->
+    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+    {
+        <div class="task-column">
+            <h2 style="background-color: rgba(56, 155, 253, 1)">ON HOLD</h2>
+            @foreach (var task in Model.Where(t => t.Status == "On Hold").OrderBy(t => t.Priority))
+            {
+                <div class="task" style="background-color: @{
+                    string taskBackgroundColor;
+                    if (task.Priority == 1)
+                    {
+                        taskBackgroundColor = "#FFCFB3";
+                    }
+                    else if (task.Priority == 2)
+                    {
+                        taskBackgroundColor = "#FFDDAE";
+                    }
+                    else if (task.Priority == 3)
+                    {
+                        taskBackgroundColor = "#FFF8DE";
+                    }
+                    else if (task.Priority == 4)
+                    {
+                        taskBackgroundColor = "#D0E8C5";
+                    }
+                    else if (task.Priority == 5)
+                    {
+                        taskBackgroundColor = "#D4F6FF";
+                    }
+                    else
+                    {
+                        taskBackgroundColor = "#F5F5F7";
+                    }
+                @taskBackgroundColor;
+            }">
+                    <div class="task-info">
+                        <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
+                        <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                        <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                        @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                        {
+                            <button class="btn btn-outline-secondary edit-task-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editTaskModal"
+                                    data-task-id="@task.TaskID"
+                                    data-task-name="@task.TaskName"
+                                    data-description="@task.Description"
+                                    data-drive-link="@task.DriveLink"
+                                    data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                                    data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                                    data-priority="@task.Priority"
+                                    data-status="@task.Status">
+                                <i class="fas fa-pencil-alt"></i> Edit
+                            </button>
+                        }
+                    </div>
+                </div>
+                    }
+
+        </div>
+                    }
+        <!-- DONE Column -->
+        <div class="task-column">
+            <h2 style="background-color: rgba(56, 155, 253, 1)">DONE</h2>
+            @foreach (var task in Model.Where(t => t.Status == "Completed").OrderBy(t => t.Priority))
+            {
+                <div class="task" style="background-color: @{
                 string taskBackgroundColor;
                 if (task.Priority == 1)
                 {
@@ -215,91 +276,32 @@
                 }
                 @taskBackgroundColor;
             }">
-                <div class="task-info" >
-                    <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
-                    <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
-                    <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
-                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
-                    {
-                    <button class="btn btn-outline-secondary edit-task-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editTaskModal"
-                            data-task-id="@task.TaskID"
-                            data-task-name="@task.TaskName"
-                            data-description="@task.Description"
-                            data-drive-link="@task.DriveLink"
-                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
-                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
-                            data-priority="@task.Priority"
-                            data-status="@task.Status">
-                        <i class="fas fa-pencil-alt"></i> Edit
-                    </button>
-                    }
+                    <div class="task-info">
+                        <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
+                        <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                        <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
+                        @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
+                        {
+                            <button class="btn btn-outline-secondary edit-task-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editTaskModal"
+                                    data-task-id="@task.TaskID"
+                                    data-task-name="@task.TaskName"
+                                    data-description="@task.Description"
+                                    data-drive-link="@task.DriveLink"
+                                    data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
+                                    data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
+                                    data-priority="@task.Priority"
+                                    data-status="@task.Status">
+                                <i class="fas fa-pencil-alt"></i> Edit
+                            </button>
+                        }
+                    </div>
                 </div>
-            </div>
-        }
-        
-    </div>
+            }
 
-    <!-- DONE Column -->
-    <div class="task-column">
-        <h2 style="background-color: rgba(56, 155, 253, 1)">DONE</h2>
-        @foreach (var task in Model.Where(t => t.Status == "Completed").OrderBy(t => t.Priority))
-        {
-            <div class="task" style="background-color: @{
-                string taskBackgroundColor;
-                if (task.Priority == 1)
-                {
-                    taskBackgroundColor = "#FFCFB3";
-                }
-                else if (task.Priority == 2)
-                {
-                    taskBackgroundColor = "#FFDDAE";
-                }
-                else if (task.Priority == 3)
-                {
-                    taskBackgroundColor = "#FFF8DE";
-                }
-                else if (task.Priority == 4)
-                {
-                    taskBackgroundColor = "#D0E8C5";
-                }
-                else if (task.Priority == 5)
-                {
-                    taskBackgroundColor = "#D4F6FF";
-                }
-                else
-                {
-                    taskBackgroundColor = "#F5F5F7";
-                }
-                @taskBackgroundColor;
-            }">
-                <div class="task-info" >
-                    <p onclick="window.location.href='/Home/DetailTask?taskId=@task.TaskID'" style="cursor: pointer; text-decoration: underline;">@task.TaskName</p>
-                    <p>Start: @(task.StartDate.HasValue ? task.StartDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
-                    <p>End: @(task.EndDate.HasValue ? task.EndDate.Value.ToString("HH:mm dd/MM/yyyy") : "N/A")</p>
-                    @if (Session["Role"] != null && (Session["Role"].ToString() == "Admin" || Session["Role"].ToString() == "Manager"))
-                    {
-                    <button class="btn btn-outline-secondary edit-task-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editTaskModal"
-                            data-task-id="@task.TaskID"
-                            data-task-name="@task.TaskName"
-                            data-description="@task.Description"
-                            data-drive-link="@task.DriveLink"
-                            data-start-date="@task.StartDate.Value.ToString("yyyy-MM-dd")"
-                            data-end-date="@task.EndDate.Value.ToString("yyyy-MM-dd")"
-                            data-priority="@task.Priority"
-                            data-status="@task.Status">
-                        <i class="fas fa-pencil-alt"></i> Edit
-                    </button>
-                    }
-                </div>
-            </div>
-        }
-        
+        </div>
     </div>
-</div>
 
 <!-- Add Task Modal -->
 <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
@@ -442,9 +444,10 @@
 
                             <label for="editStatus">Status</label>
                             <select class="form-select" name="Status" id="editStatus">
-                                <option>On Hold</option>
+
                                 <option>Pending</option>
                                 <option>In Progress</option>
+                                <option>On Hold</option>
                                 <option>Completed</option>
                             </select>
                         </div>

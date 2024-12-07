@@ -78,12 +78,12 @@
 
 
             @foreach (var interaction in Model.Interactions
-                .OrderByDescending(i => i.IsPinned)  // Sắp xếp tin nhắn được ghim lên trước
-                .ThenByDescending(i => i.InteractionDate)) // Sau đó sắp xếp theo thời gian mới nhất
+                .OrderByDescending(i => i.IsPinned)  
+                .ThenByDescending(i => i.InteractionDate)) 
             {
                 var timeElapsed = DateTime.Now - (interaction.InteractionDate ?? DateTime.Now);
                 string timeDisplay;
-                bool canEditDelete = timeElapsed.TotalMinutes <= 5; // Kiểm tra có trong khoảng 5 phút không
+                bool canEditDelete = timeElapsed.TotalMinutes <= 5; 
 
                 if (timeElapsed.TotalMinutes < 1)
                 {
@@ -196,9 +196,6 @@
 
 </div>
 <style>
-   
-
-
     .pinned-label {
         display: inline-block;
         background-color: #ffcc00;
@@ -249,7 +246,6 @@
                 background-color: #f0f0f0;
             }
 
-    /* Hiển thị menu khi có class 'show' */
     .options-menu-container:hover .options-menu {
         display: block;
     }
@@ -302,15 +298,12 @@
 
 </style>
 
-
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Sửa tin nhắn
         window.editMessage = function (messageId, projectId) {
             const newMessage = prompt("Nhập nội dung mới:");
             if (newMessage) {
-                // Gửi yêu cầu sửa tin nhắn đến server
                 window.location.href = `/Home/EditMessage?messageId=${messageId}&newMessage=${encodeURIComponent(newMessage)}&projectId=${projectId}`;
             }
         };
@@ -318,14 +311,12 @@
         // Xóa tin nhắn
         window.deleteMessage = function (messageId, projectId) {
             if (confirm("Bạn có chắc muốn xóa tin nhắn này?")) {
-                // Gửi yêu cầu xóa tin nhắn đến server
                 window.location.href = `/Home/DeleteMessage?messageId=${messageId}&projectId=${projectId}`;
             }
         };
 
         // Ghim tin nhắn
         window.pinMessage = function (messageId, projectId) {
-            // Gửi yêu cầu ghim tin nhắn đến server
             window.location.href = `/Home/PinMessage?messageId=${messageId}&projectId=${projectId}`;
         };
     });
@@ -337,7 +328,6 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        // Tải lại trang sau khi ghim/bỏ ghim thành công
                         location.reload();
                     } else {
                         alert("Có lỗi xảy ra khi thay đổi trạng thái ghim.");
@@ -345,32 +335,25 @@
                 });
         };
     });
-
-
-
-
     //Doc them  - an bot
     document.addEventListener("DOMContentLoaded", function () {
         const showMoreButtons = document.querySelectorAll(".show-more");
 
         showMoreButtons.forEach(button => {
             button.addEventListener("click", function () {
-                const message = this.closest(".message"); // Find the message container
+                const message = this.closest(".message"); 
                 const dots = message.querySelector(".dots");
                 const moreText = message.querySelector(".more-text");
                 const showMoreButton = message.querySelector(".show-more");
 
-                // Toggle the message
                 if (dots.style.display === "none") {
-                    // If the full message is shown, hide it and show the truncated version
                     dots.style.display = "inline";
                     moreText.style.display = "none";
-                    showMoreButton.innerText = "Đọc thêm"; // Change button text
+                    showMoreButton.innerText = "Đọc thêm"; 
                 } else {
-                    // If the message is truncated, show the full message
                     dots.style.display = "none";
                     moreText.style.display = "inline";
-                    showMoreButton.innerText = "Ẩn bớt"; // Change button text
+                    showMoreButton.innerText = "Ẩn bớt"; 
                 }
             });
         });
