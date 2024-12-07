@@ -289,3 +289,6 @@
     height: 50px;
     object-fit: cover;
 }
+.message {
+    padding:0;
+}
