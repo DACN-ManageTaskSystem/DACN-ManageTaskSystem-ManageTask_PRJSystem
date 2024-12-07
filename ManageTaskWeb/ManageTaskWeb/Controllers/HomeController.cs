@@ -980,6 +980,7 @@ namespace ManageTaskWeb.Controllers
                 m.MemberID,
                 m.FullName,
                 m.Role,
+                m.ImageMember,
                 NotificationIDs = requestMemberData
                     .Where(r => r.RequestMemberID == m.MemberID)
                     .Select(r => r.NotificationID)
@@ -1145,7 +1146,17 @@ namespace ManageTaskWeb.Controllers
         {
             var role = Session["Role"]?.ToString();
             var memberId = Session["MemberID"]?.ToString();
+            if (string.IsNullOrEmpty(projectId))
+            {
+                return RedirectToAction("Error", new { message = "Project ID is missing or invalid." });
+            }
+
             var project = data.Projects.FirstOrDefault(p => p.ProjectID == projectId);
+            if (project == null)
+            {
+                return RedirectToAction("Error", new { message = "Project not found." });
+            }
+
 
             ViewBag.ProjectStartDate = project.StartDate;
             ViewBag.ProjectEndDate = project.EndDate;
