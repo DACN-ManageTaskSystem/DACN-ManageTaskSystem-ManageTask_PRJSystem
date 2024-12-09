@@ -27,5 +27,5 @@ HR: (MemberID: 123472010124, Password: Abc123456*)
 3. To run the forgot password function. Create an employee or update an employee with the real email.<br>
 <br>
 ----------- DEMO - GITHUB -----------<br>
-Demo:<br>
-GitHub:<br>
+Demo: http://taskmanager8386.somee.com<br>
+GitHub: https://github.com/DACN-ManageTaskSystem/DACN-ManageTaskSystem-ManageTask_PRJSystem.git<br>
