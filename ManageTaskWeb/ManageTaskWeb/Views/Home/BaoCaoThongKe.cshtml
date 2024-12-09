@@ -78,10 +78,14 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-danger text-white mb-4">
+            <div class="card bg-danger text-white mb-4" onmouseover="loadOverdueTasks()" onmouseout="hideOverdueTasks()">
                 <div class="card-body">
                     <h5>Công việc trễ hạn</h5>
                     <h2 class="mb-0" id="overdueTasks">0</h2>
+                    <div id="overdueTasksList" style="display: none; position: absolute; background: white; color: black; z-index: 1000; border: 1px solid #ccc; padding: 10px;">
+                        <h6>Công việc trễ hạn:</h6>
+                        <ul id="overdueTasksItems"></ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -426,7 +430,25 @@ function updateDetailedReport(data) {
         // Xác định loại task và class tương ứng
         const isMainTask = item.parentTaskId === null;
         const rowClass = isMainTask ? 'main-task' : 'sub-task';
-        
+
+        // Kiểm tra điều kiện để tô màu đỏ nhạt
+        const currentDate = new Date();
+
+        // Tách chuỗi dd/MM/yyyy để tạo Date object
+        const endDateParts = formatDate(item.endDate).split('/');
+        const taskEndDate = new Date(
+            parseInt(endDateParts[2]), // Năm
+            parseInt(endDateParts[1]) - 1, // Tháng (bắt đầu từ 0)
+            parseInt(endDateParts[0]) // Ngày
+        );
+
+        const isOverdueAndPending = taskEndDate < currentDate && item.status === 'Pending';
+
+        console.log(formatDate(item.endDate)); // Chuỗi ngày đã định dạng
+        console.log(currentDate); // Ngày hiện tại
+        console.log(taskEndDate); // Ngày kết thúc dạng Date object
+        console.log(isOverdueAndPending); // Kết quả kiểm tra
+
         // Tạo progress bar
         const progressColor = getProgressColor(item.progress);
         const progressBar = `
@@ -443,9 +465,10 @@ function updateDetailedReport(data) {
             tbody.append('<tr><td colspan="7" style="height: 10px; background-color: #dee2e6;"></td></tr>');
         }
         
-        // Tạo dòng HTML
+        // Tạo dòng HTML với điều kiện tô màu
+        const rowStyle = isOverdueAndPending ? 'style="background-color: #ffc4c4;"' : '';
         const row = `
-            <tr class="${rowClass}">
+            <tr class="${rowClass}" ${rowStyle}>
                 <td>${item.projectName}</td>
                 <td>${item.taskName}</td>
                 <td>${item.assignedTo}</td>
@@ -794,6 +817,25 @@ function getStatusBadge(status) {
     
     const statusInfo = statusMap[status] || { color: 'secondary', text: status };
     return `<span class="badge bg-${statusInfo.color}">${statusInfo.text}</span>`;
+}
+
+function loadOverdueTasks() {
+    $.get('/Home/GetOverdueTasks', function(response) {
+        if (response.success) {
+            const overdueTasksItems = $('#overdueTasksItems');
+            overdueTasksItems.empty();
+            response.tasks.forEach(function(task) {
+                overdueTasksItems.append(`<li>${task.projectName} ${task.taskDes} - ${formatDate(task.dueDate)}</li>`);
+            });
+            $('#overdueTasksList').show(); // Hiện danh sách khi hover
+        } else {
+            alert('Không thể tải danh sách công việc trễ hạn.');
+        }
+    });
+}
+
+function hideOverdueTasks() {
+    $('#overdueTasksList').hide(); // Ẩn danh sách khi không hover
 }
 </script>
 

@@ -251,7 +251,7 @@
                 <input type="hidden" id="createbyId" value="@Model.Creator.MemberID">
                 <input type="hidden" id="parentTaskId" value="@Model.TaskID"> &nbsp; &nbsp;
                 <input type="hidden" id="endDateId" value="@Model.EndDate">
-
+                <input type="hidden" id="startDateId" value="@Model.StartDate">
                 <!-- Biểu tượng gửi và sự kiện onclick -->
                 <i class="fas fa-paper-plane send-icon" onclick="createSubTask()"></i>
             </div>
@@ -821,7 +821,8 @@ function createSubTask() {
         ParentTaskID: parseInt(document.getElementById('parentTaskId').value),
         CreateBy: document.getElementById('createbyId').value,  // Lấy giá trị creator ID
         MemberID: "0",  // Lấy giá trị từ select
-        EndDate: document.getElementById('endDateId').value
+        EndDate: document.getElementById('endDateId').value,
+        StartDate: document.getElementById('startDateId').value
     }; 
 
     // Kiểm tra dữ liệu đầu vào

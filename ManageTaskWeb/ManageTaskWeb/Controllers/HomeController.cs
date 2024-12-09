@@ -1539,7 +1539,7 @@ namespace ManageTaskWeb.Controllers
                         ProjectID = subTask.ProjectID,
                         ParentTaskID = subTask.ParentTaskID, 
                         createBy = subTask.createBy,
-                        StartDate = DateTime.Now,
+                        StartDate = subTask.StartDate,
                         EndDate = subTask.EndDate                        
                     };
 
@@ -2435,6 +2435,33 @@ namespace ManageTaskWeb.Controllers
                     .ToList();
 
                 return Json(new { success = true, tasks = tasks }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetOverdueTasks()
+        {
+            try
+            {
+                var today = DateTime.Now;
+                var overdueTasks = data.Tasks
+                    .Where(t => t.EndDate < today && t.Status != "Completed" && t.ParentTaskID != null)
+                    .Join(data.Projects, // Thực hiện phép nối với bảng Projects
+                        task => task.ProjectID, // Khóa ngoại từ bảng Tasks
+                        project => project.ProjectID, // Khóa chính từ bảng Projects
+                        (task, project) => new // Tạo đối tượng mới với thông tin cần thiết
+                        {
+                            taskDes = task.Description,
+                            dueDate = task.EndDate,
+                            projectName = project.ProjectName // Lấy tên dự án
+                        })
+                    .ToList();
+
+                return Json(new { success = true, tasks = overdueTasks }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
