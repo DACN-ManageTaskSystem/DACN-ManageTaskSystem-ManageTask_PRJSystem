@@ -15,11 +15,13 @@ OnCreated();
 
 ------------SAMPLE DATA------------
 1. Login account:
+<br>
 Admin: (MemberID: 123456010124, Password: Abc123456*)
+<br>
 Manager: (MemberID: 123457010124, Password: Abc123456*)
 Developer: (MemberID: 123462010124, Password: Abc123456*)
 HR: (MemberID: 123472010124, Password: Abc123456*)
-2. To run the forgot password function. Create an employee or update an employee with the real email.
+3. To run the forgot password function. Create an employee or update an employee with the real email.
 
 ----------- DEMO - GITHUB -----------
 Demo:
